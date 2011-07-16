@@ -12,13 +12,13 @@ class OrderlyApiClient(val connString: String,
                        val dbUser: String,
                        val dbPassword: String) {
 
-    // Initialise database connection
-    Class.forName("org.postgresql.Driver")
+  // Initialise database connection
+  Class.forName("org.postgresql.Driver")
 
-    SessionFactory.concreteFactory = Some(()=>
-      Session.create(
-        java.sql.DriverManager.getConnection(connString, dbUser, dbPassword),
-        new PostgreSqlAdapter))
+  SessionFactory.concreteFactory = Some(()=>
+    Session.create(
+      java.sql.DriverManager.getConnection(connString, dbUser, dbPassword),
+      new PostgreSqlAdapter))
 
   def getPlatformInstanceParameters(platformInstanceId: Long): Map[String, String] = {
 
