@@ -1,4 +1,4 @@
-import co.orderly.apiclient._
+import orderly.apiclient._
 
 object Test {
 
