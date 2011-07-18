@@ -18,19 +18,20 @@ CREATE TABLE "public"."platform_instances" (
 "id" int NOT NULL UNIQUE,
 "platform_instance_name" varchar(256) NOT NULL,
 "platform_id" integer NOT NULL REFERENCES "public"."platforms"("id"),
-"poll_frequency" integer NULL
+"active" boolean NOT NULL,
+"poll_frequency" integer NOT NULL
 )
 WITH (OIDS=FALSE);
 
-INSERT INTO "public"."platform_instances" VALUES ('1', 'Psychic Bazaar PrestaShop', '1', '15');
-INSERT INTO "public"."platform_instances" VALUES ('2', 'Psychic Bazaar Amazon Marketplace UK', '2', '60');
+INSERT INTO "public"."platform_instances" VALUES ('1', 'Psychic Bazaar PrestaShop', '1', TRUE, '15');
+INSERT INTO "public"."platform_instances" VALUES ('2', 'Psychic Bazaar Amazon Marketplace UK', '2', TRUE, '60');
 
 
 CREATE TABLE "public"."platform_instance_parameters" (
 "id" int NOT NULL UNIQUE,
 "platform_instance_id" integer NOT NULL REFERENCES "public"."platform_instances"("id"),
 "parameter_name" varchar(128) NOT NULL,
-"parameter_value" varchar(128)
+"parameter_value" varchar(128) NOT NULL
 )
 WITH (OIDS=FALSE);
 
