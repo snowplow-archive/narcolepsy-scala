@@ -1,4 +1,9 @@
+DROP TABLE "public"."platform_instance_parameters";
+
+DROP TABLE "public"."platform_instances";
+
 DROP TABLE "public"."platforms";
+
 CREATE TABLE "public"."platforms" (
 "id" int NOT NULL UNIQUE,
 "platform_name" varchar(256) NOT NULL,
@@ -9,7 +14,6 @@ WITH (OIDS=FALSE);
 INSERT INTO "public"."platforms" VALUES ('1', 'PrestaShop', 'PrestaShopConnector');
 INSERT INTO "public"."platforms" VALUES ('2', 'Amazon Marketplace', 'AmazonMarketplaceConnector');
 
-DROP TABLE "public"."platform_instances";
 CREATE TABLE "public"."platform_instances" (
 "id" int NOT NULL UNIQUE,
 "platform_instance_name" varchar(256) NOT NULL,
@@ -19,9 +23,9 @@ CREATE TABLE "public"."platform_instances" (
 WITH (OIDS=FALSE);
 
 INSERT INTO "public"."platform_instances" VALUES ('1', 'Psychic Bazaar PrestaShop', '1', '15');
-INSERT INTO "public"."platform_instances" VALUES ('2', 'Psychic Bazaar Amazon Marketplace UK', '60');
+INSERT INTO "public"."platform_instances" VALUES ('2', 'Psychic Bazaar Amazon Marketplace UK', '2', '60');
 
-DROP TABLE "public"."platform_instance_parameters";
+
 CREATE TABLE "public"."platform_instance_parameters" (
 "id" int NOT NULL UNIQUE,
 "platform_instance_id" integer NOT NULL REFERENCES "public"."platform_instances"("id"),
