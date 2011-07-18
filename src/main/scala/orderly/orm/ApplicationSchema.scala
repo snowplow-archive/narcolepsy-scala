@@ -1,4 +1,4 @@
-package co.orderly.orm
+package orderly.orm
 
 import org.squeryl.Schema
 

@@ -1,10 +1,10 @@
-package co.orderly.apiclient
+package orderly.apiclient
 
 import org.squeryl._
 import org.squeryl.adapters.PostgreSqlAdapter
 import org.squeryl.PrimitiveTypeMode._
 
-import co.orderly.orm._
+import orderly.orm._
 
 // TODO: obviously the API client will not really be initialised with
 // TODO: a database connection string - but this should get us started
