@@ -17,10 +17,20 @@ object Test {
     })
   }
 
-  def test(pi: orderly.orm.PlatformInstance) {
-    val simplepi = orderly.api.PlatformInstance.fromSqueryl(pi)
-    val serializer = new Persister()
+  def test(source: orderly.orm.PlatformInstance) {
+    val target = source.toJaxb
+
+    import javax.xml.bind.JAXBContext;
+    import javax.xml.bind.Marshaller;
+
+    val jc = JAXBContext.newInstance(classOf[orderly.api.PlatformInstance]);
+
+    val marshaller: Marshaller = jc.createMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        marshaller.marshal(target, System.out);
+
+    /* val serializer = new Persister()
     val result = new java.io.File("example.xml");
-    serializer.write(simplepi, result);
+    serializer.write(simplepi, result); */
   }
 }
