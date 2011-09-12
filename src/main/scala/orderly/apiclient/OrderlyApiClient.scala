@@ -1,4 +1,4 @@
-package orderly.apiclient
+package orderly.restful
 
 // Scala
 import scala.xml._
@@ -9,27 +9,50 @@ import http._ // To get HttpRequest etc
 import cc.spray.client._
 
 // Orderly
-import orderly.mdm._
-import representations.Representation // To handle the Representation definition
+// TODO: move this representation into the restful package
+import orderly.mdm.representations.Representation // To handle the Representation definition
 
-class OrderlyApiClient(
-  val requestUri:   String,
+/**
+ * RestfulClient is an abstract trait modelling a client for a generic RESTful API.
+ * Instantiating RestfulClient involves 
+ * 
+ * For a better understanding of RESTful web service clients, please see XXX
+ */
+
+// TODO: change contentType to a Spray variable
+abstract trait RestfulClient(
+  val apiUri:       String,
   val contentType:  String = "application/xml") {
 
   // The return type for an API response.
   // Holds return code, either one representation or multiple, and a flag
   // indicating whether the representation is an error or not.
-  type RestfulResponse = (Int, Either[Representation, List[Representation]], Bool)
+  // TODO: look at how squeryl deals with returning one row or multiple
+  type RestfulResponse = (Int, Either[RestfulRepresentation, List[RestfulRepresentation]], Bool)
 
   // Simple synonym for the API parameters
   type RestfulParams = Map[String, String]
 
+  // To store the content types (e.g. XML, JSON) supported by this RESTful web service
+  val supportedContentTypes: List[String]
+
+  // To store the parameters which are allowed for each resource type
+  // TODO
+
   // TODO let's validate for supported contentTypes
+  if (!validateContentType) {
+    throw new RestfulClientException("Content type " + contentType + " is not supported")    
+  }
+
+
+  protected def validateContentType: Boolean
+
+  protected def validateParams: Boolean
 
   // Debug
   Console.println("Accessing API at %s using %s".format(requestUri, contentType))
 
-  // Build a Spray http client with custom configuration options
+  // Build a Spray asynchronous http client with custom configuration options
   val client = new HttpClient(ClientConfig(
     requestTimeoutInMs = 300,
     userAgent = "orderly-scala-client v0.0.1",
@@ -127,4 +150,10 @@ class OrderlyApiClient(
   def getURL(url: String): RestfulResponse = {
     marshal(resource, execute(HttpMethods.GET, url, None)) // Execute the API call, marshall the output into the appropriate representation for the resource
   }
+}
+
+/**
+ * Custom runtime exception for the restful client
+ */
+class RestfulClientException(message: String) extends RuntimeException(message) {
 }
