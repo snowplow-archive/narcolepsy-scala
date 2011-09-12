@@ -1,7 +1,7 @@
 import sbt._
 import Process._
 
-class OrderlySiestaProject(info: ProjectInfo) extends DefaultWebProject(info) with AkkaProject {
+class NarcolepsyProject(info: ProjectInfo) extends DefaultWebProject(info) with AkkaProject {
 
   // -------------------------------------------------------------------------------------------------------------------
   // All repositories *must* go here! See ModuleConfigurations below.
