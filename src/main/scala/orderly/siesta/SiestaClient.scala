@@ -1,4 +1,4 @@
-package orderly.restful
+package orderly.siesta
 
 // Scala
 import scala.xml._

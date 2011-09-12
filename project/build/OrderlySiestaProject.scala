@@ -1,7 +1,7 @@
 import sbt._
 import Process._
 
-class OrderlyScalaClientProject(info: ProjectInfo) extends DefaultWebProject(info) with AkkaProject {
+class OrderlySiestaProject(info: ProjectInfo) extends DefaultWebProject(info) with AkkaProject {
 
   // -------------------------------------------------------------------------------------------------------------------
   // All repositories *must* go here! See ModuleConfigurations below.
