@@ -1,8 +1,8 @@
-import orderly.apiclient._
+// import orderly.narcolepsy._
 
 object Test {
 
   def main(args: Array[String]) {
-    val api = new OrderlyApiClient("http://localhost:8080/products")
+    Console.println("Compiled!!")
   }
 }
