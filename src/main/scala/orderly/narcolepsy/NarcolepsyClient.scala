@@ -1,5 +1,8 @@
 package orderly.narcolepsy
 
+// Maven
+import org.apache.maven.artifact.versioning.{DefaultArtifactVersion => SoftwareVersion}
+
 // Scala
 import scala.xml._
 
@@ -9,18 +12,35 @@ import http._ // To get HttpRequest etc
 import cc.spray.client._
 
 /**
- * SiestaClient is an abstract trait modelling an asynchronous client for a generic
- * RESTful API. SiestaClient is built on top of xxx
+ * NarcolepsyClient is an abstract class modelling an asynchronous client for a
+ * a generic RESTful API. NarcolepsyClient is built on top of spray-client,
+ * which is in turn based on Ning's xxx. spray-client uses Akka to xxx
  *
- * Extending SiestaClient involves 
+ * Extending NarcolepsyClient involves xxx
  * 
  * For a better understanding of RESTful web service clients, please see XXX
  */
-
-// TODO: change contentType to a Spray variable
-abstract trait NarcolepsyClient(
+abstract class NarcolepsyClient(
   val apiUri:       String,
-  val contentType:  String = "application/xml") {
+  val contentType:  String = defaultContentType) { // TODO: change contentType to a Spray variable
+
+  /* ----------------------------------------------------------------
+   * Need to populate the below vals to define a new NarcolepsyClient
+   */
+
+  // To store the content types (e.g. XML, JSON) supported by this RESTful web service
+  val supportedContentTypes: List[String] // TODO: change contentType to a Spray variable
+
+  // The default content type if none is supplied
+  val defaultContentType: String // TODO: change contentType to a Spray variable
+
+  // To track which parameters are valid for GETs
+  val validGetParams: Map[String, String] // TODO: think need a different way to represent this
+
+  // The minimum version of the RESTful API supported. SoftwareVersion taken from Maven versioning
+  // TODO: implement all this (quite bespoke per API?)
+  val minVersionSupported: SoftwareVersion
+  val maxVersionSupported: SoftwareVersion
 
   // The return type for an API response.
   // Holds return code, either one representation or multiple, and a flag
@@ -31,19 +51,14 @@ abstract trait NarcolepsyClient(
   // Simple synonym for the API parameters
   type RestfulParams = Map[String, String]
 
-  // To store the content types (e.g. XML, JSON) supported by this RESTful web service
-  val supportedContentTypes: List[String]
-
-  // To store the parameters which are allowed for each resource type
-  // TODO
-
   // TODO let's validate for supported contentTypes
+!(List("filter", "display", "sort", "limit", "schema") contains param._1)
   if (!validateContentType) {
     throw new RestfulClientException("Content type " + contentType + " is not supported")    
   }
 
-
   protected def validateContentType: Boolean
+
 
   protected def validateParams: Boolean
 
