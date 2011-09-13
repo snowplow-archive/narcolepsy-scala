@@ -46,11 +46,20 @@ import cc.spray.client._
  * For more on Narcolepsy see the GitHub project: https://github.com/orderly/narcolepsy
  */
 abstract class NarcolepsyClient(
-  val rootUri:      String = defaultRootUri,
-  val contentType:  String = defaultContentType,
+  val rootUri:      String,
+  val contentType:  String,
   val username:     String,
   val password:     String) { // TODO: change contentType to a Spray variable
                               // TODO: make a more general authentication input
+
+  // -------------------------------------------------------------------------------------------------------------------
+  // Alternative constructors
+  // -------------------------------------------------------------------------------------------------------------------
+
+  // TODO: handle defaultRootUri
+
+  // TODO: handle default content type
+
 
   // -------------------------------------------------------------------------------------------------------------------
   // Type definitions used by NarcolepsyClient
@@ -63,7 +72,7 @@ abstract class NarcolepsyClient(
   // Holds return code, either one representation or multiple, and a flag
   // indicating whether the representation is an error or not.
   // TODO: look at how squeryl deals with returning one row or multiple
-  type RestfulResponse = (Int, Either[RestfulRepresentation, List[RestfulRepresentation]], Bool)
+  type RestfulResponse = (Int, Either[RestfulRepresentation, List[RestfulRepresentation]], Boolean)
 
   // Simple synonym for the API parameters
   type RestfulParams = Map[String, String]
@@ -110,11 +119,11 @@ abstract class NarcolepsyClient(
   // -------------------------------------------------------------------------------------------------------------------
 
   // First let's validate that we have a rootUri
-  rootUri.getOrElse(throw new NarcolepsyClientException("rootUri missing, must be set for %s".format(clientName)))
+  Option(rootUri).getOrElse(throw new NarcolepsyConfigurationException("rootUri missing, must be set for %s".format(clientName)))
 
   // Now let's validate that the content type passed in is legitimate for this API
-  if (!supportedContentTypes contains contentType) {
-    throw new NarcolepsyClientException("Content type " + contentType + " is not supported")
+  if (!(supportedContentTypes contains contentType)) {
+    throw new NarcolepsyConfigurationException("Content type " + contentType + " is not supported")
   }
 
   // -------------------------------------------------------------------------------------------------------------------
@@ -180,7 +189,7 @@ abstract class NarcolepsyClient(
    * @return RESTful response from the API
    */
   protected def get(resource: String, id: Option[Int], params: Option[RestfulParams]): RestfulResponse = {
-    getURL(
+    getURL(resource,
       resource +
       (if (id.isDefined) "/%d".format(id.get) else "") +
       (if (params.isDefined) "?%s".format(canonicalize(params.get)) else "")
@@ -189,11 +198,12 @@ abstract class NarcolepsyClient(
 
   /**
    * Retrieve (GET) a resource, URL version
-   * @param url A URL which explicitly sets the resource type and ID to retrieve
+   * @param resource The type of resource to retrieve
+   * @param uri A URL which explicitly sets the resource type, ID(s) and parameters to retrieve
    * @return RESTful response from the API
    */
-  def getURL(url: String): RestfulResponse = {
-    marshal(resource, execute(HttpMethods.GET, url, None)) // Execute the API call, marshall the output into the appropriate representation for the resource
+  def getURL(resource: String, uri: String): RestfulResponse = {
+    execute(resource, HttpMethods.GET, uri) // Execute the API call using GET
   }
 
   // -------------------------------------------------------------------------------------------------------------------
@@ -207,6 +217,7 @@ abstract class NarcolepsyClient(
    * @return A RestfulResponse object
    */
   protected def execute(
+    resource: String,
     requestMethod: HttpMethod,
     requestUri: String): RestfulResponse = {
 
@@ -223,7 +234,7 @@ abstract class NarcolepsyClient(
     val response = future.get // Block TODO: make this async capable
 
      // Return the RestfulResponse
-    (200, Left(response), false) // TODO: populate with proper values
+    (200, Left(response.toString()), false) // TODO: populate with proper values
   }
 
   // TODO: do we need the below? Is there an equivalent in spray?

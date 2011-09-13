@@ -15,5 +15,11 @@ package orderly.narcolepsy
 /**
  * Custom runtime exception for NarcolepsyClient
  */
-class NarcolepsyClientException(message: String) extends RuntimeException(message) {
+class NarcolepsyException(message: String) extends RuntimeException(message) {
+}
+
+/**
+ * Custom configuration exception for NarcolepsyClient
+ */
+class NarcolepsyConfigurationException(message: String) extends NarcolepsyException(message) {
 }
