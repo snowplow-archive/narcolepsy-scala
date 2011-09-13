@@ -1,3 +1,16 @@
+/*
+ * Copyright (c) 2011 Orderly Ltd. All rights reserved.
+ *
+ * This program is licensed to you under the Apache License Version 2.0,
+ * and you may not use this file except in compliance with the Apache License Version 2.0.
+ * You may obtain a copy of the Apache License Version 2.0 at http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the Apache License Version 2.0 is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
+ */
+
 import sbt._
 import Process._
 
@@ -20,15 +33,12 @@ class NarcolepsyProject(info: ProjectInfo) extends DefaultWebProject(info) with 
   // Therefore, if repositories are defined, this must happen as def, not as val.
   // -------------------------------------------------------------------------------------------------------------------
   import Repositories._
-  // Again added by Alex for javax.servlet later
-  val glassfishModuleConfig = ModuleConfiguration("org.glassfish", GlassFishRepo)
-  // val sprayModuleConfig = ModuleConfiguration("cc.spray", ScalaToolsSnapshots) // required for spray snapshots
 
   // -------------------------------------------------------------------------------------------------------------------
   // Dependencies
   // -------------------------------------------------------------------------------------------------------------------
 
-  // these are the ones that are absolutely required
+  // these are the ones that are absolutely required for a project using spray-client
   val sprayHttp           = "cc.spray" %% "spray-http" % "0.7.0" % "compile" withSources()
   val sprayClient         = "cc.spray" %% "spray-client" % "0.7.0" % "compile" withSources()
   override val akkaActor  = akkaModule("actor") withSources() // it's good to always have the sources around
@@ -37,12 +47,8 @@ class NarcolepsyProject(info: ProjectInfo) extends DefaultWebProject(info) with 
   val akkaSlf4j = akkaModule("slf4j") withSources()
   val logback   = "ch.qos.logback" % "logback-classic" % "0.9.29" % "runtime" // a good logging backend for slf4j
 
-  // Added by Orderly so that the custom initializer can compile
-  val servlet30          = "org.glassfish" % "javax.servlet" % "3.0" % "provided"
-
-  // Added by Orderly for Squeryl and Postgres
-  val squeryl = "org.squeryl" %% "squeryl" % "0.9.4"
-	val posgresDriver = "postgresql" % "postgresql" % "8.4-701.jdbc4"
+  // For Maven-based API versioning
+  val mavenArtifact = "org.apache.maven" % "maven-artifact" % "3.0.3"
 
   // For Jackson
   val jacksonCoreLgpl = "org.codehaus.jackson" % "jackson-core-lgpl" % "1.8.4"
@@ -56,4 +62,8 @@ class NarcolepsyProject(info: ProjectInfo) extends DefaultWebProject(info) with 
   val jettyWebApp = "org.eclipse.jetty" % "jetty-webapp" % JETTY_VERSION % "test"
 
   override def testFrameworks = super.testFrameworks ++ Seq(new TestFramework("org.specs2.runner.SpecsFramework"))
+
+  // Extra resources to include in the .jar
+  def extraResources = "LICENSE-2.0.txt" +++ "README.markdown"
+  override def mainResources = super.mainResources +++ extraResources
 }

@@ -1,3 +1,15 @@
+/*
+ * Copyright (c) 2011 Orderly Ltd. All rights reserved.
+ *
+ * This program is licensed to you under the Apache License Version 2.0,
+ * and you may not use this file except in compliance with the Apache License Version 2.0.
+ * You may obtain a copy of the Apache License Version 2.0 at http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the Apache License Version 2.0 is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
+ */
 package orderly.narcolepsy
 
 // Maven
@@ -12,13 +24,26 @@ import http._ // To get HttpRequest etc
 import cc.spray.client._
 
 /**
- * NarcolepsyClient is an abstract class modelling an asynchronous client for a
- * a generic RESTful API. NarcolepsyClient is built on top of spray-client,
- * which is in turn based on Ning's xxx. spray-client uses Akka to xxx
+ * NarcolepsyClient is an abstract class you can use to build an asynchronous client
+ * for any well-behaved RESTful API. NarcolepsyClient is built on top of spray-client,
+ * which in turn is a thin Scala wrapper around Ning's Async Http Client. (The
+ * big difference between spray-client and Ning's AHC is that spray-client uses Akka
+ * futures for the asynchronous funkiness.)
  *
- * Extending NarcolepsyClient involves xxx
- * 
- * For a better understanding of RESTful web service clients, please see XXX
+ * spray-client API docs: http://spray.github.com/spray/api/spray-client/index.html
+ * Async Http Client docs: http://sonatype.github.com/async-http-client/apidocs/index.html
+ *
+ * NarcolepsyClient provides a higher-level of abstraction than that typically found in a
+ * RESTful API toolkit like spray-client or AHC. Creating an API-specific client using
+ * Narcolepsy is as simple as providing some configuration variables, generating the JAXB
+ * representation definitions and mapping those representations to resource slugs.
+ *
+ * NarcolepsyClient is licensed under the Apache License, Version 2.0 - the same
+ * as spray-client and the Async Http Client.
+ *
+ * For a better understanding of RESTful web service clients, please read XXX
+ *
+ * For more on Narcolepsy see the GitHub project: https://github.com/orderly/narcolepsy
  */
 abstract class NarcolepsyClient(
   val rootUri:      String = defaultRootUri,
@@ -27,9 +52,9 @@ abstract class NarcolepsyClient(
   val password:     String) { // TODO: change contentType to a Spray variable
                               // TODO: make a more general authentication input
 
-  /* ----------------------------------------------------------------
-   * Type definitions used by NarcolepsyClient
-   */
+  // -------------------------------------------------------------------------------------------------------------------
+  // Type definitions used by NarcolepsyClient
+  // -------------------------------------------------------------------------------------------------------------------
 
   // TODO: remove this. Temporary to test the API client without fannying around with JAXB
   type RestfulRepresentation = String
@@ -43,9 +68,9 @@ abstract class NarcolepsyClient(
   // Simple synonym for the API parameters
   type RestfulParams = Map[String, String]
 
-  /* ----------------------------------------------------------------
-   * Need to populate the below vals to define a new NarcolepsyClient
-   */
+  // -------------------------------------------------------------------------------------------------------------------
+  // Need to populate the below vals to define a new NarcolepsyClient
+  // -------------------------------------------------------------------------------------------------------------------
 
   // To provide a human readable name for this client, e.g. "Shopify Scala client"
   val clientName: String
@@ -80,9 +105,9 @@ abstract class NarcolepsyClient(
   val minVersionSupported: SoftwareVersion
   val maxVersionSupported: SoftwareVersion
 
-  /* ----------------------------------------------------------------
-   * Validation to check that the constructor arguments are okay
-   */
+  // -------------------------------------------------------------------------------------------------------------------
+  // Validation to check that the constructor arguments are okay
+  // -------------------------------------------------------------------------------------------------------------------
 
   // First let's validate that we have a rootUri
   rootUri.getOrElse(throw new NarcolepsyClientException("rootUri missing, must be set for %s".format(clientName)))
@@ -92,9 +117,9 @@ abstract class NarcolepsyClient(
     throw new NarcolepsyClientException("Content type " + contentType + " is not supported")
   }
 
-  /* ----------------------------------------------------------------
-   * Actual HTTP client constructor
-   */
+  // -------------------------------------------------------------------------------------------------------------------
+  // Actual HTTP client constructor
+  // -------------------------------------------------------------------------------------------------------------------
 
   // Finally build an asynchronous spray-client with custom configuration options
   val client = new HttpClient(ClientConfig(
@@ -103,14 +128,14 @@ abstract class NarcolepsyClient(
     useRawUrl = false
   ))
 
-  /** ----------------------------------------------------------------
-   * GET methods
-   */
+  // -------------------------------------------------------------------------------------------------------------------
+  // GET verb methods
+  // -------------------------------------------------------------------------------------------------------------------
 
   /**
    * Retrieve (GET) a resource, self-assembly version without parameters
    * @param resource Type of resource to retrieve
-   * @return XML response from the RESTful API
+   * @return RESTful response from the API
    */
   def get(resource: String): RestfulResponse = {
     get(resource, None, None)
@@ -120,7 +145,7 @@ abstract class NarcolepsyClient(
    * Retrieve (GET) a resource, self-assembly version with parameters
    * @param resource Type of resource to retrieve
    * @param params Map of parameters (one or more of 'filter', 'display', 'sort', 'limit')
-   * @return XML response from the RESTful API
+   * @return RESTful response from the API
    */
   def get(resource: String, params: RestfulParams): RestfulResponse = {
     get(resource, None, Some(params))
@@ -130,7 +155,7 @@ abstract class NarcolepsyClient(
    * Retrieve (GET) a resource, self-assembly version without parameters
    * @param resource Type of resource to retrieve
    * @param id Resource ID to retrieve
-   * @return XML response from the RESTful API
+   * @return RESTful response from the API
    */
   def get(resource: String, id: Int): RestfulResponse = {
     get(resource, Some(id), None)
@@ -141,7 +166,7 @@ abstract class NarcolepsyClient(
    * @param resource Type of resource to retrieve
    * @param id Resource ID to retrieve
    * @param params Map of parameters (one or more of 'filter', 'display', 'sort', 'limit')
-   * @return XML response from the RESTful API
+   * @return RESTful response from the API
    */
   def get(resource: String, id: Int, params: RestfulParams): RestfulResponse = {
     get(resource, Some(id), Some(params))
@@ -152,7 +177,7 @@ abstract class NarcolepsyClient(
    * @param resource Type of resource to retrieve
    * @param id Optional resource ID to retrieve
    * @param params Optional Map of parameters (one or more of 'filter', 'display', 'sort', 'limit')
-   * @return XML response from the RESTful API
+   * @return RESTful response from the API
    */
   protected def get(resource: String, id: Option[Int], params: Option[RestfulParams]): RestfulResponse = {
     getURL(
@@ -165,15 +190,15 @@ abstract class NarcolepsyClient(
   /**
    * Retrieve (GET) a resource, URL version
    * @param url A URL which explicitly sets the resource type and ID to retrieve
-   * @return XML response from the RESTful API
+   * @return RESTful response from the API
    */
   def getURL(url: String): RestfulResponse = {
     marshal(resource, execute(HttpMethods.GET, url, None)) // Execute the API call, marshall the output into the appropriate representation for the resource
   }
 
-  /** ----------------------------------------------------------------
-   * Utility methods to support the GET, POST etc methods
-   */
+  // -------------------------------------------------------------------------------------------------------------------
+  // Utility methods to support the GET, POST etc methods
+  // -------------------------------------------------------------------------------------------------------------------
 
   /**
    * Handles an HTTP request to the web service.
