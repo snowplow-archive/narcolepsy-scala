@@ -24,7 +24,7 @@ import http._ // To get HttpRequest etc
 import cc.spray.client._
 
 // Orderly
-import orderly.narcolepsy.utils._ // Full path to remove ambiguity
+import orderly.narcolepsy.utils._ // Full path to remove ambiguity vs spray.utils
 import representations._
 
 /**
