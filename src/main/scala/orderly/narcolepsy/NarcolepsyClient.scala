@@ -23,6 +23,10 @@ import cc.spray._
 import http._ // To get HttpRequest etc
 import cc.spray.client._
 
+// Orderly
+import orderly.narcolepsy.utils._ // Full path to remove ambiguity
+import representations._
+
 /**
  * NarcolepsyClient is an abstract class you can use to build an asynchronous client
  * for any well-behaved RESTful API. NarcolepsyClient is built on top of spray-client,

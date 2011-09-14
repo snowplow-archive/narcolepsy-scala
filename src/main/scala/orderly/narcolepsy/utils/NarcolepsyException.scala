@@ -10,16 +10,10 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package orderly.narcolepsy
+package orderly.narcolepsy.utils
 
 /**
  * Custom runtime exception for NarcolepsyClient
  */
-class NarcolepsyException(message: String) extends RuntimeException(message) {
-}
-
-/**
- * Custom configuration exception for NarcolepsyClient
- */
-class NarcolepsyConfigurationException(message: String) extends NarcolepsyException(message) {
+class NarcolepsyException(message: String = "") extends RuntimeException(message) {
 }
