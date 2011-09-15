@@ -24,6 +24,7 @@ import http._ // To get HttpRequest etc
 import cc.spray.client._
 
 // Orderly
+import orderly.narcolepsy._
 import orderly.narcolepsy.utils._ // Full path to remove ambiguity vs spray.utils
 import representations._
 
@@ -63,7 +64,6 @@ abstract class NarcolepsyClient(
   // TODO: handle defaultRootUri
 
   // TODO: handle default content type
-
 
   // -------------------------------------------------------------------------------------------------------------------
   // Type definitions used by NarcolepsyClient
@@ -196,7 +196,7 @@ abstract class NarcolepsyClient(
     getURL(resource,
       resource +
       (if (id.isDefined) "/%d".format(id.get) else "") +
-      (if (params.isDefined) "?%s".format(canonicalize(params.get)) else "")
+      (if (params.isDefined) "?%s".format(RestfulHelpers.canonicalize(params.get)) else "")
     )
   }
 
@@ -239,18 +239,6 @@ abstract class NarcolepsyClient(
 
      // Return the RestfulResponse
     (200, Left(response.toString()), false) // TODO: populate with proper values
-  }
-
-  // TODO: do we need the below? Is there an equivalent in spray?
-  /**
-   * Returns a canonicalized, escaped string of &key=value pairs from a Map of parameters
-   * @param params A map of parameters ('filter', 'display' etc)
-   * @return A canonicalized escaped string of the parameters
-   */
-  protected def canonicalize(params: RestfulParams): String = {
-
-    val nameValues = params.map { param => new BasicNameValuePair(param._1, param._2) }
-    URLEncodedUtils.format(nameValues.toSeq.asJava, CHARSET)
   }
 
   // TODO: about the below: don't assume XML returned (might be JSON)

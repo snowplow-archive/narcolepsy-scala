@@ -50,6 +50,10 @@ class NarcolepsyProject(info: ProjectInfo) extends DefaultWebProject(info) with 
   // For Maven-based API versioning
   val mavenArtifact = "org.apache.maven" % "maven-artifact" % "3.0.3"
 
+  // For useful HttpClient functionality
+  val httpcore = "org.apache.httpcomponents" % "httpcore" % "4.1.1"
+  val httpcomponentsClient = "org.apache.httpcomponents" % "httpclient" % "4.1.1"
+
   // For Jackson
   val jacksonCoreLgpl = "org.codehaus.jackson" % "jackson-core-lgpl" % "1.8.4"
   val jacksonMapperLgpl = "org.codehaus.jackson" % "jackson-mapper-lgpl" % "1.8.4"
