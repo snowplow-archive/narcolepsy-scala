@@ -13,7 +13,7 @@
 package orderly
 
 // TODO: update this soon
-// import RestfulRepresentation
+// import orderly.representations.RestfulRepresentation
 
 /**
  * Core Narcolepsy types for working with REST. They are always available without an explicit export.
