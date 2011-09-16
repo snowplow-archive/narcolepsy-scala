@@ -12,8 +12,11 @@
  */
 package orderly
 
-// TODO: update this soon
-// import orderly.representations.RestfulRepresentation
+// Let's import Maven versioning (we'll give it a friendly synonym below)
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion
+
+// We need the root Orderly RestfulRepresentation for our definitions below
+// import orderly.representations.RestfulRepresentation // TODO add this back in
 
 /**
  * Core Narcolepsy types for working with REST. They are always available without an explicit export.
@@ -34,6 +37,9 @@ package object narcolepsy {
 
   // Simple synonym for the API parameters
   type RestfulParams = Map[String, String]
+
+  // To store a version of REST client or server
+  type RestfulVersion = DefaultArtifactVersion
 
   // To store the map of resources supported by a given implementation of NarcolepsyClient
   // Format is:

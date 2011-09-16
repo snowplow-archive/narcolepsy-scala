@@ -12,9 +12,6 @@
  */
 package orderly.narcolepsy
 
-// Maven
-import org.apache.maven.artifact.versioning.{DefaultArtifactVersion => SoftwareVersion}
-
 // Scala
 import scala.xml._
 
@@ -73,7 +70,7 @@ abstract class NarcolepsyClient(
   val clientName: String
 
   // Define the software version, e.g. 1.1.0 or 2
-  val clientVersion: SoftwareVersion
+  val clientVersion: RestfulVersion
 
   // Define the format that errors are returned in
   // Valid formats are plaintext, representation or mixed
@@ -88,11 +85,11 @@ abstract class NarcolepsyClient(
 
   // The header variable which contains the version information
   // Set to None if there is no easily available version information in a header
-  val versionHeader: String
+  val versionHeader: Option[String]
 
   // The default root API URL if supplied. Only makes sense for APIs from SaaS companies with fixed API endpoints
   // Set to None if a default root API does not make sense for this API
-  val defaultRootUri: String
+  val defaultRootUri: Option[String]
 
   // To track which parameters are valid for GETs
   // val
@@ -101,8 +98,8 @@ abstract class NarcolepsyClient(
 
   // The minimum version of the RESTful API supported. SoftwareVersion taken from Maven versioning
   // TODO: implement all this (quite bespoke per API?)
-  val minVersionSupported: SoftwareVersion
-  val maxVersionSupported: SoftwareVersion
+  val minVersionSupported: RestfulVersion
+  val maxVersionSupported: RestfulVersion
 
   // -------------------------------------------------------------------------------------------------------------------
   // Validation to check that the constructor arguments are okay
