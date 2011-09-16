@@ -22,6 +22,7 @@ import scalaj.collection.Imports._
 
 // Orderly
 import orderly.narcolepsy._
+import orderly.narcolepsy.utils.{RestfulTypes => RT}
 // import orderly.narcolepsy.representations.RestfulRepresentation
 
 object RestfulHelpers {
@@ -31,23 +32,8 @@ object RestfulHelpers {
   // -------------------------------------------------------------------------------------------------------------------
 
   // For URL encoding
-  val CHARSET = HTTP.UTF_8;
-
-  // -------------------------------------------------------------------------------------------------------------------
-  // Type definitions used for expressing RESTful attributes
-  // -------------------------------------------------------------------------------------------------------------------
-
-  // TODO: remove this. Temporary to test the API client without fannying around with JAXB
-  type RestfulRepresentation = String
-
-  // The return type for an API response.
-  // Holds return code, either one representation or multiple, and a flag
-  // indicating whether the representation is an error or not.
-  // TODO: look at how squeryl deals with returning one row or multiple
-  type RestfulResponse = (Int, Either[RestfulRepresentation, List[RestfulRepresentation]], Boolean)
-
-  // Simple synonym for the API parameters
-  type RestfulParams = Map[String, String]
+  // TODO are vals protected or public by default?
+  protected val CHARSET = HTTP.UTF_8;
 
   // -------------------------------------------------------------------------------------------------------------------
   // Useful methods for building RESTful clients
@@ -58,7 +44,7 @@ object RestfulHelpers {
    * @param params A map of parameters ('filter', 'display' etc)
    * @return A canonicalized escaped string of the parameters
    */
-  def canonicalize(params: RestfulParams): String = {
+  def canonicalize(params: RT.RestfulParams): String = {
 
     val nameValues = params.map { param => new BasicNameValuePair(param._1, param._2) }
     URLEncodedUtils.format(nameValues.toSeq.asJava, CHARSET)
