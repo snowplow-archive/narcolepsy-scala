@@ -25,8 +25,8 @@ import cc.spray.client._
 
 // Orderly
 import orderly.narcolepsy._
-import utils.{RestfulTypes => RT, _}
 import representations._
+import utils._
 
 /**
  * NarcolepsyClient is an abstract class you can use to build an asynchronous client
@@ -136,7 +136,7 @@ abstract class NarcolepsyClient(
    * @param resource Type of resource to retrieve
    * @return RESTful response from the API
    */
-  def get(resource: String): RT.RestfulResponse = {
+  def get(resource: String): RestfulResponse = {
     get(resource, None, None)
   }
 
@@ -146,7 +146,7 @@ abstract class NarcolepsyClient(
    * @param params Map of parameters (one or more of 'filter', 'display', 'sort', 'limit')
    * @return RESTful response from the API
    */
-  def get(resource: String, params: RT.RestfulParams): RT.RestfulResponse = {
+  def get(resource: String, params: RestfulParams): RestfulResponse = {
     get(resource, None, Some(params))
   }
 
@@ -156,7 +156,7 @@ abstract class NarcolepsyClient(
    * @param id Resource ID to retrieve
    * @return RESTful response from the API
    */
-  def get(resource: String, id: Int): RT.RestfulResponse = {
+  def get(resource: String, id: Int): RestfulResponse = {
     get(resource, Some(id), None)
   }
 
@@ -167,7 +167,7 @@ abstract class NarcolepsyClient(
    * @param params Map of parameters (one or more of 'filter', 'display', 'sort', 'limit')
    * @return RESTful response from the API
    */
-  def get(resource: String, id: Int, params: RT.RestfulParams): RT.RestfulResponse = {
+  def get(resource: String, id: Int, params: RestfulParams): RestfulResponse = {
     get(resource, Some(id), Some(params))
   }
 
@@ -178,7 +178,7 @@ abstract class NarcolepsyClient(
    * @param params Optional Map of parameters (one or more of 'filter', 'display', 'sort', 'limit')
    * @return RESTful response from the API
    */
-  protected def get(resource: String, id: Option[Int], params: Option[RT.RestfulParams]): RT.RestfulResponse = {
+  protected def get(resource: String, id: Option[Int], params: Option[RestfulParams]): RestfulResponse = {
     getURL(resource,
       resource +
       (if (id.isDefined) "/%d".format(id.get) else "") +
@@ -192,7 +192,7 @@ abstract class NarcolepsyClient(
    * @param uri A URL which explicitly sets the resource type, ID(s) and parameters to retrieve
    * @return RESTful response from the API
    */
-  def getURL(resource: String, uri: String): RT.RestfulResponse = {
+  def getURL(resource: String, uri: String): RestfulResponse = {
     execute(resource, HttpMethods.GET, uri) // Execute the API call using GET
   }
 
@@ -209,7 +209,7 @@ abstract class NarcolepsyClient(
   protected def execute(
     resource: String,
     requestMethod: HttpMethod,
-    requestUri: String): RT.RestfulResponse = {
+    requestUri: String): RestfulResponse = {
 
     // TODO: let's add in the Accept header based on the contentType requested
     val request = new HttpRequest(
