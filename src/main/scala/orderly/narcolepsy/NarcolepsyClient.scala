@@ -25,7 +25,7 @@ import cc.spray.client._
 
 // Orderly
 import orderly.narcolepsy._
-import orderly.narcolepsy.utils._ // Full path to remove ambiguity vs spray.utils
+import utils.{RestfulHelpers => RH, _}
 import representations._
 
 /**
@@ -64,22 +64,6 @@ abstract class NarcolepsyClient(
   // TODO: handle defaultRootUri
 
   // TODO: handle default content type
-
-  // -------------------------------------------------------------------------------------------------------------------
-  // Type definitions used by NarcolepsyClient
-  // -------------------------------------------------------------------------------------------------------------------
-
-  // TODO: remove this. Temporary to test the API client without fannying around with JAXB
-  type RestfulRepresentation = String
-
-  // The return type for an API response.
-  // Holds return code, either one representation or multiple, and a flag
-  // indicating whether the representation is an error or not.
-  // TODO: look at how squeryl deals with returning one row or multiple
-  type RestfulResponse = (Int, Either[RestfulRepresentation, List[RestfulRepresentation]], Boolean)
-
-  // Simple synonym for the API parameters
-  type RestfulParams = Map[String, String]
 
   // -------------------------------------------------------------------------------------------------------------------
   // Need to populate the below vals to define a new NarcolepsyClient
@@ -150,7 +134,7 @@ abstract class NarcolepsyClient(
    * @param resource Type of resource to retrieve
    * @return RESTful response from the API
    */
-  def get(resource: String): RestfulResponse = {
+  def get(resource: String): RH.RestfulResponse = {
     get(resource, None, None)
   }
 
@@ -160,7 +144,7 @@ abstract class NarcolepsyClient(
    * @param params Map of parameters (one or more of 'filter', 'display', 'sort', 'limit')
    * @return RESTful response from the API
    */
-  def get(resource: String, params: RestfulParams): RestfulResponse = {
+  def get(resource: String, params: RH.RestfulParams): RH.RestfulResponse = {
     get(resource, None, Some(params))
   }
 
@@ -170,7 +154,7 @@ abstract class NarcolepsyClient(
    * @param id Resource ID to retrieve
    * @return RESTful response from the API
    */
-  def get(resource: String, id: Int): RestfulResponse = {
+  def get(resource: String, id: Int): RH.RestfulResponse = {
     get(resource, Some(id), None)
   }
 
@@ -181,7 +165,7 @@ abstract class NarcolepsyClient(
    * @param params Map of parameters (one or more of 'filter', 'display', 'sort', 'limit')
    * @return RESTful response from the API
    */
-  def get(resource: String, id: Int, params: RestfulParams): RestfulResponse = {
+  def get(resource: String, id: Int, params: RH.RestfulParams): RH.RestfulResponse = {
     get(resource, Some(id), Some(params))
   }
 
@@ -192,11 +176,11 @@ abstract class NarcolepsyClient(
    * @param params Optional Map of parameters (one or more of 'filter', 'display', 'sort', 'limit')
    * @return RESTful response from the API
    */
-  protected def get(resource: String, id: Option[Int], params: Option[RestfulParams]): RestfulResponse = {
+  protected def get(resource: String, id: Option[Int], params: Option[RH.RestfulParams]): RH.RestfulResponse = {
     getURL(resource,
       resource +
       (if (id.isDefined) "/%d".format(id.get) else "") +
-      (if (params.isDefined) "?%s".format(RestfulHelpers.canonicalize(params.get)) else "")
+      (if (params.isDefined) "?%s".format(RH.canonicalize(params.get)) else "")
     )
   }
 
@@ -206,7 +190,7 @@ abstract class NarcolepsyClient(
    * @param uri A URL which explicitly sets the resource type, ID(s) and parameters to retrieve
    * @return RESTful response from the API
    */
-  def getURL(resource: String, uri: String): RestfulResponse = {
+  def getURL(resource: String, uri: String): RH.RestfulResponse = {
     execute(resource, HttpMethods.GET, uri) // Execute the API call using GET
   }
 
@@ -223,7 +207,7 @@ abstract class NarcolepsyClient(
   protected def execute(
     resource: String,
     requestMethod: HttpMethod,
-    requestUri: String): RestfulResponse = {
+    requestUri: String): RH.RestfulResponse = {
 
     // TODO: let's add in the Accept header based on the contentType requested
     val request = new HttpRequest(

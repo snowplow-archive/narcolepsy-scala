@@ -54,6 +54,9 @@ class NarcolepsyProject(info: ProjectInfo) extends DefaultWebProject(info) with 
   val httpcore = "org.apache.httpcomponents" % "httpcore" % "4.1.1"
   val httpcomponentsClient = "org.apache.httpcomponents" % "httpclient" % "4.1.1"
 
+  // scalaj for asJava etc
+  val scalajCollection = "org.scalaj" %% "scalaj-collection" % "1.1"
+
   // For Jackson
   val jacksonCoreLgpl = "org.codehaus.jackson" % "jackson-core-lgpl" % "1.8.4"
   val jacksonMapperLgpl = "org.codehaus.jackson" % "jackson-mapper-lgpl" % "1.8.4"
