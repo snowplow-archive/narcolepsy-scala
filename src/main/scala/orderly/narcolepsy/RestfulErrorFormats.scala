@@ -17,14 +17,14 @@ trait RestfulErrorFormat
 /**
  * "Enum" meaning that this API returns all errors as its own custom form of ErrorRepresentation
  */
-case object RepresentationFormat extends ErrorType
+case object RepresentationFormat extends RestfulErrorFormat
 
 /**
  * "Enum" meaning that this API returns all errors as plaintext
  */
-case object PlaintextFormat extends ErrorType
+case object PlaintextFormat extends RestfulErrorFormat
 
 /**
  * "Enum" meaning that this API returns errors as a mix of plaintext and its own custom form of ErrorRepresentation
  */
-case object MixedFormat extends ErrorType
+case object MixedFormat extends RestfulErrorFormat
