@@ -75,7 +75,7 @@ abstract class NarcolepsyClient(
   // Define the format that errors are returned in
   // Valid formats are plaintext, representation or mixed
   // TODO: really this ought to be some sort of enum or something
-  val errorFormat: String
+  val errorFormat: RestfulErrorFormat
 
   // To store the content types (e.g. XML, JSON) supported by this RESTful web service
   val supportedContentTypes: List[String] // TODO: change contentType to a Spray variable
