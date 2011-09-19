@@ -48,11 +48,42 @@ import utils._
  * For more on Narcolepsy see the GitHub project: https://github.com/orderly/narcolepsy
  */
 abstract class NarcolepsyClient(
-  val rootUri:      String,
-  val contentType:  String,
-  val username:     String,
-  val password:     String) { // TODO: change contentType to a Spray variable
-                              // TODO: make a more general authentication input
+  // TODO: add comments
+  val rootUri:        String,
+  val contentType:    String,
+  val username:       String,
+  val password:       String,
+
+  // To provide a human readable name for this client, e.g. "Shopify Scala client"
+  val clientName:     String,
+
+  // Define the software version, e.g. 1.1.0 or 2. RestfulVersion taken from Maven versioning
+  val clientVersion:  RestfulVersion,
+
+  // The minimum version of the RESTful API supported by this client.
+  val minVersionSupported:    RestfulVersion,
+
+  // The maximum version of the RESTful API supported by this client.
+  val maxVersionSupported:    RestfulVersion,
+
+  // The default root API URL if supplied. Only makes sense for APIs from SaaS companies with fixed API endpoints
+  // Set to None if a default root API does not make sense for this API
+  val defaultRootUri:         Option[String],
+
+  // The header variable which contains the version information
+  // Set to None if there is no easily available version information in a header
+  val versionHeader:          Option[String],
+
+  // Define the format that errors are returned in. Valid formats are plaintext, representation or mixed
+  val errorFormat:    RestfulErrorFormat,
+
+  // To store the content types (e.g. XML, JSON) supported by this RESTful web service
+  val supportedContentTypes:  List[String], // TODO: change contentType to a Spray variable
+
+  // The default content type if none is supplied
+  val defaultContentType:     String // TODO: change contentType to a Spray variable
+  ) { // TODO: change contentType to a Spray variable
+      // TODO: make a more general authentication input
 
   // -------------------------------------------------------------------------------------------------------------------
   // Alternative constructors
@@ -61,45 +92,6 @@ abstract class NarcolepsyClient(
   // TODO: handle defaultRootUri
 
   // TODO: handle default content type
-
-  // -------------------------------------------------------------------------------------------------------------------
-  // Need to populate the below vals to define a new NarcolepsyClient
-  // -------------------------------------------------------------------------------------------------------------------
-
-  // To provide a human readable name for this client, e.g. "Shopify Scala client"
-  val clientName: String
-
-  // Define the software version, e.g. 1.1.0 or 2
-  val clientVersion: RestfulVersion
-
-  // Define the format that errors are returned in
-  // Valid formats are plaintext, representation or mixed
-  // TODO: really this ought to be some sort of enum or something
-  val errorFormat: RestfulErrorFormat
-
-  // To store the content types (e.g. XML, JSON) supported by this RESTful web service
-  val supportedContentTypes: List[String] // TODO: change contentType to a Spray variable
-
-  // The default content type if none is supplied
-  val defaultContentType: String // TODO: change contentType to a Spray variable
-
-  // The header variable which contains the version information
-  // Set to None if there is no easily available version information in a header
-  val versionHeader: Option[String]
-
-  // The default root API URL if supplied. Only makes sense for APIs from SaaS companies with fixed API endpoints
-  // Set to None if a default root API does not make sense for this API
-  val defaultRootUri: Option[String]
-
-  // To track which parameters are valid for GETs
-  // val
-
-  // val validGetParams: Map[String, String] // TODO: think need a different way to represent this
-
-  // The minimum version of the RESTful API supported. SoftwareVersion taken from Maven versioning
-  // TODO: implement all this (quite bespoke per API?)
-  val minVersionSupported: RestfulVersion
-  val maxVersionSupported: RestfulVersion
 
   // -------------------------------------------------------------------------------------------------------------------
   // Validation to check that the constructor arguments are okay
