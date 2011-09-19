@@ -18,7 +18,7 @@ import scala.xml._
 // Spray
 import cc.spray._
 import http._ // To get HttpRequest etc
-import cc.spray.client._
+import client._
 
 // Orderly
 import orderly.narcolepsy._
@@ -49,18 +49,10 @@ import utils._
  */
 abstract class NarcolepsyClient(
   val rootUri:      Option[String],
-  val contentType:  String,
+  val contentType:  Option[String],
   val username:     String,
   val password:     String) { // TODO: change contentType to a Spray variable
                               // TODO: make a more general authentication input
-
-  // -------------------------------------------------------------------------------------------------------------------
-  // Alternative constructors
-  // -------------------------------------------------------------------------------------------------------------------
-
-  // TODO: handle defaultRootUri
-
-  // TODO: handle default content type
 
   // -------------------------------------------------------------------------------------------------------------------
   // Need to populate the below vals to define a new NarcolepsyClient
@@ -80,7 +72,7 @@ abstract class NarcolepsyClient(
   val supportedContentTypes: List[String] // TODO: change contentType to a Spray variable
 
   // The default content type if none is supplied
-  val defaultContentType: String // TODO: change contentType to a Spray variable
+  val defaultContentType: Option[String] // TODO: change contentType to a Spray variable
 
   // The header variable which contains the version information
   // Set to None if there is no easily available version information in a header
@@ -97,8 +89,24 @@ abstract class NarcolepsyClient(
 
   // The minimum version of the RESTful API supported. SoftwareVersion taken from Maven versioning
   // TODO: implement all this (quite bespoke per API?)
-  val minVersionSupported: RestfulVersion
-  val maxVersionSupported: RestfulVersion
+  val minVersionSupported: Option[RestfulVersion]
+  val maxVersionSupported: Option[RestfulVersion]
+
+  // -------------------------------------------------------------------------------------------------------------------
+  // Validation to check that the "abstract fields" above have been instantiated
+  // -------------------------------------------------------------------------------------------------------------------
+
+  // Check we have a client name
+  Option(clientName).getOrElse(throw new NarcolepsyConfigurationException("No clientName defined"))
+
+  // Check we have a client version
+  Option(clientVersion).getOrElse(throw new NarcolepsyConfigurationException("No clientVersion defined"))
+
+  // Check we have a client version
+  Option(errorFormat).getOrElse(throw new NarcolepsyConfigurationException("No errorFormat defined"))
+
+  // Check we have some supported content types
+  Option(supportedContentTypes).getOrElse(throw new NarcolepsyConfigurationException("No supportedContentTypes defined"))
 
   // -------------------------------------------------------------------------------------------------------------------
   // Validation to check that the constructor arguments are okay
@@ -113,6 +121,7 @@ abstract class NarcolepsyClient(
   })
 
   // Now let's validate that the content type passed in is legitimate for this API
+  // TODO: confirm we have a content type somewhere
   if (!(supportedContentTypes contains contentType)) {
     throw new NarcolepsyConfigurationException("Content type " + contentType + " is not supported")
   }
