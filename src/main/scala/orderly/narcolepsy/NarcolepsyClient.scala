@@ -48,7 +48,7 @@ import utils._
  * For more on Narcolepsy see the GitHub project: https://github.com/orderly/narcolepsy
  */
 abstract class NarcolepsyClient(
-  val rootUri:      String,
+  val rootUri:      Option[String],
   val contentType:  String,
   val username:     String,
   val password:     String) { // TODO: change contentType to a Spray variable
@@ -104,8 +104,13 @@ abstract class NarcolepsyClient(
   // Validation to check that the constructor arguments are okay
   // -------------------------------------------------------------------------------------------------------------------
 
-  // First let's validate that we have a rootUri
-  Option(rootUri).getOrElse(throw new NarcolepsyConfigurationException("rootUri missing, must be set for %s".format(clientName)))
+  // Check we have a rootUri and add a trailing slash if necessary
+  val trailSlash = (uri: String) => if (uri.matches(".*/")) uri else (uri + "/")
+  val apiUri = trailSlash((rootUri, defaultRootUri) match {
+    case (Some(uri), _) => uri
+    case (None, Some(uri)) => uri
+    case _ => throw new NarcolepsyConfigurationException("No rootUri or defaultRootUri provided")
+  })
 
   // Now let's validate that the content type passed in is legitimate for this API
   if (!(supportedContentTypes contains contentType)) {
@@ -122,6 +127,37 @@ abstract class NarcolepsyClient(
     userAgent = "%s/%s [NarcolepsyClient]".format(clientName, clientVersion),
     useRawUrl = false
   ))
+
+  // -------------------------------------------------------------------------------------------------------------------
+  // The actual execute method which runs the GET, POST etc methods
+  // -------------------------------------------------------------------------------------------------------------------
+
+  /**
+   * Handles an HTTP request to the web service.
+   * @param method HttpMethod to apply to this request
+   * @param requestUri Relative path to resource. Attach rootUri to get the absolute URI
+   * @return A RestfulResponse object
+   */
+  protected def execute(
+    resource: String,
+    requestMethod: HttpMethod,
+    requestUri: String): RestfulResponse = {
+
+    // TODO: let's add in the Accept header based on the contentType requested
+    val request = new HttpRequest(
+      method = requestMethod,
+      uri = apiUri + requestUri,
+      headers = Nil,
+      content = None, // TODO: this needs to be configurable
+      remoteHost = None, // TODO: what is this?
+      version = None // TODO: what is this?
+    )
+    val future = client.dispatch(request)
+    val response = future.get // Block TODO: make this async capable
+
+     // Return the RestfulResponse
+    (200, Left(response.toString()), false) // TODO: populate with proper values
+  }
 
   // -------------------------------------------------------------------------------------------------------------------
   // GET verb methods
@@ -190,37 +226,6 @@ abstract class NarcolepsyClient(
    */
   def getURL(resource: String, uri: String): RestfulResponse = {
     execute(resource, HttpMethods.GET, uri) // Execute the API call using GET
-  }
-
-  // -------------------------------------------------------------------------------------------------------------------
-  // Utility methods to support the GET, POST etc methods
-  // -------------------------------------------------------------------------------------------------------------------
-
-  /**
-   * Handles an HTTP request to the web service.
-   * @param method HttpMethod to apply to this request
-   * @param requestUri Relative path to resource. Attach rootUri to get the absolute URI
-   * @return A RestfulResponse object
-   */
-  protected def execute(
-    resource: String,
-    requestMethod: HttpMethod,
-    requestUri: String): RestfulResponse = {
-
-    // TODO: let's add in the Accept header based on the contentType requested
-    val request = new HttpRequest(
-      method = requestMethod,
-      uri = requestUri,
-      headers = Nil,
-      content = None, // TODO: this needs to be configurable
-      remoteHost = None, // TODO: what is this?
-      version = None // TODO: what is this?
-    )
-    val future = client.dispatch(request)
-    val response = future.get // Block TODO: make this async capable
-
-     // Return the RestfulResponse
-    (200, Left(response.toString()), false) // TODO: populate with proper values
   }
 
   // TODO: about the below: don't assume XML returned (might be JSON)
