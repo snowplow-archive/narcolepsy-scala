@@ -120,10 +120,16 @@ abstract class NarcolepsyClient(
     case _ => throw new NarcolepsyConfigurationException("No rootUri or defaultRootUri provided")
   })
 
+  // Check that we have a content type
+  val apiContentType = (contentType, defaultContentType) match {
+    case (Some(ct), _) => ct
+    case (None, Some(ct)) => ct
+    case _ => throw new NarcolepsyConfigurationException("No contentType or defaultContentType provided")
+  }
+
   // Now let's validate that the content type passed in is legitimate for this API
-  // TODO: confirm we have a content type somewhere
-  if (!(supportedContentTypes contains contentType)) {
-    throw new NarcolepsyConfigurationException("Content type " + contentType + " is not supported")
+  if (!(supportedContentTypes contains apiContentType)) {
+    throw new NarcolepsyConfigurationException("Content type " + apiContentType + " is not supported")
   }
 
   // -------------------------------------------------------------------------------------------------------------------
