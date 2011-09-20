@@ -171,7 +171,7 @@ abstract class NarcolepsyClient(
     val response = future.get // Block TODO: make this async capable
 
      // Return the RestfulResponse
-    (200, Left(response.toString()), false) // TODO: populate with proper values
+    (200, Left(new Representation), false) // TODO: populate with proper values
   }
 
   // -------------------------------------------------------------------------------------------------------------------

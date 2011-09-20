@@ -15,8 +15,8 @@ package orderly
 // Let's import Maven versioning (we'll give it a friendly synonym below)
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion
 
-// We need the root Orderly RestfulRepresentation for our definitions below
-// import orderly.representations.RestfulRepresentation // TODO add this back in
+// Need to import the Narcolepsy Representation
+import orderly.narcolepsy.representations.Representation
 
 /**
  * Core Narcolepsy types for working with REST. They are always available without an explicit export.
@@ -25,15 +25,12 @@ import org.apache.maven.artifact.versioning.DefaultArtifactVersion
  */
 package object narcolepsy {
 
-  // TODO: remove this. Temporary to test the API client without fannying around with JAXB
-  type RestfulRepresentation = String
-
   // The return type for an API response.
   // Holds return code, either one representation or multiple, and a flag
   // indicating whether the representation is an error or not.
   // TODO: look at how squeryl deals with returning one row or multiple
   // TODO: are we definitely returning a List of RestfulRepresentations?
-  type RestfulResponse = (Int, Either[RestfulRepresentation, List[RestfulRepresentation]], Boolean)
+  type RestfulResponse = (Int, Either[Representation, List[Representation]], Boolean)
 
   // Simple synonym for the API parameters
   type RestfulParams = Map[String, String]
@@ -44,5 +41,5 @@ package object narcolepsy {
   // To store the map of resources supported by a given implementation of NarcolepsyClient
   // Format is:
   //      TODO
-  type RestfulResourceMap = Map[String, Tuple2[RestfulRepresentation, List[String]]]
+  type RestfulResourceMap = Map[String, Tuple2[Representation, List[String]]]
 }
