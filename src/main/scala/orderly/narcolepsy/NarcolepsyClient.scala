@@ -12,9 +12,6 @@
  */
 package orderly.narcolepsy
 
-// Scala
-import scala.xml._
-
 // Spray
 import cc.spray._
 import http._ // To get HttpRequest etc

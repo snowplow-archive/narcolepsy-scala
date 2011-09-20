@@ -41,5 +41,5 @@ package object narcolepsy {
   // To store the map of resources supported by a given implementation of NarcolepsyClient
   // Format is:
   //      TODO
-  type RestfulResourceMap = Map[String, Tuple2[Representation, List[String]]]
+  type RestfulSchema = Map[String, Tuple2[Representation, List[String]]]
 }
