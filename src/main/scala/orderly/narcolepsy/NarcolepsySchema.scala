@@ -24,21 +24,24 @@ import collection.mutable.{HashMap, ArrayBuffer}
  */
 trait NarcolepsySchema {
 
-  private val representations = new ArrayBuffer[Representation[_]]
+  private val resources = new ArrayBuffer[Resource[_]]
 
-  private val representationTypes = new HashMap[Class[_], Representation[_]]
+  private val resourceMap = new HashMap[String, Class[_]]
 
-  protected def representation[R](name: String)(implicit manifestR: Manifest[R]): Representation[R] = {
+  protected def resource[R](name: String, slug: String)(implicit manifestR: Manifest[R]): Resource[R] = {
     val typeR = manifestR.erasure.asInstanceOf[Class[R]]
-    val r = new Table[T](name, typeR, this, None)
-    addRepresentation(r)
-    addRepresentationType(typeR, r)
+    val r = new Resource[R](name, slug)
+    addResource(r)
+    addResourceMap(slug, typeR)
     r
   }
 
-  private [squeryl] def addRepresentation(r: Representation[_]) =
-    representations.append(r)
+  private [narcolepsy] def addResource(r: Resource[_]) =
+    resources.append(r)
 
-  private [squeryl] def addRepresentationType(typeR: Class[_], r: Representation[_]) =
-    representationTypes += ((typeR, r))
+  private [narcolepsy] def addResourceMap(slug: String, typeR: Class[_]) =
+    resourceMap += ((slug, typeR))
 }
+
+// TODO: move this
+class Resource[R](name: String, slug: String)
