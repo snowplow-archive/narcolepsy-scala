@@ -41,6 +41,9 @@ trait NarcolepsySchema {
 
   private [narcolepsy] def addResourceMap(slug: String, typeR: Class[_]) =
     resourceMap += ((slug, typeR))
+
+  def getRepresentation(slug: String) =
+    resourceMap get slug
 }
 
 // TODO: move this
