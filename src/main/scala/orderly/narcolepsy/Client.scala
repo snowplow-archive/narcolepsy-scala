@@ -79,12 +79,10 @@ abstract class Client(
   // Set to None if a default root API does not make sense for this API
   val defaultRootUri: Option[String]
 
-  // To track which parameters are valid for GETs
-  // val
+  // Map resource slug names against the Representation subclasses required by this RESTful API
+  val apiResources: Api
 
-  // val validGetParams: Map[String, String] // TODO: think need a different way to represent this
-
-  // The minimum version of the RESTful API supported. SoftwareVersion taken from Maven versioning
+  // The minimum version of the RESTful API supported. RestfulVersion taken from Maven versioning
   // TODO: implement all this (quite bespoke per API?)
   val minVersionSupported: Option[RestfulVersion]
   val maxVersionSupported: Option[RestfulVersion]
@@ -104,6 +102,9 @@ abstract class Client(
 
   // Check we have some supported content types
   Option(supportedContentTypes).getOrElse(throw new ClientConfigurationException("No supportedContentTypes defined"))
+
+  // Check that we have the resources set
+  Option(apiResources).getOrElse(throw new ClientConfigurationException("No apiResources defined"))
 
   // -------------------------------------------------------------------------------------------------------------------
   // Validation to check that the constructor arguments are okay
@@ -166,6 +167,16 @@ abstract class Client(
     )
     val future = client.dispatch(request)
     val response = future.get // Block TODO: make this async capable
+
+    // TODO: check the return code
+    // If return code != 200, then we need to go into error handling mode
+
+    // Okay we now have some text, so next we need to turn it into a representation
+    // List<Product> output = new Vector<Product>();
+    // val jaxbContext = JAXBContext.newInstance(ProductListAPIWrapper.class)
+    // val unmarshaller = jaxbContext.createUnmarshaller()
+    // JAXBElement<ProductListAPIWrapper> root = unmarshaller.unmarshal(new StreamSource(new StringReader(responseString)), ProductListAPIWrapper.class);
+    // output.addAll(root.getValue().getProducts());
 
      // Return the RestfulResponse
     (200, Left(new Representation), false) // TODO: populate with proper values
