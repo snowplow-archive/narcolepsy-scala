@@ -23,11 +23,11 @@ import representations._
 import utils._
 
 /**
- * NarcolepsyClient is an abstract class you can use to build an asynchronous client
- * for any well-behaved RESTful API. NarcolepsyClient is built on top of spray-client,
- * which in turn is a thin Scala wrapper around Ning's Async Http Client. (The
- * big difference between spray-client and Ning's AHC is that spray-client uses Akka
- * futures for the asynchronous funkiness.)
+ * Client is an abstract Narcolepsy class you can use to build an asynchronous client
+ * for any well-behaved RESTful API. Client is built on top of spray-client, which in
+ * turn is a thin Scala wrapper around Ning's Async Http Client. (The big difference
+ * between spray-client and Ning's AHC is that spray-client uses Akka futures for the
+ * asynchronous funkiness.)
  *
  * spray-client API docs: http://spray.github.com/spray/api/spray-client/index.html
  * Async Http Client docs: http://sonatype.github.com/async-http-client/apidocs/index.html
@@ -44,7 +44,7 @@ import utils._
  *
  * For more on Narcolepsy see the GitHub project: https://github.com/orderly/narcolepsy
  */
-abstract class NarcolepsyClient(
+abstract class Client(
   val rootUri:      Option[String],
   val contentType:  Option[String],
   val username:     String,
@@ -63,7 +63,7 @@ abstract class NarcolepsyClient(
 
   // Define the format that errors are returned in
   // Valid formats are plaintext, representation or mixed
-  val errorFormat: RestfulErrorFormat
+  val errorFormat: ErrorFormat
 
   // To store the content types (e.g. XML, JSON) supported by this RESTful web service
   val supportedContentTypes: List[String] // TODO: change contentType to a Spray variable
@@ -94,16 +94,16 @@ abstract class NarcolepsyClient(
   // -------------------------------------------------------------------------------------------------------------------
 
   // Check we have a client name
-  Option(clientName).getOrElse(throw new NarcolepsyConfigurationException("No clientName defined"))
+  Option(clientName).getOrElse(throw new ClientConfigurationException("No clientName defined"))
 
   // Check we have a client version
-  Option(clientVersion).getOrElse(throw new NarcolepsyConfigurationException("No clientVersion defined"))
+  Option(clientVersion).getOrElse(throw new ClientConfigurationException("No clientVersion defined"))
 
   // Check we have a client version
-  Option(errorFormat).getOrElse(throw new NarcolepsyConfigurationException("No errorFormat defined"))
+  Option(errorFormat).getOrElse(throw new ClientConfigurationException("No errorFormat defined"))
 
   // Check we have some supported content types
-  Option(supportedContentTypes).getOrElse(throw new NarcolepsyConfigurationException("No supportedContentTypes defined"))
+  Option(supportedContentTypes).getOrElse(throw new ClientConfigurationException("No supportedContentTypes defined"))
 
   // -------------------------------------------------------------------------------------------------------------------
   // Validation to check that the constructor arguments are okay
@@ -114,19 +114,19 @@ abstract class NarcolepsyClient(
   val apiUri = trailSlash((rootUri, defaultRootUri) match {
     case (Some(uri), _) => uri
     case (None, Some(uri)) => uri
-    case _ => throw new NarcolepsyConfigurationException("No rootUri or defaultRootUri provided")
+    case _ => throw new ClientConfigurationException("No rootUri or defaultRootUri provided")
   })
 
   // Check that we have a content type
   val apiContentType = (contentType, defaultContentType) match {
     case (Some(ct), _) => ct
     case (None, Some(ct)) => ct
-    case _ => throw new NarcolepsyConfigurationException("No contentType or defaultContentType provided")
+    case _ => throw new ClientConfigurationException("No contentType or defaultContentType provided")
   }
 
   // Now let's validate that the content type passed in is legitimate for this API
   if (!(supportedContentTypes contains apiContentType)) {
-    throw new NarcolepsyConfigurationException("Content type " + apiContentType + " is not supported")
+    throw new ClientConfigurationException("Content type " + apiContentType + " is not supported")
   }
 
   // -------------------------------------------------------------------------------------------------------------------
@@ -242,4 +242,11 @@ abstract class NarcolepsyClient(
 
   // TODO: about the below: don't assume XML returned (might be JSON)
   // TODO: need to think about how the validation will work (taking it out for now)
+}
+
+/**
+ * Flags an exception in the configuration of a client - i.e. the extending of the
+ * abstract Client class above
+ */
+class ClientConfigurationException(message: String = "") extends RuntimeException(message) {
 }

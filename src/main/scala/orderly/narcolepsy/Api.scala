@@ -16,21 +16,21 @@ package orderly.narcolepsy
 import collection.mutable.{HashMap, ArrayBuffer}
 
 /**
- * NarcolepsySchema allows you to define a mapping of RESTful resource names
- * (e.g. "products") to RESTful Representations (e.g. Product)
+ * Api allows you to define a mapping of RESTful resource names (e.g. "products")
+ * to RESTful Representations (e.g. Product)
  *
- * NarcolepsySchema is heavily inspired by Squeryl's schema approach, see:
+ * Api is heavily inspired by Squeryl's Schema approach, see for example:
  * https://github.com/max-l/Squeryl/blob/master/src/main/scala/org/squeryl/Schema.scala
  */
-trait NarcolepsySchema {
+trait Api {
 
   private val resources = new ArrayBuffer[Resource[_]]
 
   private val resourceMap = new HashMap[String, Class[_]]
 
-  protected def resource[R](name: String, slug: String)(implicit manifestR: Manifest[R]): Resource[R] = {
+  protected def resource[R](slug: String)(implicit manifestR: Manifest[R]): Resource[R] = {
     val typeR = manifestR.erasure.asInstanceOf[Class[R]]
-    val r = new Resource[R](name, slug)
+    val r = new Resource[R](slug)
     addResource(r)
     addResourceMap(slug, typeR)
     r
@@ -42,9 +42,6 @@ trait NarcolepsySchema {
   private [narcolepsy] def addResourceMap(slug: String, typeR: Class[_]) =
     resourceMap += ((slug, typeR))
 
-  def getRepresentation(slug: String) =
+  def representationNameFromSlug(slug: String) =
     resourceMap get slug
 }
-
-// TODO: move this
-class Resource[R](name: String, slug: String)

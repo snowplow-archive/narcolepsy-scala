@@ -15,19 +15,19 @@ package orderly.narcolepsy.utils
 /**
  * Trait for the error format case objects
  */
-trait RestfulErrorFormat
+trait ErrorFormat
 
 /**
- * "Enum" meaning that this API returns all errors as its own custom form of ErrorRepresentation
+ * Meaning that this API returns all errors as its own custom form of ErrorRepresentation
  */
-case object RepresentationFormat extends RestfulErrorFormat
+case object RepresentationErrors extends ErrorFormat
 
 /**
- * "Enum" meaning that this API returns all errors as plaintext
+ * Meaning that this API returns all errors as plaintext
  */
-case object PlaintextFormat extends RestfulErrorFormat
+case object PlaintextErrors extends ErrorFormat
 
 /**
- * "Enum" meaning that this API returns errors as a mix of plaintext and its own custom form of ErrorRepresentation
+ * Meaning that this API returns errors as a mix of plaintext and its own custom form of ErrorRepresentation
  */
-case object MixedFormat extends RestfulErrorFormat
+case object MixedErrors extends ErrorFormat

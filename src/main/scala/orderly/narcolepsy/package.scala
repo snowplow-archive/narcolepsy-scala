@@ -16,12 +16,13 @@ package orderly
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion
 
 // Need to import the Narcolepsy Representation
-import orderly.narcolepsy.representations.Representation
+import orderly.narcolepsy.Representation
 
 /**
  * Core Narcolepsy types for working with REST. They are always available without an explicit export.
  * This approach was taken following discussion on Stack Overflow here:
  * http://stackoverflow.com/questions/7441277/scala-type-keyword-how-best-to-use-it-across-multiple-classes
+ * All types defined here start with "Restful" to make them more obvious throughout the code
  */
 package object narcolepsy {
 

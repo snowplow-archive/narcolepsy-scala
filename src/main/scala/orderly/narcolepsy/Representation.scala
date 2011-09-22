@@ -1,3 +1,5 @@
+package orderly.narcolepsy
+
 /*
  * Copyright (c) 2011 Orderly Ltd. All rights reserved.
  *
@@ -10,8 +12,6 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package orderly.narcolepsy.representations
-
 /**
  * Representation is the parent class for all representations handled by
  * NarcolepsyClient. A representation is REST speak for the instantiated form
