@@ -88,25 +88,6 @@ abstract class Client(
   val maxVersionSupported: Option[RestfulVersion]
 
   // -------------------------------------------------------------------------------------------------------------------
-  // Validation to check that the "abstract fields" above have been instantiated
-  // -------------------------------------------------------------------------------------------------------------------
-
-  // Check we have a client name
-  Option(clientName).getOrElse(throw new ClientConfigurationException("No clientName defined"))
-
-  // Check we have a client version
-  Option(clientVersion).getOrElse(throw new ClientConfigurationException("No clientVersion defined"))
-
-  // Check we have a client version
-  Option(errorFormat).getOrElse(throw new ClientConfigurationException("No errorFormat defined"))
-
-  // Check we have some supported content types
-  Option(supportedContentTypes).getOrElse(throw new ClientConfigurationException("No supportedContentTypes defined"))
-
-  // Check that we have the resources set
-  Option(apiResources).getOrElse(throw new ClientConfigurationException("No apiResources defined"))
-
-  // -------------------------------------------------------------------------------------------------------------------
   // Validation to check that the constructor arguments are okay
   // -------------------------------------------------------------------------------------------------------------------
 
