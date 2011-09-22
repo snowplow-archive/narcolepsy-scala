@@ -43,5 +43,12 @@ trait Api {
     resourceMap += ((slug, typeR))
 
   def representationNameFromSlug(slug: String) =
-    resourceMap get slug
+    (resourceMap get slug).getOrElse(throw new ApiConfigurationException("No representation found for slug %s".format(slug)))
+}
+
+/**
+ * Flags an exception in the configuration of the API - e.g. when there is a request
+ * for a slug which hasn't been defined
+ */
+class ApiConfigurationException(message: String = "") extends RuntimeException(message) {
 }

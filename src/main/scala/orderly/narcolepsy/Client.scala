@@ -12,6 +12,14 @@
  */
 package orderly.narcolepsy
 
+// Java
+import java.io.StringReader
+
+// JAXB and XML
+import javax.xml.bind.JAXBContext
+import javax.xml.bind.JAXBElement
+import javax.xml.transform.stream.StreamSource
+
 // Spray
 import cc.spray._
 import http._ // To get HttpRequest etc
@@ -147,20 +155,31 @@ abstract class Client(
       version = None // TODO: what is this?
     )
     val future = client.dispatch(request)
-    val response = future.get // Block TODO: make this async capable
+    val responseString = scala.io.Source.fromInputStream(future.get.content.get.inputStream).mkString("") // Blocking TODO: make this async capable
+
+    Console.println(">>>>>>>>>>" + responseString + "<<<<<<<<")
 
     // TODO: check the return code
     // If return code != 200, then we need to go into error handling mode
 
     // Okay we now have some text, so next we need to turn it into a representation
     // List<Product> output = new Vector<Product>();
-    // val jaxbContext = JAXBContext.newInstance(ProductListAPIWrapper.class)
-    // val unmarshaller = jaxbContext.createUnmarshaller()
-    // JAXBElement<ProductListAPIWrapper> root = unmarshaller.unmarshal(new StreamSource(new StringReader(responseString)), ProductListAPIWrapper.class);
-    // output.addAll(root.getValue().getProducts());
+    val representationClass = apiResources.representationNameFromSlug(resource)
+    val jaxbContext = JAXBContext.newInstance(representationClass)
+    val unmarshaller = jaxbContext.createUnmarshaller()
+    val root = unmarshaller.unmarshal(new StreamSource(new StringReader(responseString)), representationClass)
+
+    // TODO: next I need to update the Api definition so it contains the plural form (ProductList) as well as the
+    // singular form
+
+    import orderly.mdm.representations.Product
+    import orderly.mdm.representations.wrappers.ProductList
+    import scalaj.collection.Imports._
+    val r = root.getValue().asInstanceOf[ProductList]
+    val representations = (r.getProducts).asScala.toList // TODO: obviously this is not very clever
 
      // Return the RestfulResponse
-    (200, Left(new Representation), false) // TODO: populate with proper values
+    (200, Right(representations), false) // TODO: populate with proper values
   }
 
   // -------------------------------------------------------------------------------------------------------------------
