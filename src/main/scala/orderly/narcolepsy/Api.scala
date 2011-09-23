@@ -13,7 +13,7 @@
 package orderly.narcolepsy
 
 // Scala
-import collection.mutable.{HashMap, ArrayBuffer}
+import collection.mutable.HashMap
 
 /**
  * Api allows you to define a mapping of RESTful resource names (e.g. "products")
