@@ -165,15 +165,18 @@ abstract class Client(
     // Okay we now have some text, so next we need to turn it into a representation
     // List<Product> output = new Vector<Product>();
     val representationClass = apiResources.representationWrapperFromSlug(resource)
-    val jaxbContext = JAXBContext.newInstance(representationClass)
+    import orderly.mdm.representations.wrappers.ProductList
+
+    // val jaxbContext = JAXBContext.newInstance(representationClass)
+    val jaxbContext = JAXBContext.newInstance(ProductList.getClass())
     val unmarshaller = jaxbContext.createUnmarshaller()
-    val root = unmarshaller.unmarshal(new StreamSource(new StringReader(responseString)), representationClass)
+    // mapper.configure(SerializationConfig.Feature.WRAP_ROOT_VALUE, withRoot)
+    val root = unmarshaller.unmarshal(new StreamSource(new StringReader(responseString)), ProductList.getClass())
 
     // TODO: next I need to update the Api definition so it contains the plural form (ProductList) as well as the
     // singular form
 
     import orderly.mdm.representations.Product
-    import orderly.mdm.representations.wrappers.ProductList
     import scalaj.collection.Imports._
     val r = root.getValue().asInstanceOf[ProductList]
     val representations = (r.getProducts).asScala.toList // TODO: obviously this is not very clever
