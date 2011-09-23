@@ -38,9 +38,4 @@ package object narcolepsy {
 
   // To store a version of REST client or server
   type RestfulVersion = DefaultArtifactVersion
-
-  // To store the map of resources supported by a given implementation of NarcolepsyClient
-  // Format is:
-  //      TODO
-  type RestfulSchema = Map[String, Tuple2[Representation, List[String]]]
 }

@@ -24,26 +24,25 @@ import collection.mutable.{HashMap, ArrayBuffer}
  */
 trait Api {
 
-  private val resources = new ArrayBuffer[Resource[_]]
+  private val resourceMap = new HashMap[String, Class[_ <: Representation]]
+  private val resourceListMap = new HashMap[String, Class[_ <: Representation]]
 
-  private val resourceMap = new HashMap[String, Class[_]]
-
-  protected def resource[R](slug: String)(implicit manifestR: Manifest[R]): Resource[R] = {
+  protected def resource[R <: Representation, RL <: Representation](slug: String)(implicit manifestR: Manifest[R], manifestRL: Manifest[RL]): Resource[R, RL] = {
     val typeR = manifestR.erasure.asInstanceOf[Class[R]]
-    val r = new Resource[R](slug)
-    addResource(r)
+    val typeRL = manifestRL.erasure.asInstanceOf[Class[RL]]
     addResourceMap(slug, typeR)
-    r
+    addResourceListMap(slug, typeRL)
+    new Resource[R, RL](slug)
   }
 
-  private [narcolepsy] def addResource(r: Resource[_]) =
-    resources.append(r)
-
-  private [narcolepsy] def addResourceMap(slug: String, typeR: Class[_]) =
+  private [narcolepsy] def addResourceMap(slug: String, typeR: Class[_ <: Representation]) =
     resourceMap += ((slug, typeR))
 
+  private [narcolepsy] def addResourceListMap(slug: String, typeRL: Class[_ <: Representation]) =
+    resourceListMap += ((slug, typeRL))
+
   def representationNameFromSlug(slug: String) =
-    (resourceMap get slug).getOrElse(throw new ApiConfigurationException("No representation found for slug %s".format(slug)))
+    (resourceListMap get slug).getOrElse(throw new ApiConfigurationException("No representation found for slug %s".format(slug)))
 }
 
 /**

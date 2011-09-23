@@ -1,3 +1,5 @@
+package orderly.narcolepsy;
+
 /*
  * Copyright (c) 2011 Orderly Ltd. All rights reserved.
  *
@@ -10,12 +12,12 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package orderly.narcolepsy
-
 /**
- * Resource defines a mapping from a URL slug (e.g. "products") to a Representation object.
- * Defining these for each resource in an API object allows Narcolepsy to know which type
- * of Representation to instantiate for a given resource access
+ * Representation is the parent class for all representations handled by
+ * NarcolepsyClient. A representation is REST speak for the instantiated form
+ * of a REST resource. For the purposes of Narcolepsy, a Representation is a
+ * Scala class that has been marshalled from XML/JSON/whatever by JAXB, Jackson
+ * or similar.
  */
-class Resource[R, RL](slug: String) {
-} // TODO: currently the Representation R is not stored in the class anywhere - strictly we could drop it
+class Representation {
+}
