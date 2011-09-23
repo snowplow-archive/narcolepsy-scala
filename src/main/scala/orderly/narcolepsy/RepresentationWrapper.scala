@@ -19,5 +19,5 @@ package orderly.narcolepsy
  * Scala class that has been marshalled from XML/JSON/whatever by JAXB, Jackson
  * or similar.
  */
-class RepresentationList extends Representation {
+class RepresentationWrapper extends Representation {
 }

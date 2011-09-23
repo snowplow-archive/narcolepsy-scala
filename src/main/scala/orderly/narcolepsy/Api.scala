@@ -47,7 +47,7 @@ trait Api {
   private [narcolepsy] def addResourceMap(slug: String, typeR: Class[_ <: Representation]) =
     resourceMap += ((slug, typeR))
 
-  // Adds the plural RepresentationList type into the corresponding slug map
+  // Adds the plural RepresentationWrapper type into the corresponding slug map
   private [narcolepsy] def addResourceWrapperMap(slug: String, typeRL: Class[_ <: RepresentationWrapper]) =
     resourceWrapperMap += ((slug, typeRW))
 
