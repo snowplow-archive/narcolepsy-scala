@@ -17,31 +17,54 @@ import collection.mutable.{HashMap, ArrayBuffer}
 
 /**
  * Api allows you to define a mapping of RESTful resource names (e.g. "products")
- * to RESTful Representations (e.g. Product)
+ * to RESTful Representations (e.g. Product) and RepresentationLists (e.g. ProductList).
  *
  * Api is heavily inspired by Squeryl's Schema approach, see for example:
  * https://github.com/max-l/Squeryl/blob/master/src/main/scala/org/squeryl/Schema.scala
  */
 trait Api {
 
+  // Holds the map of slugs like "products" onto representations like Product
   private val resourceMap = new HashMap[String, Class[_ <: Representation]]
-  private val resourceListMap = new HashMap[String, Class[_ <: Representation]]
+  // Holds the map of slugs like "products" onto representation _wrappers_ like ProductList
+  private val resourceWrapperMap = new HashMap[String, Class[_ <: RepresentationWrapper]]
 
-  protected def resource[R <: Representation, RL <: Representation](slug: String)(implicit manifestR: Manifest[R], manifestRL: Manifest[RL]): Resource[R, RL] = {
+  /**
+   * When extending Api, call resource to define individual resources within the Api e.g:
+   * val products = resource[Product, ProductList]("products")
+   * @param slug The URL slug identifying the resource, e.g. "products"
+   * @return The instantiated Resource
+   */
+  protected def resource[R <: Representation, RW <: RepresentationWrapper](slug: String)(implicit manifestR: Manifest[R], manifestRL: Manifest[RW]): Resource[R, RW] = {
     val typeR = manifestR.erasure.asInstanceOf[Class[R]]
-    val typeRL = manifestRL.erasure.asInstanceOf[Class[RL]]
+    val typeRW = manifestRL.erasure.asInstanceOf[Class[RW]]
     addResourceMap(slug, typeR)
-    addResourceListMap(slug, typeRL)
-    new Resource[R, RL](slug)
+    addResourceWrapperMap(slug, typeRW)
+    new Resource[R, RW](slug)
   }
 
+  // Adds the singular Representation type into the corresponding slug map
   private [narcolepsy] def addResourceMap(slug: String, typeR: Class[_ <: Representation]) =
     resourceMap += ((slug, typeR))
 
-  private [narcolepsy] def addResourceListMap(slug: String, typeRL: Class[_ <: Representation]) =
-    resourceListMap += ((slug, typeRL))
+  // Adds the plural RepresentationList type into the corresponding slug map
+  private [narcolepsy] def addResourceWrapperMap(slug: String, typeRL: Class[_ <: RepresentationWrapper]) =
+    resourceWrapperMap += ((slug, typeRW))
 
-  def representationNameFromSlug(slug: String) =
+  /**
+   * Returns the singular Representation available at this resource slug
+   * @param slug The URL slug identifying the resource, e.g. "products"
+   * @return The class name for this Representation, e.g. Product
+   */
+  def representationFromSlug(slug: String) =
+    (resourceListMap get slug).getOrElse(throw new ApiConfigurationException("No representation found for slug %s".format(slug)))
+
+  /**
+   * Returns the plural RepresentationWrapper available at this resource slug
+   * @param slug The URL slug identifying the resource, e.g. "products"
+   * @return The class name for this RepresentationWrapper, e.g. ProductList
+   */
+  def representationWrapperFromSlug(slug: String) =
     (resourceListMap get slug).getOrElse(throw new ApiConfigurationException("No representation found for slug %s".format(slug)))
 }
 
