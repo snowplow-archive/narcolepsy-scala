@@ -164,7 +164,7 @@ abstract class Client(
 
     // Okay we now have some text, so next we need to turn it into a representation
     // List<Product> output = new Vector<Product>();
-    val representationClass = apiResources.representationNameFromSlug(resource)
+    val representationClass = apiResources.representationWrapperFromSlug(resource)
     val jaxbContext = JAXBContext.newInstance(representationClass)
     val unmarshaller = jaxbContext.createUnmarshaller()
     val root = unmarshaller.unmarshal(new StreamSource(new StringReader(responseString)), representationClass)

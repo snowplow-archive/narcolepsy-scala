@@ -35,9 +35,9 @@ trait Api {
    * @param slug The URL slug identifying the resource, e.g. "products"
    * @return The instantiated Resource
    */
-  protected def resource[R <: Representation, RW <: RepresentationWrapper](slug: String)(implicit manifestR: Manifest[R], manifestRL: Manifest[RW]): Resource[R, RW] = {
+  protected def resource[R <: Representation, RW <: RepresentationWrapper](slug: String)(implicit manifestR: Manifest[R], manifestRW: Manifest[RW]): Resource[R, RW] = {
     val typeR = manifestR.erasure.asInstanceOf[Class[R]]
-    val typeRW = manifestRL.erasure.asInstanceOf[Class[RW]]
+    val typeRW = manifestRW.erasure.asInstanceOf[Class[RW]]
     addResourceMap(slug, typeR)
     addResourceWrapperMap(slug, typeRW)
     new Resource[R, RW](slug) // Return the new Resource
@@ -48,7 +48,7 @@ trait Api {
     resourceMap += ((slug, typeR))
 
   // Adds the plural RepresentationWrapper type into the corresponding slug map
-  private [narcolepsy] def addResourceWrapperMap(slug: String, typeRL: Class[_ <: RepresentationWrapper]) =
+  private [narcolepsy] def addResourceWrapperMap(slug: String, typeRW: Class[_ <: RepresentationWrapper]) =
     resourceWrapperMap += ((slug, typeRW))
 
   /**
@@ -57,7 +57,7 @@ trait Api {
    * @return The class name for this Representation, e.g. Product
    */
   def representationFromSlug(slug: String) =
-    (resourceListMap get slug).getOrElse(throw new ApiConfigurationException("No representation found for slug %s".format(slug)))
+    (resourceWrapperMap get slug).getOrElse(throw new ApiConfigurationException("No representation found for slug %s".format(slug)))
 
   /**
    * Returns the plural RepresentationWrapper available at this resource slug
@@ -65,7 +65,7 @@ trait Api {
    * @return The class name for this RepresentationWrapper, e.g. ProductList
    */
   def representationWrapperFromSlug(slug: String) =
-    (resourceListMap get slug).getOrElse(throw new ApiConfigurationException("No representation found for slug %s".format(slug)))
+    (resourceWrapperMap get slug).getOrElse(throw new ApiConfigurationException("No representation found for slug %s".format(slug)))
 }
 
 /**
