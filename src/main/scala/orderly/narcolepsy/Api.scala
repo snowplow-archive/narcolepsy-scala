@@ -40,7 +40,7 @@ trait Api {
     val typeRW = manifestRL.erasure.asInstanceOf[Class[RW]]
     addResourceMap(slug, typeR)
     addResourceWrapperMap(slug, typeRW)
-    new Resource[R, RW](slug)
+    new Resource[R, RW](slug) // Return the new Resource
   }
 
   // Adds the singular Representation type into the corresponding slug map
