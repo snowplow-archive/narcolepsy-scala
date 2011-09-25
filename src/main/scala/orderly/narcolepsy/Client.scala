@@ -167,19 +167,26 @@ abstract class Client(
     val representationClass = apiResources.representationWrapperFromSlug(resource)
     import orderly.mdm.representations.wrappers.ProductList
 
-    // val jaxbContext = JAXBContext.newInstance(representationClass)
+    /*
     val jaxbContext = JAXBContext.newInstance(ProductList.getClass())
     val unmarshaller = jaxbContext.createUnmarshaller()
-    // mapper.configure(SerializationConfig.Feature.WRAP_ROOT_VALUE, withRoot)
     val root = unmarshaller.unmarshal(new StreamSource(new StringReader(responseString)), ProductList.getClass())
+    val r = root.getValue().asInstanceOf[ProductList]
+    import orderly.mdm.representations.Product
+    import scalaj.collection.Imports._
+    val representations = (r.getProducts).asScala.toList // TODO: obviously this is not very clever
+    */
+
+    val context = JAXBContext.newInstance(classOf[ProductList])
+    val unmarshaller = context.createUnmarshaller()
+    val productList = unmarshaller.unmarshal(
+      new StringReader(responseString)
+    ).asInstanceOf[ProductList]
+    import scalaj.collection.Imports._
+    // val representations = productList.getProducts.asScala.toList
 
     // TODO: next I need to update the Api definition so it contains the plural form (ProductList) as well as the
     // singular form
-
-    import orderly.mdm.representations.Product
-    import scalaj.collection.Imports._
-    val r = root.getValue().asInstanceOf[ProductList]
-    val representations = (r.getProducts).asScala.toList // TODO: obviously this is not very clever
 
      // Return the RestfulResponse
     (200, Right(representations), false) // TODO: populate with proper values
