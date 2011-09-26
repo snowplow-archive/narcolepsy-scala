@@ -17,7 +17,6 @@ import java.io.StringReader
 
 // JAXB and XML
 import javax.xml.bind.JAXBContext
-import javax.xml.transform.stream.StreamSource
 
 /**
  * RepresentationWrapper singleton to hold the unmarshalling logic.
