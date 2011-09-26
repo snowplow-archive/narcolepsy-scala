@@ -23,7 +23,7 @@ import javax.xml.bind.JAXBContext
  */
 object Representation {
 
-  def unmarshall(marshalledData: String, representationClass: Class[_ <: Representation]): Representation = {
+  def unmarshall[R <: Representation](marshalledData: String, representationClass: Class[R]): Representation = {
 
     val context = JAXBContext.newInstance(representationClass)
     val representation = context.createUnmarshaller().unmarshal(
