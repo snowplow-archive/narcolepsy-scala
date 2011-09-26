@@ -175,8 +175,7 @@ abstract class Client(
     println("Size: " + productList.getProducts.size)
     println("Name of first: " + productList.getProducts.get(0).getSku)
 
-    import scalaj.collection.Imports._
-    val representations = productList.getProducts.asScala.toList
+    val representations = productList.toList
 
     // TODO: next I need to update the Api definition so it contains the plural form (ProductList) as well as the
     // singular form
