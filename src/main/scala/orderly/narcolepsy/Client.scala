@@ -167,23 +167,16 @@ abstract class Client(
     val representationClass = apiResources.representationWrapperFromSlug(resource)
     import orderly.mdm.representations.wrappers.ProductList
 
-    /*
-    val jaxbContext = JAXBContext.newInstance(ProductList.getClass())
-    val unmarshaller = jaxbContext.createUnmarshaller()
-    val root = unmarshaller.unmarshal(new StreamSource(new StringReader(responseString)), ProductList.getClass())
-    val r = root.getValue().asInstanceOf[ProductList]
-    import orderly.mdm.representations.Product
-    import scalaj.collection.Imports._
-    val representations = (r.getProducts).asScala.toList // TODO: obviously this is not very clever
-    */
-
-    val context = JAXBContext.newInstance(classOf[ProductList])
-    val unmarshaller = context.createUnmarshaller()
-    val productList = unmarshaller.unmarshal(
+    val context = JAXBContext.newInstance(representationClass) // classOf[ProductList])
+    val productList = context.createUnmarshaller().unmarshal(
       new StringReader(responseString)
     ).asInstanceOf[ProductList]
+
+    println("Size: " + productList.getProducts.size)
+    println("Name of first: " + productList.getProducts.get(0).getSku)
+
     import scalaj.collection.Imports._
-    // val representations = productList.getProducts.asScala.toList
+    val representations = productList.getProducts.asScala.toList
 
     // TODO: next I need to update the Api definition so it contains the plural form (ProductList) as well as the
     // singular form

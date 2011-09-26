@@ -1,5 +1,3 @@
-package orderly.narcolepsy
-
 /*
  * Copyright (c) 2011 Orderly Ltd. All rights reserved.
  *
@@ -12,6 +10,8 @@ package orderly.narcolepsy
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
+package orderly.narcolepsy
+
 /**
  * Representation is the parent class for all representations handled by
  * NarcolepsyClient. A representation is REST speak for the instantiated form
@@ -19,5 +19,12 @@ package orderly.narcolepsy
  * Scala class that has been marshalled from XML/JSON/whatever by JAXB, Jackson
  * or similar.
  */
-class RepresentationWrapper extends Representation {
+abstract class RepresentationWrapper extends Representation {
+
+  /**
+   * Every Wrapper should implement the toList method to turn the
+   * RepresentationWrapper into a List[Representation] for easier
+   * mapping/folding etc in Scala
+   */
+  def toList: List[Representation]
 }
