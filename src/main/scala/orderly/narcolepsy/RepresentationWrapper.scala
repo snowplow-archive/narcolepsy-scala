@@ -12,6 +12,29 @@
  */
 package orderly.narcolepsy
 
+// Java
+import java.io.StringReader
+
+// JAXB and XML
+import javax.xml.bind.JAXBContext
+import javax.xml.transform.stream.StreamSource
+
+/**
+ * RepresentationWrapper singleton to hold the unmarshalling logic.
+ */
+object RepresentationWrapper {
+
+  def unmarshall(marshalledData: String, wrapperClass: Class[_ <: RepresentationWrapper]): List[Representation] = {
+
+    val context = JAXBContext.newInstance(wrapperClass)
+    val wrapper = context.createUnmarshaller().unmarshal(
+      new StringReader(marshalledData)
+    ).asInstanceOf[RepresentationWrapper]
+
+    wrapper.toList // Return the wrapper representation in List[] form
+  }
+}
+
 /**
  * Representation is the parent class for all representations handled by
  * NarcolepsyClient. A representation is REST speak for the instantiated form

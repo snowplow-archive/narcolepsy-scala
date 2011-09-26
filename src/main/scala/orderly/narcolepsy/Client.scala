@@ -13,12 +13,12 @@
 package orderly.narcolepsy
 
 // Java
-import java.io.StringReader
+// import java.io.StringReader
 
 // JAXB and XML
-import javax.xml.bind.JAXBContext
+// import javax.xml.bind.JAXBContext
 import javax.xml.bind.JAXBElement
-import javax.xml.transform.stream.StreamSource
+// import javax.xml.transform.stream.StreamSource
 
 // Spray
 import cc.spray._
@@ -164,13 +164,7 @@ abstract class Client(
 
     // Okay we now have some text, so next we need to turn it into a representation
     val wrapperClass = apiResources.representationWrapperFromSlug(resource)
-
-    val context = JAXBContext.newInstance(wrapperClass)
-    val wrapper = context.createUnmarshaller().unmarshal(
-      new StringReader(responseString)
-    ).asInstanceOf[RepresentationWrapper]
-
-    val representations = wrapper.toList
+    val representations = RepresentationWrapper.unmarshall(responseString, wrapperClass)
 
     // TODO: next I need to update the Api definition so it contains the plural form (ProductList) as well as the
     // singular form
