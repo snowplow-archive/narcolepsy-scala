@@ -163,19 +163,14 @@ abstract class Client(
     // If return code != 200, then we need to go into error handling mode
 
     // Okay we now have some text, so next we need to turn it into a representation
-    // List<Product> output = new Vector<Product>();
-    val representationClass = apiResources.representationWrapperFromSlug(resource)
-    import orderly.mdm.representations.wrappers.ProductList
+    val wrapperClass = apiResources.representationWrapperFromSlug(resource)
 
-    val context = JAXBContext.newInstance(representationClass) // classOf[ProductList])
-    val productList = context.createUnmarshaller().unmarshal(
+    val context = JAXBContext.newInstance(wrapperClass)
+    val wrapper = context.createUnmarshaller().unmarshal(
       new StringReader(responseString)
-    ).asInstanceOf[ProductList]
+    ).asInstanceOf[RepresentationWrapper]
 
-    println("Size: " + productList.getProducts.size)
-    println("Name of first: " + productList.getProducts.get(0).getSku)
-
-    val representations = productList.toList
+    val representations = wrapper.toList
 
     // TODO: next I need to update the Api definition so it contains the plural form (ProductList) as well as the
     // singular form
