@@ -143,7 +143,7 @@ abstract class Client(
   protected def execute(
     resource: String,
     requestMethod: HttpMethod,
-    requestUri: String): RestfulResponse = {
+    requestUri: String): (Int, String) = {
 
     // TODO: let's add in the Accept header based on the contentType requested
     val request = new HttpRequest(
@@ -159,18 +159,8 @@ abstract class Client(
 
     Console.println(">>>>>>>>>>" + responseString + "<<<<<<<<")
 
-    // TODO: check the return code
-    // If return code != 200, then we need to go into error handling mode
-
-    // Okay we now have some text, so next we need to turn it into a representation
-    val wrapperClass = apiResources.representationWrapperFromSlug(resource)
-    val representations = RepresentationWrapper.unmarshall(responseString, wrapperClass)
-
-    // TODO: next I need to update the Api definition so it contains the plural form (ProductList) as well as the
-    // singular form
-
-     // Return the RestfulResponse
-    (200, Right(representations), false) // TODO: populate with proper values
+     // Return the response code and data
+    (200, responseString) // TODO: populate with proper values
   }
 }
 

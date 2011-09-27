@@ -12,14 +12,53 @@
  */
 package orderly.narcolepsy
 
+// Java
+import java.io.StringReader
+
+// JAXB and XML
+import javax.xml.bind.JAXBContext
+
+// Orderly
 import utils.RestfulHelpers
 
 /**
  * Resource defines a mapping from a URL slug (e.g. "products") to a Representation object.
  * Defining these for each resource in an API object allows Narcolepsy to know which type
- * of Representation to instantiate for a given resource access
+ * of Representation or RepresentationWrapper to instantiate for a given resource access
  */
-class Resource[R, RL](slug: String) {
+class Resource[
+  R <: Representation,
+  W <: RepresentationWrapper](slug: String) {
+
+  this: Client =>
+
+  // -------------------------------------------------------------------------------------------------------------------
+  // Marshalling and unmarshalling logic
+  // -------------------------------------------------------------------------------------------------------------------
+
+  // TODO: add in marshall()
+
+  def unmarshall(marshalledData: String)(implicit manifestR: Manifest[R]): R = {
+
+    val typeR = manifestR.erasure.asInstanceOf[Class[R]]
+    val context = JAXBContext.newInstance(typeR)
+    val representation = context.createUnmarshaller().unmarshal(
+      new StringReader(marshalledData)
+    ).asInstanceOf[R]
+
+    representation // Return the representation
+  }
+
+  def unmarshallWrapper(marshalledData: String)(implicit manifestW: Manifest[W]): List[R] = {
+
+    val typeW = manifestW.erasure.asInstanceOf[Class[W]]
+    val context = JAXBContext.newInstance(typeW)
+    val wrapper = context.createUnmarshaller().unmarshal(
+      new StringReader(marshalledData)
+    ).asInstanceOf[W]
+
+    wrapper.toList // Return the wrapper representation in List[] form
+  }
 
   // -------------------------------------------------------------------------------------------------------------------
   // GET verb methods
@@ -29,7 +68,7 @@ class Resource[R, RL](slug: String) {
    * Retrieve (GET) a resource, self-assembly version without parameters
    * @return RESTful response from the API
    */
-  def get(): RestfulResponse = {
+  def get(): (Int, Either[R, List[R]], Boolean) = {
     get(slug, None, None)
   }
 
@@ -38,7 +77,7 @@ class Resource[R, RL](slug: String) {
    * @param params Map of parameters (one or more of 'filter', 'display', 'sort', 'limit')
    * @return RESTful response from the API
    */
-  def get(params: RestfulParams): RestfulResponse = {
+  def get(params: RestfulParams): (Int, Either[R, List[R]], Boolean) = {
     get(slug, None, Some(params))
   }
 
@@ -48,7 +87,7 @@ class Resource[R, RL](slug: String) {
    * @param id Resource ID to retrieve
    * @return RESTful response from the API
    */
-  def get(id: String): RestfulResponse = {
+  def get(id: String): (Int, Either[R, List[R]], Boolean) = {
     get(Some(id), None)
   }
 
@@ -59,7 +98,7 @@ class Resource[R, RL](slug: String) {
    * @param params Map of parameters (one or more of 'filter', 'display', 'sort', 'limit')
    * @return RESTful response from the API
    */
-  def get(id: String, params: RestfulParams): RestfulResponse = {
+  def get(id: String, params: RestfulParams): (Int, Either[R, List[R]], Boolean) = {
     get(slug, Some(id), Some(params))
   }
 
@@ -69,7 +108,7 @@ class Resource[R, RL](slug: String) {
    * @param params Optional Map of parameters (one or more of 'filter', 'display', 'sort', 'limit')
    * @return RESTful response from the API
    */
-  protected def get(id: Option[String], params: Option[RestfulParams]): RestfulResponse = {
+  protected def get(id: Option[String], params: Option[RestfulParams]): (Int, Either[R, List[R]], Boolean) = {
     getUri(
       slug +
       (if (id.isDefined) "/%s".format(id.get) else "") +
@@ -79,11 +118,12 @@ class Resource[R, RL](slug: String) {
 
   /**
    * Retrieve (GET) a resource, URL version
-   * @param resource The type of resource to retrieve
    * @param uri A URL which explicitly sets the resource type, ID(s) and parameters to retrieve
    * @return RESTful response from the API
    */
-  def getUri(uri: String): RestfulResponse = {
-    execute(slug, HttpMethods.GET, uri) // Execute the API call using GET
+  def getUri(uri: String): (Int, Either[R, List[R]], Boolean) = {
+    val (code, data) = execute(slug, HttpMethods.GET, uri) // Execute the API call using GET. Injected dependency using Cake pattern
+
+    (code, data, false) // TODO need to add in error handling etc
   }
 }

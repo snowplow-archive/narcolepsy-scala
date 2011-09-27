@@ -12,28 +12,6 @@
  */
 package orderly.narcolepsy
 
-// Java
-import java.io.StringReader
-
-// JAXB and XML
-import javax.xml.bind.JAXBContext
-
-/**
- * RepresentationWrapper singleton to hold the unmarshalling logic.
- */
-object RepresentationWrapper {
-
-  def unmarshall[RW <: RepresentationWrapper](marshalledData: String, wrapperClass: Class[RW]): List[Representation] = {
-
-    val context = JAXBContext.newInstance(wrapperClass)
-    val wrapper = context.createUnmarshaller().unmarshal(
-      new StringReader(marshalledData)
-    ).asInstanceOf[RepresentationWrapper]
-
-    wrapper.toList // Return the wrapper representation in List[] form
-  }
-}
-
 /**
  * Representation is the parent class for all representations handled by
  * NarcolepsyClient. A representation is REST speak for the instantiated form
@@ -47,6 +25,10 @@ abstract class RepresentationWrapper extends Representation {
    * Every Wrapper should implement the toList method to turn the
    * RepresentationWrapper into a List[Representation] for easier
    * mapping/folding etc in Scala
+   * Weirdly I need to write [R <: etc below rather than just
+   * List[Representation] because otherwise I get a compiler
+   * error where I call toList on account of this problem:
+   * http://scala-programming-language.1934581.n4.nabble.com/Surprising-type-mismatch-with-generics-td2257197.html
    */
-  def toList: List[Representation]
+  def toList[R <: Representation]: List[R]
 }

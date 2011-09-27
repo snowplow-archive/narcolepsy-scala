@@ -24,10 +24,13 @@ import collection.mutable.HashMap
  */
 trait Api {
 
-  // Holds the map of slugs like "products" onto representations like Product
-  private val resourceMap = new HashMap[String, Class[_ <: Representation]]
-  // Holds the map of slugs like "products" onto representation _wrappers_ like ProductList
-  private val resourceWrapperMap = new HashMap[String, Class[_ <: RepresentationWrapper]]
+  // Holds the client access details
+  protected var client: Client
+
+  // Helper to "attach" the client to the Api and thus to the individual resources
+  protected def attachClient(client: Client) {
+    this.client = client
+  }
 
   /**
    * When extending Api, call resource to define individual resources within the Api e.g:
@@ -35,37 +38,10 @@ trait Api {
    * @param slug The URL slug identifying the resource, e.g. "products"
    * @return The instantiated Resource
    */
-  protected def resource[R <: Representation, RW <: RepresentationWrapper](slug: String)(implicit manifestR: Manifest[R], manifestRW: Manifest[RW]): Resource[R, RW] = {
-    val typeR = manifestR.erasure.asInstanceOf[Class[R]]
-    val typeRW = manifestRW.erasure.asInstanceOf[Class[RW]]
-    addResourceMap(slug, typeR)
-    addResourceWrapperMap(slug, typeRW)
-    new Resource[R, RW](slug) // Return the new Resource
+  protected def resource[R <: Representation, RW <: RepresentationWrapper](slug: String): Resource[R, RW] = {
+    new Resource[R, RW](this.client, slug) // Return the new Resource
+    // TODO: what if client hasn't been attached yet?
   }
-
-  // Adds the singular Representation type into the corresponding slug map
-  private [narcolepsy] def addResourceMap(slug: String, typeR: Class[_ <: Representation]) =
-    resourceMap += ((slug, typeR))
-
-  // Adds the plural RepresentationWrapper type into the corresponding slug map
-  private [narcolepsy] def addResourceWrapperMap(slug: String, typeRW: Class[_ <: RepresentationWrapper]) =
-    resourceWrapperMap += ((slug, typeRW))
-
-  /**
-   * Returns the singular Representation available at this resource slug
-   * @param slug The URL slug identifying the resource, e.g. "products"
-   * @return The class name for this Representation, e.g. Product
-   */
-  def representationFromSlug(slug: String) =
-    (resourceWrapperMap get slug).getOrElse(throw new ApiConfigurationException("No representation found for slug %s".format(slug)))
-
-  /**
-   * Returns the plural RepresentationWrapper available at this resource slug
-   * @param slug The URL slug identifying the resource, e.g. "products"
-   * @return The class name for this RepresentationWrapper, e.g. ProductList
-   */
-  def representationWrapperFromSlug(slug: String) =
-    (resourceWrapperMap get slug).getOrElse(throw new ApiConfigurationException("No representation found for slug %s".format(slug)))
 }
 
 /**
