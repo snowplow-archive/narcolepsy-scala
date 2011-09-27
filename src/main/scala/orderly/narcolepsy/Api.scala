@@ -24,23 +24,16 @@ import collection.mutable.HashMap
  */
 trait Api {
 
-  // Holds the client access details
-  protected var client: Client
-
-  // Helper to "attach" the client to the Api and thus to the individual resources
-  protected def attachClient(client: Client) {
-    this.client = client
-  }
-
   /**
    * When extending Api, call resource to define individual resources within the Api e.g:
    * val products = resource[Product, ProductList]("products")
    * @param slug The URL slug identifying the resource, e.g. "products"
    * @return The instantiated Resource
    */
-  protected def resource[R <: Representation, RW <: RepresentationWrapper](slug: String): Resource[R, RW] = {
-    new Resource[R, RW](this.client, slug) // Return the new Resource
-    // TODO: what if client hasn't been attached yet?
+  protected def resource[R <: Representation, RW <: RepresentationWrapper](slug: String)(implicit manifestR: Manifest[R], manifestRW: Manifest[RW]): Resource[R, RW] = {
+    val typeR = manifestR.erasure.asInstanceOf[Class[R]]
+    val typeRW = manifestRW.erasure.asInstanceOf[Class[RW]]
+    new Resource[R, RW](slug, typeR, typeRW) // Return the new Resource
   }
 }
 

@@ -18,6 +18,10 @@ import java.io.StringReader
 // JAXB and XML
 import javax.xml.bind.JAXBContext
 
+// Spray
+import cc.spray._
+import http._ // To get HttpRequest etc
+
 // Orderly
 import utils.RestfulHelpers
 
@@ -27,8 +31,12 @@ import utils.RestfulHelpers
  * of Representation or RepresentationWrapper to instantiate for a given resource access
  */
 class Resource[
-  R <: Representation,
-  W <: RepresentationWrapper](slug: String) {
+  R  <: Representation,
+  RW <: RepresentationWrapper](
+  slug: String,
+  typeR:  Class[_ <: Representation],
+  typeRW: Class[_ <: RepresentationWrapper]
+  ) {
 
   this: Client =>
 
@@ -38,9 +46,8 @@ class Resource[
 
   // TODO: add in marshall()
 
-  def unmarshall(marshalledData: String)(implicit manifestR: Manifest[R]): R = {
+  def unmarshall(marshalledData: String): R = {
 
-    val typeR = manifestR.erasure.asInstanceOf[Class[R]]
     val context = JAXBContext.newInstance(typeR)
     val representation = context.createUnmarshaller().unmarshal(
       new StringReader(marshalledData)
@@ -49,13 +56,12 @@ class Resource[
     representation // Return the representation
   }
 
-  def unmarshallWrapper(marshalledData: String)(implicit manifestW: Manifest[W]): List[R] = {
+  def unmarshallWrapper(marshalledData: String): List[R] = {
 
-    val typeW = manifestW.erasure.asInstanceOf[Class[W]]
-    val context = JAXBContext.newInstance(typeW)
+    val context = JAXBContext.newInstance(typeRW)
     val wrapper = context.createUnmarshaller().unmarshal(
       new StringReader(marshalledData)
-    ).asInstanceOf[W]
+    ).asInstanceOf[RW]
 
     wrapper.toList // Return the wrapper representation in List[] form
   }
@@ -69,7 +75,7 @@ class Resource[
    * @return RESTful response from the API
    */
   def get(): (Int, Either[R, List[R]], Boolean) = {
-    get(slug, None, None)
+    get(None, None)
   }
 
   /**
@@ -78,12 +84,11 @@ class Resource[
    * @return RESTful response from the API
    */
   def get(params: RestfulParams): (Int, Either[R, List[R]], Boolean) = {
-    get(slug, None, Some(params))
+    get(None, Some(params))
   }
 
   /**
    * Retrieve (GET) a resource, self-assembly version without parameters
-   * @param resource Type of resource to retrieve
    * @param id Resource ID to retrieve
    * @return RESTful response from the API
    */
@@ -93,13 +98,12 @@ class Resource[
 
   /**
    * Retrieve (GET) a resource, self-assembly version with parameters
-   * @param resource Type of resource to retrieve
    * @param id Resource ID to retrieve
    * @param params Map of parameters (one or more of 'filter', 'display', 'sort', 'limit')
    * @return RESTful response from the API
    */
   def get(id: String, params: RestfulParams): (Int, Either[R, List[R]], Boolean) = {
-    get(slug, Some(id), Some(params))
+    get(Some(id), Some(params))
   }
 
   /**
@@ -122,8 +126,10 @@ class Resource[
    * @return RESTful response from the API
    */
   def getUri(uri: String): (Int, Either[R, List[R]], Boolean) = {
-    val (code, data) = execute(slug, HttpMethods.GET, uri) // Execute the API call using GET. Injected dependency using Cake pattern
+    val (code, responseString) = execute(slug, HttpMethods.GET, uri) // Execute the API call using GET. Injected dependency using Cake pattern
 
-    (code, data, false) // TODO need to add in error handling etc
+    val representationList = unmarshallWrapper(responseString)
+
+    (code, Right(representationList), false) // TODO need to add in error handling etc
   }
 }

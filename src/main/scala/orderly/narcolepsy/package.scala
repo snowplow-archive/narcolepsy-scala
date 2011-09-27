@@ -31,7 +31,7 @@ package object narcolepsy {
   // indicating whether the representation is an error or not.
   // TODO: look at how squeryl deals with returning one row or multiple
   // TODO: are we definitely returning a List of RestfulRepresentations?
-  type RestfulResponse = (Int, Either[_ <: Representation, List[_ <: Representation]], Boolean)
+  type RestfulResponse = (Int, String)
 
   // Simple synonym for the API parameters
   type RestfulParams = Map[String, String]
