@@ -38,7 +38,16 @@ class Resource[
   typeRW: Class[_ <: RepresentationWrapper]
   ) {
 
-  var client: Client = _
+  // Private var to hold the client used to access this resource
+  private var client: Client = _
+
+  // -------------------------------------------------------------------------------------------------------------------
+  // Client handling logic
+  // -------------------------------------------------------------------------------------------------------------------
+
+  def attachClient(client: Client) {
+    this.client = client
+  }
 
   // -------------------------------------------------------------------------------------------------------------------
   // Marshalling and unmarshalling logic

@@ -24,6 +24,7 @@ import collection.mutable.ArrayBuffer
  */
 trait Api {
 
+  // Private mutable array to hold the resources defined so far
   private val resources = new ArrayBuffer[Resource[_, _]]
 
   /**
@@ -40,15 +41,22 @@ trait Api {
     r
   }
 
-  def attachClient(client: Client) =
-    resources.foreach(r => attachClientToResource(client, r))
+  /**
+   * Use this to attach an API client to each resource currently defined within the
+   * Api. Note that the Resource class's attachClient can be called directly to
+   * attach a specific API client to an individual resource type.
+   * @param client The API client to attach to each resource
+   */
+  def attachClient(client: Client) {
+    resources.foreach(_.attachClient(client))
+  }
 
+  /**
+   * Helper to add a resource into the resource array
+   * @param r The resource to add into the resource array
+   */
   private [narcolepsy] def addResource(r: Resource[_, _]) =
     resources.append(r)
-
-  private [narcolepsy] def attachClientToResource(client: Client, r: Resource[_, _]) {
-    r.client = client
-  }
 }
 
 /**
