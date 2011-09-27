@@ -13,7 +13,7 @@
 package orderly.narcolepsy
 
 // Scala
-import collection.mutable.HashMap
+import collection.mutable.ArrayBuffer
 
 /**
  * Api allows you to define a mapping of RESTful resource names (e.g. "products")
@@ -24,6 +24,8 @@ import collection.mutable.HashMap
  */
 trait Api {
 
+  private val resources = new ArrayBuffer[Resource[_, _]]
+
   /**
    * When extending Api, call resource to define individual resources within the Api e.g:
    * val products = resource[Product, ProductList]("products")
@@ -33,7 +35,19 @@ trait Api {
   protected def resource[R <: Representation, RW <: RepresentationWrapper](slug: String)(implicit manifestR: Manifest[R], manifestRW: Manifest[RW]): Resource[R, RW] = {
     val typeR = manifestR.erasure.asInstanceOf[Class[R]]
     val typeRW = manifestRW.erasure.asInstanceOf[Class[RW]]
-    new Resource[R, RW](slug, typeR, typeRW) // Return the new Resource
+    val r = new Resource[R, RW](slug, typeR, typeRW) // Return the new Resource
+    addResource(r)
+    r
+  }
+
+  def attachClient(client: Client) =
+    resources.foreach(r => attachClientToResource(client, r))
+
+  private [narcolepsy] def addResource(r: Resource[_, _]) =
+    resources.append(r)
+
+  private [narcolepsy] def attachClientToResource(client: Client, r: Resource[_, _]) {
+    r.client = client
   }
 }
 

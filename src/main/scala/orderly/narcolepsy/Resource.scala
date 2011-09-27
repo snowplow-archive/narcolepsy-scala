@@ -38,7 +38,7 @@ class Resource[
   typeRW: Class[_ <: RepresentationWrapper]
   ) {
 
-  this: Client =>
+  var client: Client = _
 
   // -------------------------------------------------------------------------------------------------------------------
   // Marshalling and unmarshalling logic
@@ -126,7 +126,7 @@ class Resource[
    * @return RESTful response from the API
    */
   def getUri(uri: String): (Int, Either[R, List[R]], Boolean) = {
-    val (code, responseString) = execute(slug, HttpMethods.GET, uri) // Execute the API call using GET. Injected dependency using Cake pattern
+    val (code, responseString) = client.execute(slug, HttpMethods.GET, uri) // Execute the API call using GET. Injected dependency using Cake pattern
 
     val representationList = unmarshallWrapper(responseString)
 

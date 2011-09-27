@@ -140,7 +140,7 @@ abstract class Client(
    * @param requestUri Relative path to resource. Attach rootUri to get the absolute URI
    * @return A RestfulResponse object
    */
-  protected def execute(
+  def execute(
     resource: String,
     requestMethod: HttpMethod,
     requestUri: String): (Int, String) = {
