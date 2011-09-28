@@ -31,7 +31,7 @@ class Representation {
   /**
    * Marshals this representation into XML
    */
-  def marshallToXml(): String = {
+  def marshalToXml(): String = {
     val context = JAXBContext.newInstance(this.getClass())
     val writer = new StringWriter
     context.createMarshaller.marshal(this, writer)
