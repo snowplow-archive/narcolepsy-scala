@@ -55,6 +55,8 @@ class Resource[
 
   // TODO: add in marshall()
 
+  // TODO: this code is in the wrong place. Should be in the Representation and RepresentationWrapper objects
+
   def unmarshallXml(marshalledData: String): R = {
 
     val context = JAXBContext.newInstance(typeR)
