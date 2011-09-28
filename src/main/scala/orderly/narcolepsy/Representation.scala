@@ -47,6 +47,10 @@ class Representation {
   /*
   def marshalToJson[R <: Representation](representation: R, withRoot: Boolean = true) = {
 
+    // Jackson
+    import org.codehaus.jackson.map._
+    import org.codehaus.jackson.xc._
+
     val mapper = new ObjectMapper()
     // Include (or not) a top level segment, as per http://stackoverflow.com/questions/5728276/jackson-json-top-level-segment-inclusion
     // We include if we are marshalling 1 entity (e.g. 1 platform), but exclude if marshalling N entities (e.g. N platforms)
