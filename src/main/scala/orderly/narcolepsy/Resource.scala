@@ -55,7 +55,7 @@ class Resource[
 
   // TODO: add in marshall()
 
-  def unmarshall(marshalledData: String): R = {
+  def unmarshallXml(marshalledData: String): R = {
 
     val context = JAXBContext.newInstance(typeR)
     val representation = context.createUnmarshaller().unmarshal(
@@ -65,7 +65,7 @@ class Resource[
     representation // Return the representation
   }
 
-  def unmarshallWrapper(marshalledData: String): List[R] = {
+  def unmarshallWrapperXml(marshalledData: String): List[R] = {
 
     val context = JAXBContext.newInstance(typeRW)
     val wrapper = context.createUnmarshaller().unmarshal(
@@ -137,7 +137,7 @@ class Resource[
   def getUri(uri: String): (Int, Either[R, List[R]], Boolean) = {
     val (code, responseString) = client.execute(slug, HttpMethods.GET, uri) // Execute the API call using GET. Injected dependency using Cake pattern
 
-    val representationList = unmarshallWrapper(responseString)
+    val representationList = unmarshallWrapperXml(responseString)
 
     (code, Right(representationList), false) // TODO need to add in error handling etc
   }
