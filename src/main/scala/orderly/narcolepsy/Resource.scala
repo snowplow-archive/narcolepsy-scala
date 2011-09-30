@@ -140,6 +140,7 @@ class Resource[
     val (code, responseString) = client.execute(slug, HttpMethods.GET, uri) // Execute the API call using GET. Injected dependency using Cake pattern
 
     val representationList = unmarshallWrapperXml(responseString)
+    // val representationList = typeR.getClass(responseString)
 
     (code, Right(representationList), false) // TODO need to add in error handling etc
   }

@@ -27,6 +27,9 @@ import javax.xml.bind.Marshaller
  */
 object Representation {
 
+  // Dummy constructor
+  def apply(marshalled: String): Representation = unmarshallXml[Representation](marshalled)
+
   /**
    * Convenience constructor taking a marshalled string and taking the subclass of Representation
    * to construct. This method is then wired into the factory object apply() constructors of each
