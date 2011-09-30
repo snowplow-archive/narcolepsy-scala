@@ -20,6 +20,27 @@ import javax.xml.bind.JAXBContext
 import javax.xml.bind.Marshaller
 
 /**
+ * The Representation singleton holds the custom marshalling-based constructor
+ * for a representation. See below for the definition of a representation.
+ */
+object Representation {
+
+  /**
+   * Convenience constructor taking a marshalled string
+   * TODO: need to figure out how this works as I don't yet
+  def apply(marshalledData: String): Representation = {
+
+    val context = JAXBContext.newInstance(classOf[Representation])
+    val representation = context.createUnmarshaller().unmarshal(
+      new StringReader(marshalledData)
+    ).asInstanceOf[Representation]
+
+    representation // Return the representation
+  } */
+}
+
+
+/**
  * Representation is the parent class for all representations handled by
  * NarcolepsyClient. A representation is REST speak for the instantiated form
  * of a REST resource. For the purposes of Narcolepsy, a Representation is a
