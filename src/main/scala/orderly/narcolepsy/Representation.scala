@@ -59,7 +59,7 @@ object Representation {
  * Scala class that has been marshalled from XML/JSON/whatever by JAXB, Jackson
  * or similar.
  */
-class Representation {
+abstract class Representation {
 
   /**
    * Marshals this representation into XML
