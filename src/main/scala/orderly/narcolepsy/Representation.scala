@@ -14,31 +14,40 @@ package orderly.narcolepsy
 
 // Java
 import java.io.StringWriter
+import java.io.StringReader
 
 // JAXB and XML
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.Marshaller
 
 /**
- * The Representation singleton holds the custom marshalling-based constructor
- * for a representation. See below for the definition of a representation.
+ * The Representation singleton holds the unmarshalling method used in the
+ * Representation subclasses to create custom constructors. See the
+ * Representation class below for the definition of a representation.
  */
 object Representation {
 
   /**
-   * Convenience constructor taking a marshalled string
-   * TODO: need to figure out how this works as I don't yet
-  def apply(marshalledData: String): Representation = {
+   * Convenience constructor taking a marshalled string and taking the subclass of Representation
+   * to construct. This method is then wired into the factory object apply() constructors of each
+   * Representation subclass like so:
+   *
+   * object Product {
+   *   def apply(marshalled: String): Product = Representation.unmarshallXml[Product](marshalled)
+   * }
+   */
+  def unmarshallXml[R <: Representation](marshalledData: String)(implicit manifestR: Manifest[R]): R = {
 
-    val context = JAXBContext.newInstance(classOf[Representation])
-    val representation = context.createUnmarshaller().unmarshal(
+    val typeR = manifestR.erasure.asInstanceOf[Class[R]] // Grab the type as we need to feed it into the JAXB context
+    val context = JAXBContext.newInstance(typeR)
+
+    val representation = context.createUnmarshaller().unmarshal( // Vanilla unmarshalling
       new StringReader(marshalledData)
-    ).asInstanceOf[Representation]
+    ).asInstanceOf[R]
 
     representation // Return the representation
-  } */
+  }
 }
-
 
 /**
  * Representation is the parent class for all representations handled by
