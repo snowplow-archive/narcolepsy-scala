@@ -53,8 +53,8 @@ class Resource[
   // Marshalling and unmarshalling logic
   //
   // Note: I (Alex) tried to move these unmarshalling methods to the Representation and
-  // RepresentationWrapper (a la http://stackoverflow.com/questions/7616692/how-can-i-invoke-the-constructor-of-a-scala-abstract-type
-  // but couldn't figure out how to achieve it
+  // RepresentationWrapper (a la http://stackoverflow.com/questions/7616692/how-can-i-invoke-the-constructor-of-a-scala-abstract-type )
+  // but couldn't figure out how to achieve it without massive over-complication. I think they're fine here.
   // -------------------------------------------------------------------------------------------------------------------
 
   def unmarshalXml(marshalledData: String): R = {
@@ -85,27 +85,24 @@ class Resource[
    * Retrieve (GET) a resource, self-assembly version without parameters
    * @return RESTful response from the API
    */
-  def get(): (Int, Either[R, List[R]], Boolean) = {
+  def get(): GetResponse[R] =
     get(None, None)
-  }
 
   /**
    * Retrieve (GET) a resource, self-assembly version with parameters
    * @param params Map of parameters (one or more of 'filter', 'display', 'sort', 'limit')
    * @return RESTful response from the API
    */
-  def get(params: RestfulParams): (Int, Either[R, List[R]], Boolean) = {
+  def get(params: RestfulParams): GetResponse[R] =
     get(None, Some(params))
-  }
 
   /**
    * Retrieve (GET) a resource, self-assembly version without parameters
    * @param id Resource ID to retrieve
    * @return RESTful response from the API
    */
-  def get(id: String): (Int, Either[R, List[R]], Boolean) = {
+  def get(id: String): GetResponse[R] =
     get(Some(id), None)
-  }
 
   /**
    * Retrieve (GET) a resource, self-assembly version with parameters
@@ -113,9 +110,8 @@ class Resource[
    * @param params Map of parameters (one or more of 'filter', 'display', 'sort', 'limit')
    * @return RESTful response from the API
    */
-  def get(id: String, params: RestfulParams): (Int, Either[R, List[R]], Boolean) = {
+  def get(id: String, params: RestfulParams): GetResponse[R] =
     get(Some(id), Some(params))
-  }
 
   /**
    * Retrieve (GET) a resource, helper version using Options
@@ -123,7 +119,7 @@ class Resource[
    * @param params Optional Map of parameters (one or more of 'filter', 'display', 'sort', 'limit')
    * @return RESTful response from the API
    */
-  protected def get(id: Option[String], params: Option[RestfulParams]): (Int, Either[R, List[R]], Boolean) = {
+  protected def get(id: Option[String], params: Option[RestfulParams]): GetResponse[R] = {
     getUri(
       slug +
       (if (id.isDefined) "/%s".format(id.get) else "") +
@@ -136,11 +132,43 @@ class Resource[
    * @param uri A URL which explicitly sets the resource type, ID(s) and parameters to retrieve
    * @return RESTful response from the API
    */
-  def getUri(uri: String): (Int, Either[R, List[R]], Boolean) = {
+  def getUri(uri: String): GetResponse[R] = {
     val (code, responseString) = client.execute(slug, HttpMethods.GET, uri) // Execute the API call using GET. Injected dependency using Cake pattern
 
     val representationList = unmarshalWrapperXml(responseString)
 
     (code, Right(representationList), false) // TODO need to add in error handling etc
+  }
+
+  // -------------------------------------------------------------------------------------------------------------------
+  // DELETE verb methods
+  // -------------------------------------------------------------------------------------------------------------------
+
+  /**
+   * Delete (DELETE) a resource, self-assembly version supporting one ID
+   * This version takes a resource type and an array of IDs to delete
+   * @param resource The type of resource to delete (e.g. "orders")
+   * @param id An ID of this resource type, to delete
+   */
+  def delete(id: String): DeleteResponse[R] =
+    deleteUri(slug + "/" + id)
+
+  /**
+   * Delete (DELETE) a resource, self-assembly version supporting multiple IDs
+   * This version takes a resource type and an array of IDs to delete
+   * @param resource The type of resource to delete (e.g. "orders")
+   * @param ids An array of IDs of this resource type, to delete
+   */
+  // TODO: this is PrestaShop-specific behaviour
+  def delete(ids: Array[String]): DeleteResponse[R] =
+    deleteUri(slug + "/?id=[%s]".format(ids.mkString(",")))
+
+  /**
+   * Delete (DELETE) a resource, URL version
+   * @param url A URL which explicitly sets resource type and resource ID
+   */
+  def deleteUri(uri: String): DeleteResponse[R] = {
+
+    (200, None, false) // Placeholder for now
   }
 }

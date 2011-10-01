@@ -26,16 +26,25 @@ import orderly.narcolepsy.Representation
  */
 package object narcolepsy {
 
-  // The return type for an API response.
-  // Holds return code, either one representation or multiple, and a flag
-  // indicating whether the representation is an error or not.
-  // TODO: look at how squeryl deals with returning one row or multiple
-  // TODO: are we definitely returning a List of RestfulRepresentations?
-  type RestfulResponse = (Int, String)
+  // -------------------------------------------------------------------------------------------------------------------
+  // API response types
+  // -------------------------------------------------------------------------------------------------------------------
+
+  // Response from a GET request
+  type GetResponse[R] = (Int, Either[R, List[R]], Boolean)
+
+  // Response from a DELETE request
+  type DeleteResponse[R] = (Int, Option[R], Boolean)
+
+  // -------------------------------------------------------------------------------------------------------------------
+  // Miscellaneous types
+  // -------------------------------------------------------------------------------------------------------------------
 
   // Simple synonym for the API parameters
   type RestfulParams = Map[String, String]
 
   // To store a version of REST client or server
   type RestfulVersion = DefaultArtifactVersion
+
+
 }
