@@ -53,11 +53,7 @@ class Resource[
   // Marshalling and unmarshalling logic
   // -------------------------------------------------------------------------------------------------------------------
 
-  // TODO: add in marshall()
-
-  // TODO: this code is in the wrong place. Should be in the Representation and RepresentationWrapper objects
-
-  def unmarshallXml(marshalledData: String): R = {
+  def unmarshalXml(marshalledData: String): R = {
 
     val context = JAXBContext.newInstance(typeR)
     val representation = context.createUnmarshaller().unmarshal(
@@ -67,7 +63,7 @@ class Resource[
     representation // Return the representation
   }
 
-  def unmarshallWrapperXml(marshalledData: String): List[R] = {
+  def unmarshalWrapperXml(marshalledData: String): List[R] = {
 
     val context = JAXBContext.newInstance(typeRW)
     val wrapper = context.createUnmarshaller().unmarshal(
@@ -139,8 +135,7 @@ class Resource[
   def getUri(uri: String): (Int, Either[R, List[R]], Boolean) = {
     val (code, responseString) = client.execute(slug, HttpMethods.GET, uri) // Execute the API call using GET. Injected dependency using Cake pattern
 
-    val representationList = unmarshallWrapperXml(responseString)
-    // val representationList = typeR.getClass(responseString)
+    val representationList = unmarshalWrapperXml(responseString)
 
     (code, Right(representationList), false) // TODO need to add in error handling etc
   }
