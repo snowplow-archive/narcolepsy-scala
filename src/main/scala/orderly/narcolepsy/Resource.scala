@@ -51,6 +51,10 @@ class Resource[
 
   // -------------------------------------------------------------------------------------------------------------------
   // Marshalling and unmarshalling logic
+  //
+  // Note: I (Alex) tried to move these unmarshalling methods to the Representation and
+  // RepresentationWrapper (a la http://stackoverflow.com/questions/7616692/how-can-i-invoke-the-constructor-of-a-scala-abstract-type
+  // but couldn't figure out how to achieve it
   // -------------------------------------------------------------------------------------------------------------------
 
   def unmarshalXml(marshalledData: String): R = {
