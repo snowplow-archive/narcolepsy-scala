@@ -28,7 +28,11 @@ import org.apache.http.client.entity.UrlEncodedFormEntity
 import org.apache.http.impl.client._
 import org.apache.http.protocol.HTTP
 
+// Scala
+import scala.io.Source
+
 // Orderly
+import orderly.narcolepsy._
 import orderly.narcolepsy.utils._
 
 class ApacheHttpClientAdapter extends HttpAdapter {
@@ -49,10 +53,10 @@ class ApacheHttpClientAdapter extends HttpAdapter {
     // Construct the right type of HttpRequest object for our given HttpMethod,
     // and validate that our requestData payload is set appropriately
     val request = (requestMethod, requestData) match {
-      case (GetMethod,    _)      => HttpGet(requestUri)      // _ because a GET action may have a payload
-      case (DeleteMethod, _)      => HttpDelete(requestUri)   // _ because a DELETE action may have a payload
-      case (PutMethod, Some(d))   => HttpPut(requestUri)
-      case (PostMethod,Some(d))   => HttpPost(requestUri)
+      case (GetMethod,    _)      => new HttpGet(requestUri)      // _ because a GET action may have a payload
+      case (DeleteMethod, _)      => new HttpDelete(requestUri)   // _ because a DELETE action may have a payload
+      case (PutMethod, Some(d))   => new HttpPut(requestUri)
+      case (PostMethod,Some(d))   => new HttpPost(requestUri)
       case (PutMethod, None)      => throw new HttpAdapterException("Request data missing for HTTP PUT action")
       case (PutMethod, None)      => throw new HttpAdapterException("Request data missing for HTTP POST action")
       case _                      => throw new HttpAdapterException("Http action not supported")
@@ -61,7 +65,7 @@ class ApacheHttpClientAdapter extends HttpAdapter {
     // Configure the authentication
     httpClient.getCredentialsProvider().setCredentials(
       new AuthScope(request.getURI.getHost, request.getURI.getPort),
-      new UsernamePasswordCredentials(apiKey, "")
+      new UsernamePasswordCredentials("username TODO", "password TODO") // TODO need to set these to vars
     )
 
     // Attach the XML to the request if we have some - how we pass it in depends on whether it's a POST or PUT
@@ -74,7 +78,7 @@ class ApacheHttpClientAdapter extends HttpAdapter {
 
     // Execute the request and retrieve the response code and headers
     val response = httpClient.execute(request)
-    val code = check(response.getStatusLine())
+    val code = response.getStatusLine().getStatusCode() // TODO are we throwing away any info here?
     val headers = response.getAllHeaders()
 
     // Now get the response body if we have one

@@ -13,6 +13,7 @@
 package orderly.narcolepsy.adapters
 
 // Orderly
+import orderly.narcolepsy._
 import orderly.narcolepsy.utils.HttpMethod
 
 trait HttpAdapter {
