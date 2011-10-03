@@ -12,41 +12,24 @@
  */
 package orderly.narcolepsy
 
-// Java
-// import java.io.StringReader
-
-// JAXB and XML
-// import javax.xml.bind.JAXBContext
-import javax.xml.bind.JAXBElement
-// import javax.xml.transform.stream.StreamSource
-
-// Spray
-import cc.spray._
-import http._ // To get HttpRequest etc
-import client._
-
 // Orderly
 import orderly.narcolepsy._
 import representations._
 import utils._
+import adapters._
 
 /**
- * Client is an abstract Narcolepsy class you can use to build an asynchronous client
- * for any well-behaved RESTful API. Client is built on top of spray-client, which in
- * turn is a thin Scala wrapper around Ning's Async Http Client. (The big difference
- * between spray-client and Ning's AHC is that spray-client uses Akka futures for the
- * asynchronous funkiness.)
+ * Client is an abstract Narcolepsy class you can use to build a web services client
+ * for any well-behaved RESTful API. The Narcolepsy Client is designed to be agnostic of
+ * the underlying HTTP library you use. The initial version comes bundled with an adapter
+ * for the Apache HttpClient module; an adapter for spray-client is also in the works.
  *
- * spray-client API docs: http://spray.github.com/spray/api/spray-client/index.html
- * Async Http Client docs: http://sonatype.github.com/async-http-client/apidocs/index.html
+ * The Narcolepsy Client provides a higher-level of abstraction than that typically found in a
+ * RESTful API toolkit like spray-client or Apache HttpClient. Creating an API-specific client
+ * using Narcolepsy should be as simple as providing some configuration variables, generating
+ * the JAXB representation definitions and mapping those representations to resource slugs.
  *
- * NarcolepsyClient provides a higher-level of abstraction than that typically found in a
- * RESTful API toolkit like spray-client or AHC. Creating an API-specific client using
- * Narcolepsy is as simple as providing some configuration variables, generating the JAXB
- * representation definitions and mapping those representations to resource slugs.
- *
- * NarcolepsyClient is licensed under the Apache License, Version 2.0 - the same
- * as spray-client and the Async Http Client.
+ * Narcolepsy is licensed under the Apache License, Version 2.0.
  *
  * For a better understanding of RESTful web service clients, please read XXX
  *
@@ -57,6 +40,9 @@ abstract class Client(
   val contentType:  Option[String],
   val username:     String,
   val password:     String) {
+
+  // Dependency injection for an HttpAdapter
+  this: HttpAdapter =>
 
   // TODO: let's use the Cake pattern to decouple all of this from the HttpClient implementation
   // TODO: http://jonasboner.com/2008/10/06/real-world-scala-dependency-injection-di.html
@@ -122,49 +108,16 @@ abstract class Client(
   }
 
   // -------------------------------------------------------------------------------------------------------------------
-  // Actual HTTP client constructor
+  // Set additional variables
   // -------------------------------------------------------------------------------------------------------------------
 
+  // How the client should identify itself to the RESTful API
   val userAgent = "%s/%s [NarcolepsyClient]".format(clientName, clientVersion)
-  httpAdapter.initialize(username, password, userAgent)
-
-  // -------------------------------------------------------------------------------------------------------------------
-  // The actual execute method which runs the GET, POST etc methods
-  // -------------------------------------------------------------------------------------------------------------------
-
-  /**
-   * Handles an HTTP request to the web service.
-   * @param method HttpMethod to apply to this request
-   * @param requestUri Relative path to resource. Attach rootUri to get the absolute URI
-   * @return A RestfulResponse object
-   */
-  def execute(
-    resource: String,
-    requestMethod: HttpMethod,
-    requestUri: String): (Int, String) = {
-
-    // TODO: let's add in the Accept header based on the contentType requested
-    val request = new HttpRequest(
-      method = requestMethod,
-      uri = apiUri + requestUri,
-      headers = Nil,
-      content = None, // TODO: this needs to be configurable
-      remoteHost = None, // TODO: what is this?
-      version = None // TODO: what is this?
-    )
-    val future = client.dispatch(request)
-    val responseString = scala.io.Source.fromInputStream(future.get.content.get.inputStream).mkString("") // Blocking TODO: make this async capable
-
-    Console.println(">>>>>>>>>>" + responseString + "<<<<<<<<")
-
-     // Return the response code and data
-    (200, responseString) // TODO: populate with proper values
-  }
 }
 
 /**
- * Flags an exception in the configuration of a client - i.e. the extending of the
- * abstract Client class above
+ * Flags an exception in the configuration of a client - i.e. the subclassing of the
+ * Client abstract class above
  */
 class ClientConfigurationException(message: String = "") extends RuntimeException(message) {
 }

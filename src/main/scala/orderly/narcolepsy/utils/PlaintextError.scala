@@ -12,7 +12,7 @@
  */
 package orderly.narcolepsy.utils
 
-// Scala
+// Orderly
 import orderly.narcolepsy.Representation
 
 class PlaintextError extends Representation {

@@ -38,6 +38,8 @@ class Resource[
   typeRW: Class[_ <: RepresentationWrapper]
   ) {
 
+  // TODO: can I substitute R and RW above?
+
   // Private var to hold the client used to access this resource
   private var client: Client = _
 
@@ -133,11 +135,15 @@ class Resource[
    * @return RESTful response from the API
    */
   def getUri(uri: String): GetResponse[R] = {
-    val (code, responseString) = client.execute(slug, HttpMethods.GET, uri) // Execute the API call using GET. Injected dependency using Cake pattern
+    val (code, headers, body) = client.execute(GetMethod, None, uri) // Execute the API call using GET. Injected dependency using Cake pattern
 
-    val representationList = unmarshalWrapperXml(responseString)
+    // TODO: add some validation / error handling
+    val isError = false // TODO placeholder for now
 
-    (code, Right(representationList), false) // TODO need to add in error handling etc
+    val representationList = unmarshalWrapperXml(body)
+
+    // Return the GetResponse Tuple3
+    (code, Right(representationList), isError) // TODO: add Left() in here too
   }
 
   // -------------------------------------------------------------------------------------------------------------------
@@ -159,7 +165,7 @@ class Resource[
    * @param resource The type of resource to delete (e.g. "orders")
    * @param ids An array of IDs of this resource type, to delete
    */
-  // TODO: this is PrestaShop-specific behaviour
+  // TODO: this is PrestaShop-specific behaviour, need to sort this out
   def delete(ids: Array[String]): DeleteResponse[R] =
     deleteUri(slug + "/?id=[%s]".format(ids.mkString(",")))
 
@@ -169,6 +175,13 @@ class Resource[
    */
   def deleteUri(uri: String): DeleteResponse[R] = {
 
-    (200, None, false) // Placeholder for now
+    // Perform the DELETE
+    val (code, headers, body) = client.execute(DeleteMethod, None, uri)
+
+    // TODO: add some validation & error handling
+    val isError = false // TODO placeholder for now
+
+    // Return the DeleteResponse Tuple3
+    (code, None, isError) // TODO: update with something other than None
   }
 }

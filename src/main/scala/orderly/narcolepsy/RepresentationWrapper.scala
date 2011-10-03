@@ -19,7 +19,7 @@ package orderly.narcolepsy
  * Scala class that has been marshalled from XML/JSON/whatever by JAXB, Jackson
  * or similar.
  */
-abstract class RepresentationWrapper extends Representation {
+trait RepresentationWrapper extends Representation {
 
   /**
    * Every Wrapper should implement the toList method to turn the

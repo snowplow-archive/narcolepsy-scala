@@ -27,7 +27,7 @@ import javax.xml.bind.Marshaller
  * Scala class that has been marshalled from XML/JSON/whatever by JAXB, Jackson
  * or similar.
  */
-abstract class Representation {
+trait Representation {
 
   /**
    * Marshals this representation into XML

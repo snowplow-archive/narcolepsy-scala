@@ -12,7 +12,33 @@
  */
 package orderly.narcolepsy.adapters
 
+// Orderly
+import orderly.narcolepsy.utils.HttpMethod
+
 trait HttpAdapter {
 
-  def initialize()
+  /**
+   * Initialises the Apache HttpClient with configuration variables
+   * @param username Username to authenticate this request
+   * @param password Password to authenticate this request
+   * @param userAgent Identifies this client to the API
+   */
+  def initialize(username: String, password: String, userAgent: String)
+
+  /**
+   * Handles an HTTP request to the web service
+   * @param requestMethod HttpMethod to apply to this request
+   * @param requestData The payload
+   * TODO: shouldn't be a String, should be a list of something.
+   * @param requestUri Relative path to resource. Attach rootUri to get the absolute URI
+   * @return The RestfulResponse (response code, response body and response header)
+   */
+  def execute(requestMethod: HttpMethod, requestData: Option[String], requestUri: String): RestfulResponse
+}
+
+/**
+ * Flags an exception in the configuration of an HTTP library adapter - i.e. a subclass of the
+ * above trait
+ */
+class HttpAdapterException(message: String = "") extends RuntimeException(message) {
 }

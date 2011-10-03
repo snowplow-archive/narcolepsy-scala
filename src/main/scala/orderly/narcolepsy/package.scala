@@ -30,10 +30,22 @@ package object narcolepsy {
   // API response types
   // -------------------------------------------------------------------------------------------------------------------
 
-  // Response from a GET request
+  // Raw response (prior to massaging into one of the below types)
+  // 1. Return code
+  // 2. Response body
+  // 3. Response headers
+  type RestfulResponse = (Int, List[String], String)
+
+  // Response from a GET request:
+  // 1. Return code
+  // 2. Either a subclass of Representation or a List of the same
+  // 3. Is the Representation an error Representation?
   type GetResponse[R] = (Int, Either[R, List[R]], Boolean)
 
   // Response from a DELETE request
+  // 1. Return code
+  // 2. Either None (no news is good news) or a subclass of Representation
+  // 3. Is the Representation an error Representation?
   type DeleteResponse[R] = (Int, Option[R], Boolean)
 
   // -------------------------------------------------------------------------------------------------------------------
@@ -43,8 +55,6 @@ package object narcolepsy {
   // Simple synonym for the API parameters
   type RestfulParams = Map[String, String]
 
-  // To store a version of REST client or server
+  // To identify a REST server/client version
   type RestfulVersion = DefaultArtifactVersion
-
-
 }
