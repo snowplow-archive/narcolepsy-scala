@@ -18,14 +18,6 @@ import orderly.narcolepsy.utils.HttpMethod
 trait HttpAdapter {
 
   /**
-   * Initialises the Apache HttpClient with configuration variables
-   * @param username Username to authenticate this request
-   * @param password Password to authenticate this request
-   * @param userAgent Identifies this client to the API
-   */
-  def initialize(username: String, password: String, userAgent: String)
-
-  /**
    * Handles an HTTP request to the web service
    * @param requestMethod HttpMethod to apply to this request
    * @param requestData The payload
