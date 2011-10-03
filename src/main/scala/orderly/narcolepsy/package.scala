@@ -34,7 +34,7 @@ package object narcolepsy {
   // 1. Return code
   // 2. Response body
   // 3. Response headers
-  type RestfulResponse = (Int, List[String], String)
+  type RestfulResponse = (Int, List[String], Option[String])
 
   // Response from a GET request:
   // 1. Return code

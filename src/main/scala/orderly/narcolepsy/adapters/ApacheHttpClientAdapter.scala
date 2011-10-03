@@ -58,7 +58,7 @@ class ApacheHttpClientAdapter extends HttpAdapter {
       case (PutMethod, Some(d))   => new HttpPut(requestUri)
       case (PostMethod,Some(d))   => new HttpPost(requestUri)
       case (PutMethod, None)      => throw new HttpAdapterException("Request data missing for HTTP PUT action")
-      case (PutMethod, None)      => throw new HttpAdapterException("Request data missing for HTTP POST action")
+      case (PostMethod, None)     => throw new HttpAdapterException("Request data missing for HTTP POST action")
       case _                      => throw new HttpAdapterException("Http action not supported")
     } // TODO: move to spray-style HttpMethod.GET structure so we can specify the unsupported verb in the error message
 
@@ -89,6 +89,7 @@ class ApacheHttpClientAdapter extends HttpAdapter {
     }
 
     // Finally let's return the RestfulResponse
-    (code, headers, data)
+    // TODO: headers not working
+    (code, Nil, data)
   }
 }

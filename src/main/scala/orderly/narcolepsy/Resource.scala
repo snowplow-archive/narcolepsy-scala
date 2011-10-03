@@ -23,7 +23,8 @@ import cc.spray._
 import http._ // To get HttpRequest etc
 
 // Orderly
-import utils.RestfulHelpers
+import adapters._
+import utils._
 
 /**
  * Resource defines a mapping from a URL slug (e.g. "products") to a Representation object.
@@ -36,7 +37,7 @@ class Resource[
   slug: String,
   typeR:  Class[_ <: Representation],
   typeRW: Class[_ <: RepresentationWrapper]
-  ) {
+  ) extends ApacheHttpClientAdapter { // TODO: how to generalise this? Maybe move it to a var
 
   // TODO: can I substitute R and RW above?
 
@@ -135,12 +136,12 @@ class Resource[
    * @return RESTful response from the API
    */
   def getUri(uri: String): GetResponse[R] = {
-    val (code, headers, body) = client.execute(GetMethod, None, uri) // Execute the API call using GET. Injected dependency using Cake pattern
+    val (code, headers, body) = execute(GetMethod, None, uri) // Execute the API call using GET. Injected dependency using Cake pattern
 
     // TODO: add some validation / error handling
     val isError = false // TODO placeholder for now
 
-    val representationList = unmarshalWrapperXml(body)
+    val representationList = unmarshalWrapperXml(body.get)
 
     // Return the GetResponse Tuple3
     (code, Right(representationList), isError) // TODO: add Left() in here too
@@ -176,7 +177,7 @@ class Resource[
   def deleteUri(uri: String): DeleteResponse[R] = {
 
     // Perform the DELETE
-    val (code, headers, body) = client.execute(DeleteMethod, None, uri)
+    val (code, headers, body) = execute(DeleteMethod, None, uri)
 
     // TODO: add some validation & error handling
     val isError = false // TODO placeholder for now
