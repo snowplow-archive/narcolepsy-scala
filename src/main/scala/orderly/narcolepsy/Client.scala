@@ -56,8 +56,10 @@ abstract class Client(
   val rootUri:      Option[String],
   val contentType:  Option[String],
   val username:     String,
-  val password:     String) { // TODO: change contentType to a Spray variable
-                              // TODO: make a more general authentication input
+  val password:     String) {
+
+  // TODO: let's use the Cake pattern to decouple all of this from the HttpClient implementation
+  // TODO: http://jonasboner.com/2008/10/06/real-world-scala-dependency-injection-di.html
 
   // -------------------------------------------------------------------------------------------------------------------
   // Need to populate the below vals to define a new NarcolepsyClient
@@ -123,12 +125,8 @@ abstract class Client(
   // Actual HTTP client constructor
   // -------------------------------------------------------------------------------------------------------------------
 
-  // Finally build an asynchronous spray-client with custom configuration options
-  val client = new HttpClient(ClientConfig(
-    requestTimeoutInMs = 500,
-    userAgent = "%s/%s [NarcolepsyClient]".format(clientName, clientVersion),
-    useRawUrl = false
-  ))
+  val userAgent = "%s/%s [NarcolepsyClient]".format(clientName, clientVersion)
+  httpAdapter.initialize(username, password, userAgent)
 
   // -------------------------------------------------------------------------------------------------------------------
   // The actual execute method which runs the GET, POST etc methods
