@@ -43,7 +43,7 @@ class NarcolepsyProject(info: ProjectInfo) extends DefaultProject(info) {
   // Extra resources to include in the .jar
   // -------------------------------------------------------------------------------------------------------------------
 
-  // Include Apache license and README file
+  // Include Apache 2 license and README file
   def extraResources = "LICENSE-2.0.txt" +++ "README.markdown"
   override def mainResources = super.mainResources +++ extraResources
 }
