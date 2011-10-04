@@ -17,3 +17,6 @@ import orderly.narcolepsy.Representation
 
 class PlaintextError extends Representation {
 }
+
+// TODO: add in error message
+// TODO: add in source (as an error message can originate within Narcolepsy)

@@ -18,10 +18,6 @@ import java.io.StringReader
 // JAXB and XML
 import javax.xml.bind.JAXBContext
 
-// Spray
-import cc.spray._
-import http._ // To get HttpRequest etc
-
 // Orderly
 import adapters._
 import utils._
@@ -87,7 +83,7 @@ class Resource[
    * @return RESTful response from the API
    */
   def get(): GetResponse[R] =
-    get(None, None)
+    get(None, None, true) // Expecting a wrapper representation (plural) back
 
   /**
    * Retrieve (GET) a resource, self-assembly version with parameters
@@ -95,7 +91,7 @@ class Resource[
    * @return RESTful response from the API
    */
   def get(params: RestfulParams): GetResponse[R] =
-    get(None, Some(params))
+    get(None, Some(params), false) // Not expecting a wrapper representation back
 
   /**
    * Retrieve (GET) a resource, self-assembly version without parameters
@@ -103,7 +99,7 @@ class Resource[
    * @return RESTful response from the API
    */
   def get(id: String): GetResponse[R] =
-    get(Some(id), None)
+    get(Some(id), None, false) // Not expecting a wrapper back
 
   /**
    * Retrieve (GET) a resource, self-assembly version with parameters
@@ -112,37 +108,45 @@ class Resource[
    * @return RESTful response from the API
    */
   def get(id: String, params: RestfulParams): GetResponse[R] =
-    get(Some(id), Some(params))
+    get(Some(id), Some(params), false) // Not expecting a wrapper back
 
   /**
-   * Retrieve (GET) a resource, helper version using Options
+   * Retrieve (GET) a resource, master version using Options (not invoked directly)
    * @param id Optional resource ID to retrieve
    * @param params Optional Map of parameters (one or more of 'filter', 'display', 'sort', 'limit')
    * @return RESTful response from the API
    */
-  protected def get(id: Option[String], params: Option[RestfulParams]): GetResponse[R] = {
+  protected def get(id: Option[String], params: Option[RestfulParams], isWrapper: Boolean): GetResponse[R] = {
     getUri(
-      slug +
+      (slug +
       (if (id.isDefined) "/%s".format(id.get) else "") +
-      (if (params.isDefined) "?%s".format(RestfulHelpers.canonicalize(params.get)) else "")
+      (if (params.isDefined) "?%s".format(RestfulHelpers.canonicalize(params.get)) else "")),
+      isWrapper
     )
   }
 
   /**
    * Retrieve (GET) a resource, URL version
    * @param uri A URL which explicitly sets the resource type, ID(s) and parameters to retrieve
+   * @param wrapped Whether the returned representation will be a wrapper representation or a singular one
    * @return RESTful response from the API
    */
-  def getUri(uri: String): GetResponse[R] = {
+  def getUri(uri: String, wrapped: Boolean): GetResponse[R] = {
     val (code, headers, body) = execute(GetMethod, None, uri) // Execute the API call using GET. Injected dependency using Cake pattern
 
     // TODO: add some validation / error handling
-    val isError = false // TODO placeholder for now
+    val errored = false // TODO placeholder for now
 
-    val representationList = unmarshalWrapperXml(body.get)
+    // Whether we unmarshal a singular representation or a representation wrapper depends on wrapped:
+    val r = if (wrapped) {
+      Right(unmarshalWrapperXml(body.get))
+    } else {
+      Left(unmarshalXml(body.get))
+    }
+    // TODO: add some validation / error handling
 
     // Return the GetResponse Tuple3
-    (code, Right(representationList), isError) // TODO: add Left() in here too
+    (code, r, errored)
   }
 
   // -------------------------------------------------------------------------------------------------------------------
@@ -178,9 +182,9 @@ class Resource[
     val (code, headers, body) = execute(DeleteMethod, None, uri)
 
     // TODO: add some validation & error handling
-    val isError = false // TODO placeholder for now
+    val errored = false // TODO placeholder for now
 
     // Return the DeleteResponse Tuple3
-    (code, None, isError) // TODO: update with something other than None
+    (code, None, errored) // TODO: update with something other than None
   }
 }
