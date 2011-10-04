@@ -33,7 +33,7 @@ class Resource[
   slug: String,
   typeR:  Class[R],
   typeRW: Class[RW]
-  ) extends ApacheHttpClientAdapter { // TODO: how to generalise this? Maybe move it to a var
+  ) {
 
   // Private var to hold the client used to access this resource
   private var client: Client = _
@@ -132,7 +132,7 @@ class Resource[
    * @return RESTful response from the API
    */
   def getUri(uri: String, wrapped: Boolean): GetResponse[R] = {
-    val (code, headers, body) = execute(GetMethod, None, uri) // Execute the API call using GET. Injected dependency using Cake pattern
+    val (code, headers, body) = client.execute(GetMethod, None, uri) // Execute the API call using GET. Injected dependency using Cake pattern
 
     // TODO: add some validation / error handling
     val errored = false // TODO placeholder for now
@@ -179,7 +179,7 @@ class Resource[
   def deleteUri(uri: String): DeleteResponse[R] = {
 
     // Perform the DELETE
-    val (code, headers, body) = execute(DeleteMethod, None, uri)
+    val (code, headers, body) = client.execute(DeleteMethod, None, uri)
 
     // TODO: add some validation & error handling
     val errored = false // TODO placeholder for now

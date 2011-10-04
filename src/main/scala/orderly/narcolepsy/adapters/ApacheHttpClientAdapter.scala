@@ -35,7 +35,12 @@ import scala.io.Source
 import orderly.narcolepsy._
 import orderly.narcolepsy.utils._
 
-class ApacheHttpClientAdapter extends HttpAdapter {
+trait ApacheHttpClientAdapter extends HttpAdapter {
+
+  self: {
+    val username: String
+    val password: String
+  } =>
 
   // Private immutable copy of an Apache HttpClient, we use this to access the API
   private val httpClient = new DefaultHttpClient

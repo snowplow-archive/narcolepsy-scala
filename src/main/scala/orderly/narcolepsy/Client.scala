@@ -39,10 +39,7 @@ abstract class Client(
   val rootUri:      Option[String],
   val contentType:  Option[String],
   val username:     String,
-  val password:     String) {
-
-  // Dependency injection for an HttpAdapter
-  this: HttpAdapter =>
+  val password:     String) extends HttpAdapter {
 
   // TODO: let's use the Cake pattern to decouple all of this from the HttpClient implementation
   // TODO: http://jonasboner.com/2008/10/06/real-world-scala-dependency-injection-di.html
