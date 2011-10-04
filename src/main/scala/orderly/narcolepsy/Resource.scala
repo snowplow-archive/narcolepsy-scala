@@ -35,11 +35,9 @@ class Resource[
   R  <: Representation,
   RW <: RepresentationWrapper](
   slug: String,
-  typeR:  Class[_ <: Representation],
-  typeRW: Class[_ <: RepresentationWrapper]
+  typeR:  Class[R],
+  typeRW: Class[RW]
   ) extends ApacheHttpClientAdapter { // TODO: how to generalise this? Maybe move it to a var
-
-  // TODO: can I substitute R and RW above?
 
   // Private var to hold the client used to access this resource
   private var client: Client = _
