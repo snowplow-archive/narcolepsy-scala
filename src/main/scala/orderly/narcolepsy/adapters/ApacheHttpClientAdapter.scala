@@ -37,6 +37,7 @@ import orderly.narcolepsy.utils._
 
 trait ApacheHttpClientAdapter extends HttpAdapter {
 
+  // Borrow these from the Client...
   self: {
     val username: String
     val password: String

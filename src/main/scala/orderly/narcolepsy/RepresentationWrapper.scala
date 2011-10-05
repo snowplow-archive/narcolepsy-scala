@@ -12,14 +12,8 @@
  */
 package orderly.narcolepsy
 
-/**
- * Representation is the parent class for all representations handled by
- * NarcolepsyClient. A representation is REST speak for the instantiated form
- * of a REST resource. For the purposes of Narcolepsy, a Representation is a
- * Scala class that has been marshalled from XML/JSON/whatever by JAXB, Jackson
- * or similar.
- */
-trait RepresentationWrapper extends Representation {
+// As per http://stackoverflow.com/questions/7666759/can-i-use-a-type-bound-on-a-scala-abstract-method-and-then-tighten-up-the-defin
+trait Wraps[+R <: Representation] {
 
   /**
    * Every Wrapper should implement the toList method to turn the
@@ -30,5 +24,14 @@ trait RepresentationWrapper extends Representation {
    * error where I call toList on account of this problem:
    * http://scala-programming-language.1934581.n4.nabble.com/Surprising-type-mismatch-with-generics-td2257197.html
    */
-  def toList[R <: Representation]: List[R]
+  def toList: List[R]
 }
+
+/**
+ * Representation is the parent class for all representations handled by
+ * NarcolepsyClient. A representation is REST speak for the instantiated form
+ * of a REST resource. For the purposes of Narcolepsy, a Representation is a
+ * Scala class that has been marshalled from XML/JSON/whatever by JAXB, Jackson
+ * or similar.
+ */
+abstract class RepresentationWrapper extends Wraps[Representation]

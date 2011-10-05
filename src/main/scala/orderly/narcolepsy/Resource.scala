@@ -29,10 +29,10 @@ import utils._
  */
 class Resource[
   R  <: Representation,
-  RW <: RepresentationWrapper](
+  RW <: RepresentationWrapper with Wraps[R]](
   slug: String,
-  typeR:  Class[R],
-  typeRW: Class[RW]
+  typeR:  Class[_ <: Representation],
+  typeRW: Class[_ <: RepresentationWrapper]
   ) {
 
   // Private var to hold the client used to access this resource
@@ -116,12 +116,12 @@ class Resource[
    * @param params Optional Map of parameters (one or more of 'filter', 'display', 'sort', 'limit')
    * @return RESTful response from the API
    */
-  protected def get(id: Option[String], params: Option[RestfulParams], isWrapper: Boolean): GetResponse[R] = {
+  protected def get(id: Option[String], params: Option[RestfulParams], wrapped: Boolean): GetResponse[R] = {
     getUri(
       (slug +
       (if (id.isDefined) "/%s".format(id.get) else "") +
       (if (params.isDefined) "?%s".format(RestfulHelpers.canonicalize(params.get)) else "")),
-      isWrapper
+      wrapped
     )
   }
 
