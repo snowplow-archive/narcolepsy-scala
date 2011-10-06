@@ -13,7 +13,7 @@
 package orderly.narcolepsy
 
 // As per http://stackoverflow.com/questions/7666759/can-i-use-a-type-bound-on-a-scala-abstract-method-and-then-tighten-up-the-defin
-trait Wraps[+R <: Representation] {
+trait Listable[+R <: Representation] {
 
   /**
    * Every Wrapper should implement the toList method to turn the
@@ -34,4 +34,4 @@ trait Wraps[+R <: Representation] {
  * Scala class that has been marshalled from XML/JSON/whatever by JAXB, Jackson
  * or similar.
  */
-abstract class RepresentationWrapper extends Wraps[Representation]
+abstract class RepresentationWrapper extends Listable[Representation]

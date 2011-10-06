@@ -29,7 +29,7 @@ import utils._
  */
 class Resource[
   R  <: Representation,
-  RW <: RepresentationWrapper with Wraps[R]](
+  RW <: RepresentationWrapper with Listable[R]](
   slug: String,
   typeR:  Class[_ <: Representation],
   typeRW: Class[_ <: RepresentationWrapper]
