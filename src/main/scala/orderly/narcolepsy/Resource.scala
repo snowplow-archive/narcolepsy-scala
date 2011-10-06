@@ -31,8 +31,8 @@ class Resource[
   R  <: Representation,
   RW <: RepresentationWrapper with Listable[R]](
   slug: String,
-  typeR:  Class[_ <: Representation],
-  typeRW: Class[_ <: RepresentationWrapper]
+  typeR:  Class[_ <: Representation], // TODO: can I change this?
+  typeRW: Class[_ <: RepresentationWrapper] // TODO: can I change this?
   ) {
 
   // Private var to hold the client used to access this resource

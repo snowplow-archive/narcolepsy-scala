@@ -12,6 +12,9 @@
  */
 package orderly.narcolepsy
 
+// Scala
+import scala.collection.mutable.ArrayBuffer
+
 // As per http://stackoverflow.com/questions/7666759/can-i-use-a-type-bound-on-a-scala-abstract-method-and-then-tighten-up-the-defin
 trait Listable[+R <: Representation] {
 
@@ -25,13 +28,20 @@ trait Listable[+R <: Representation] {
    * http://scala-programming-language.1934581.n4.nabble.com/Surprising-type-mismatch-with-generics-td2257197.html
    */
   def toList: List[R]
+
+  // http://stackoverflow.com/questions/663254/scala-covariance-contravariance-question
+  // def fromList[L >: R](representations: List[L])
+
+  // And bear with me again <sorry>
+  protected def arrayBufferFromList[L <: Representation](list: List[L]): ArrayBuffer[L] = {
+    val ab = new ArrayBuffer[L]
+    ab ++= list
+    ab
+  }
 }
 
 /**
- * Representation is the parent class for all representations handled by
- * NarcolepsyClient. A representation is REST speak for the instantiated form
- * of a REST resource. For the purposes of Narcolepsy, a Representation is a
- * Scala class that has been marshalled from XML/JSON/whatever by JAXB, Jackson
- * or similar.
+ * RepresentationWrapper is a subclass of Representation (to get the marshalling goodness),
+ * designed to hold a list of individual Representations.
  */
-abstract class RepresentationWrapper extends Listable[Representation]
+abstract class RepresentationWrapper extends Representation with Listable[Representation]
