@@ -41,6 +41,7 @@ trait ApacheHttpClientAdapter extends HttpAdapter {
   self: {
     val username: String
     val password: String
+    val apiUri:   String
   } =>
 
   // Private immutable copy of an Apache HttpClient, we use this to access the API
@@ -56,13 +57,15 @@ trait ApacheHttpClientAdapter extends HttpAdapter {
    */
   def execute(requestMethod: HttpMethod, requestData: Option[String], requestUri: String): RestfulResponse = {
 
+    val uri = apiUri + "/" + requestUri
+
     // Construct the right type of HttpRequest object for our given HttpMethod,
     // and validate that our requestData payload is set appropriately
     val request = (requestMethod, requestData) match {
-      case (GetMethod,    _)      => new HttpGet(requestUri)      // _ because a GET action may have a payload
-      case (DeleteMethod, _)      => new HttpDelete(requestUri)   // _ because a DELETE action may have a payload
-      case (PutMethod, Some(d))   => new HttpPut(requestUri)
-      case (PostMethod,Some(d))   => new HttpPost(requestUri)
+      case (GetMethod,    _)      => new HttpGet(uri)      // _ because a GET action may have a payload
+      case (DeleteMethod, _)      => new HttpDelete(uri)   // _ because a DELETE action may have a payload
+      case (PutMethod, Some(d))   => new HttpPut(uri)
+      case (PostMethod,Some(d))   => new HttpPost(uri)
       case (PutMethod, None)      => throw new HttpAdapterException("Request data missing for HTTP PUT action")
       case (PostMethod, None)     => throw new HttpAdapterException("Request data missing for HTTP POST action")
       case _                      => throw new HttpAdapterException("Http action not supported")
