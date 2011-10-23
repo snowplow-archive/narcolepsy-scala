@@ -22,6 +22,7 @@ import javax.xml.bind.Marshaller
 
 // Jackson
 import org.codehaus.jackson.map._
+import org.codehaus.jackson.map.introspect._
 import org.codehaus.jackson.xc._
 
 /**
@@ -61,8 +62,11 @@ abstract class Representation {
     val mapper = new ObjectMapper()
     // mapper.configure(SerializationConfig.Feature.WRAP_ROOT_VALUE, false)
 
-    val introspector = new JaxbAnnotationIntrospector()
-    mapper.getSerializationConfig().withAnnotationIntrospector(introspector)
+    val introspectorPair = new AnnotationIntrospector.Pair(
+      new JacksonAnnotationIntrospector(),
+      new JaxbAnnotationIntrospector()
+    )
+    mapper.getSerializationConfig().withAnnotationIntrospector(introspectorPair)
 
     val writer = mapper.defaultPrettyPrintingWriter
     writer.writeValueAsString(this)
