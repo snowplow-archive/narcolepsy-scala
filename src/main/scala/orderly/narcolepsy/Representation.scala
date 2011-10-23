@@ -52,14 +52,14 @@ abstract class Representation {
 
     // First determine whether we should be showing a root value, aka a "top level segment",
     // as per http://stackoverflow.com/questions/5728276/jackson-json-top-level-segment-inclusion
-    val wrapRootValue = this match {
+    /* val wrapRootValue = this match {
       case r:RepresentationWrapper => true // Yes include a root value wrapper
       case _ => false
-    }
+    } */
 
     // Define the Jackson mapper and configure it
     val mapper = new ObjectMapper()
-    mapper.configure(SerializationConfig.Feature.WRAP_ROOT_VALUE, wrapRootValue)
+    // mapper.configure(SerializationConfig.Feature.WRAP_ROOT_VALUE, false)
 
     val introspector = new JaxbAnnotationIntrospector()
     mapper.getSerializationConfig().withAnnotationIntrospector(introspector)
