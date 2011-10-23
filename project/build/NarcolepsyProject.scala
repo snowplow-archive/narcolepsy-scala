@@ -30,6 +30,16 @@ class NarcolepsyProject(info: ProjectInfo) extends DefaultProject(info) {
   val scalajCollection = "org.scalaj" %% "scalaj-collection" % "1.1"
 
   // -------------------------------------------------------------------------------------------------------------------
+  // Dependencies for using Jackson (JSON serializer/deserializer)
+  // -------------------------------------------------------------------------------------------------------------------
+
+  val jacksonCoreLgpl = "org.codehaus.jackson" % "jackson-core-lgpl" % "1.8.4"
+  val jacksonMapperLgpl = "org.codehaus.jackson" % "jackson-mapper-lgpl" % "1.8.4"
+
+  // Allows Jackson to use JAXB annotations
+  val jacksonXc = "org.codehaus.jackson" % "jackson-xc" % "1.8.4"
+
+  // -------------------------------------------------------------------------------------------------------------------
   // Dependencies for using Apache HttpClient adapter
   // -------------------------------------------------------------------------------------------------------------------
 

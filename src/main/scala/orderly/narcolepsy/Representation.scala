@@ -20,6 +20,10 @@ import java.io.StringReader
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.Marshaller
 
+// Jackson
+import org.codehaus.jackson.map._
+import org.codehaus.jackson.xc._
+
 /**
  * Representation is the parent class for all representations handled by
  * NarcolepsyClient. A representation is REST speak for the instantiated form
@@ -41,33 +45,26 @@ abstract class Representation {
   }
 
   /**
-   * Marshals this representation into JSON
-   * Commented out until decide what to do with
-   * this (but it's in the right place)
+   * Marshals this representation into JSON via Jackson
+   * (using JAXB annotations)
    */
-  /*
-  def marshalToJson[R <: Representation](representation: R, withRoot: Boolean = true) = {
+  def marshalToJson(): String = {
 
-    // Jackson
-    import org.codehaus.jackson.map._
-    import org.codehaus.jackson.xc._
+    // First determine whether we should be showing a root value, aka a "top level segment",
+    // as per http://stackoverflow.com/questions/5728276/jackson-json-top-level-segment-inclusion
+    val wrapRootValue = this match {
+      case r:RepresentationWrapper => true // Yes include a root value wrapper
+      case _ => false
+    }
 
+    // Define the Jackson mapper and configure it
     val mapper = new ObjectMapper()
-    // Include (or not) a top level segment, as per http://stackoverflow.com/questions/5728276/jackson-json-top-level-segment-inclusion
-    // We include if we are marshalling 1 entity (e.g. 1 platform), but exclude if marshalling N entities (e.g. N platforms)
+    mapper.configure(SerializationConfig.Feature.WRAP_ROOT_VALUE, wrapRootValue)
 
-    // TODO: I think we can change this to pattern match Representation vs RepresentationWrapper class
-    mapper.configure(SerializationConfig.Feature.WRAP_ROOT_VALUE, withRoot)
-
-    val introspector = new JaxbAnnotationIntrospector();
-
-    // TODO: the below has been deprecated. What's the new-new approach?
-    // make deserializer use JAXB annotations (only)
-    mapper.getDeserializationConfig().setAnnotationIntrospector(introspector);
-    // make serializer use JAXB annotations (only)
-    mapper.getSerializationConfig().setAnnotationIntrospector(introspector);
+    val introspector = new JaxbAnnotationIntrospector()
+    mapper.getSerializationConfig().withAnnotationIntrospector(introspector)
 
     val writer = mapper.defaultPrettyPrintingWriter
-    writer.writeValueAsString(representation)
-  } */
+    writer.writeValueAsString(this)
+  }
 }
