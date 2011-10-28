@@ -56,6 +56,7 @@ class Resource[
   // Update: maybe structured types would let me do this?
   // -------------------------------------------------------------------------------------------------------------------
 
+  // TODO: add 'From' into this method name
   def unmarshalXml(marshalledData: String): R = {
 
     val context = JAXBContext.newInstance(typeR)
