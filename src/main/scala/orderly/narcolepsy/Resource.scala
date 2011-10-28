@@ -54,6 +54,7 @@ class Resource[
   // but couldn't figure out how to achieve it without massive over-complication. I think they're fine here.
   // -------------------------------------------------------------------------------------------------------------------
 
+  // TODO: rename to unmarshalFromXml
   def unmarshalXml(marshalledData: String): R = {
 
     val context = JAXBContext.newInstance(typeR)
@@ -64,6 +65,7 @@ class Resource[
     representation // Return the representation
   }
 
+  // TODO: rename to unmarshalFromXml
   def unmarshalWrapperXml(marshalledData: String): List[R] = {
 
     val context = JAXBContext.newInstance(typeRW)
