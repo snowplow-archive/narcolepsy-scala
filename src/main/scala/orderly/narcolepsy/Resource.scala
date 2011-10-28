@@ -52,6 +52,8 @@ class Resource[
   // Note: I (Alex) tried to move these unmarshalling methods to the Representation and
   // RepresentationWrapper (a la http://stackoverflow.com/questions/7616692/how-can-i-invoke-the-constructor-of-a-scala-abstract-type )
   // but couldn't figure out how to achieve it without massive over-complication. I think they're fine here.
+  //
+  // Update: maybe structured types would let me do this?
   // -------------------------------------------------------------------------------------------------------------------
 
   // TODO: rename to unmarshalFromXml
