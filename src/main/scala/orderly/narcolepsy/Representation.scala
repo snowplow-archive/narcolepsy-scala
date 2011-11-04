@@ -60,6 +60,8 @@ abstract class Representation {
 
     // Define the Jackson mapper and configure it
     val mapper = new ObjectMapper()
+    // Stack Overflow: 4428109
+
     // mapper.configure(SerializationConfig.Feature.WRAP_ROOT_VALUE, false)
 
     val introspectorPair = new AnnotationIntrospector.Pair(
