@@ -15,6 +15,7 @@ package orderly.narcolepsy
 // Java
 import java.io.StringWriter
 import java.io.StringReader
+import java.text.SimpleDateFormat
 
 // JAXB and XML
 import javax.xml.bind.JAXBContext
@@ -59,8 +60,7 @@ abstract class Representation {
     } */
 
     // Define the Jackson mapper and configure it
-    val mapper = new ObjectMapper()
-    // Stack Overflow: 4428109
+    val om = new ObjectMapper()
 
     // mapper.configure(SerializationConfig.Feature.WRAP_ROOT_VALUE, false)
 
@@ -68,9 +68,10 @@ abstract class Representation {
       new JacksonAnnotationIntrospector(),
       new JaxbAnnotationIntrospector()
     )
-    mapper.getSerializationConfig().withAnnotationIntrospector(introspectorPair)
+    om.getSerializationConfig().setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"))
+    om.getSerializationConfig().withAnnotationIntrospector(introspectorPair)
 
-    val writer = mapper.defaultPrettyPrintingWriter
+    val writer = om.defaultPrettyPrintingWriter
     writer.writeValueAsString(this)
   }
 }
