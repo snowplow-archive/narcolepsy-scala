@@ -68,8 +68,8 @@ abstract class Representation {
       new JaxbAnnotationIntrospector()
     )
 
-    val sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
-    mapper.getSerializationConfig().withDateFormat(sdf).withAnnotationIntrospector(introspectorPair)
+    mapper.getSerializationConfig().setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"))
+    mapper.getSerializationConfig().withAnnotationIntrospector(introspectorPair)
 
     val writer = mapper.defaultPrettyPrintingWriter
     writer.writeValueAsString(this)
