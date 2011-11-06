@@ -54,24 +54,24 @@ abstract class Representation {
 
     // First determine whether we should be showing a root value, aka a "top level segment",
     // as per http://stackoverflow.com/questions/5728276/jackson-json-top-level-segment-inclusion
-    /* val wrapRootValue = this match {
-      case r:RepresentationWrapper => true // Yes include a root value wrapper
-      case _ => false
-    } */
+    val rootKey = this match {
+      case r:RepresentationWrapper => false // Don't include as we get the root key for free
+      case _ => true // Yes include a root key
+    }
 
     // Define the Jackson mapper and configure it
-    val om = new ObjectMapper()
-
-    // mapper.configure(SerializationConfig.Feature.WRAP_ROOT_VALUE, false)
+    val mapper = new ObjectMapper()
+    mapper.configure(SerializationConfig.Feature.WRAP_ROOT_VALUE, rootKey)
 
     val introspectorPair = new AnnotationIntrospector.Pair(
       new JacksonAnnotationIntrospector(),
       new JaxbAnnotationIntrospector()
     )
-    om.getSerializationConfig().setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"))
-    om.getSerializationConfig().withAnnotationIntrospector(introspectorPair)
 
-    val writer = om.defaultPrettyPrintingWriter
+    val sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    mapper.getSerializationConfig().withDateFormat(sdf).withAnnotationIntrospector(introspectorPair)
+
+    val writer = mapper.defaultPrettyPrintingWriter
     writer.writeValueAsString(this)
   }
 }
