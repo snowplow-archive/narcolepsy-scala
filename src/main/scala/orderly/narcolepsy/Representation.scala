@@ -52,17 +52,21 @@ abstract class Representation {
    */
   def marshalToJson(): String = {
 
-    // First determine whether we should be showing a root value, aka a "top level segment",
+    // Define the Jackson mapper and configure it
+    val mapper = new ObjectMapper()
+
+    // Determine whether we should be showing a root value, aka a "top level segment",
     // as per http://stackoverflow.com/questions/5728276/jackson-json-top-level-segment-inclusion
     val rootKey = this match {
       case r:RepresentationWrapper => false // Don't include as we get the root key for free
       case _ => true // Yes include a root key
     }
-
-    // Define the Jackson mapper and configure it
-    val mapper = new ObjectMapper()
     mapper.configure(SerializationConfig.Feature.WRAP_ROOT_VALUE, rootKey)
 
+    // Translates typical camel case Java property names to lower case JSON element names, separated by underscore
+    mapper.setPropertyNamingStrategy(new PropertyNamingStrategy.LowerCaseWithUnderscoresStrategy())
+
+    // Use Jackson annotations first, fall back to JAXB ones
     val introspectorPair = new AnnotationIntrospector.Pair(
       new JacksonAnnotationIntrospector(),
       new JaxbAnnotationIntrospector()
