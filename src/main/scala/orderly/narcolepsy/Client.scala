@@ -14,7 +14,6 @@ package orderly.narcolepsy
 
 // Orderly
 import orderly.narcolepsy._
-import representations._
 import utils._
 import adapters._
 
