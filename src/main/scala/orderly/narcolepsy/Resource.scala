@@ -30,7 +30,9 @@ import utils._
 class Resource[
   R  <: Representation,
   RW <: RepresentationWrapper with Listable[R]](
-  slug: String
+  slug: String,
+  typeR:  Class[R],
+  typeRW: Class[RW]
   ) {
 
   // Private var to hold the client used to access this resource
@@ -109,9 +111,9 @@ class Resource[
 
     // Whether we unmarshal a singular representation or a representation wrapper depends on wrapped:
     val r = if (wrapped) {
-      Right(UnmarshalXml(body.get).toRepresentation[RW])
+      Right(UnmarshalXml(body.get).toRepresentation[RW](typeRW).toList)
     } else {
-      Left(UnmarshalXml(body.get).toRepresentation[R])
+      Left(UnmarshalXml(body.get).toRepresentation[R](typeR))
     }
     // TODO: add some validation / error handling
 

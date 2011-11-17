@@ -28,11 +28,13 @@ import org.codehaus.jackson.xc._
 
 case class UnmarshalXml(xml: String) {
 
-  def toRepresentation[R <: Representation](implicit m: Manifest[R]): R = {
-    JAXBContext.newInstance(m.erasure.asInstanceOf[Class[R]]).createUnmarshaller().unmarshal(
+  def toRepresentation[T <: Representation](implicit m: Manifest[T]): T =
+    toRepresentation[T](m.erasure.asInstanceOf[Class[T]])
+
+  def toRepresentation[T <: Representation](typeT: Class[T]): T =
+    JAXBContext.newInstance(typeT).createUnmarshaller().unmarshal(
       new StringReader(xml)
-    ).asInstanceOf[R]
-  }
+    ).asInstanceOf[T]
 }
 
 case class UnmarshalJson(json: String) {
