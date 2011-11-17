@@ -33,10 +33,8 @@ trait Api {
    * @param slug The URL slug identifying the resource, e.g. "products"
    * @return The instantiated Resource
    */
-  protected def resource[R <: Representation, RW <: RepresentationWrapper with Listable[R]](slug: String)(implicit manifestR: Manifest[R], manifestRW: Manifest[RW]): Resource[R, RW] = {
-    val typeR = manifestR.erasure.asInstanceOf[Class[R]]
-    val typeRW = manifestRW.erasure.asInstanceOf[Class[RW]]
-    val r = new Resource[R, RW](slug, typeR, typeRW) // Return the new Resource
+  protected def resource[R <: Representation, RW <: RepresentationWrapper with Listable[R]](slug: String): Resource[R, RW] = {
+    val r = new Resource[R, RW](slug) // Return the new Resource
     addResource(r)
     r
   }

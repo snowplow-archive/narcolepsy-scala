@@ -30,9 +30,7 @@ import utils._
 class Resource[
   R  <: Representation,
   RW <: RepresentationWrapper with Listable[R]](
-  slug: String,
-  typeR:  Class[R],
-  typeRW: Class[RW]
+  slug: String
   ) {
 
   // Private var to hold the client used to access this resource
@@ -44,38 +42,6 @@ class Resource[
 
   def attachClient(client: Client) {
     this.client = client
-  }
-
-  // -------------------------------------------------------------------------------------------------------------------
-  // Marshalling and unmarshalling logic
-  //
-  // Note: I (Alex) tried to move these unmarshalling methods to the Representation and
-  // RepresentationWrapper (a la http://stackoverflow.com/questions/7616692/how-can-i-invoke-the-constructor-of-a-scala-abstract-type )
-  // but couldn't figure out how to achieve it without massive over-complication. I think they're fine here.
-  //
-  // Update: maybe structured types would let me do this?
-  // -------------------------------------------------------------------------------------------------------------------
-
-  // TODO: rename to unmarshalFromXml
-  def unmarshalXml(marshalledData: String): R = {
-
-    val context = JAXBContext.newInstance(typeR)
-    val representation = context.createUnmarshaller().unmarshal(
-      new StringReader(marshalledData)
-    ).asInstanceOf[R]
-
-    representation // Return the representation
-  }
-
-  // TODO: rename to unmarshalFromXml
-  def unmarshalWrapperXml(marshalledData: String): List[R] = {
-
-    val context = JAXBContext.newInstance(typeRW)
-    val wrapper = context.createUnmarshaller().unmarshal(
-      new StringReader(marshalledData)
-    ).asInstanceOf[RW]
-
-    wrapper.toList // Return the wrapper representation in List[] form
   }
 
   // -------------------------------------------------------------------------------------------------------------------
@@ -143,9 +109,9 @@ class Resource[
 
     // Whether we unmarshal a singular representation or a representation wrapper depends on wrapped:
     val r = if (wrapped) {
-      Right(unmarshalWrapperXml(body.get))
+      Right(UnmarshalXml(body.get).toRepresentation[RW])
     } else {
-      Left(unmarshalXml(body.get))
+      Left(UnmarshalXml(body.get).toRepresentation[R])
     }
     // TODO: add some validation / error handling
 

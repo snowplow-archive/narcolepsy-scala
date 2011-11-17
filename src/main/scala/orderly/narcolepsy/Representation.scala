@@ -26,6 +26,35 @@ import org.codehaus.jackson.map._
 import org.codehaus.jackson.map.introspect._
 import org.codehaus.jackson.xc._
 
+case class UnmarshalXml(xml: String) {
+
+  def toRepresentation[R <: Representation](implicit m: Manifest[R]): R = {
+    JAXBContext.newInstance(m.erasure.asInstanceOf[Class[R]]).createUnmarshaller().unmarshal(
+      new StringReader(xml)
+    ).asInstanceOf[R]
+  }
+}
+
+case class UnmarshalJson(json: String) {
+
+  def toRepresentation[R <: Representation](implicit m: Manifest[R]): R = {
+
+    val mapper = new ObjectMapper()
+    mapper.configure(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE, true)
+    mapper.getDeserializationConfig().setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"))
+
+    // Use Jackson annotations but fall back to JAXB
+    val introspectorPair = new AnnotationIntrospector.Pair(
+      new JacksonAnnotationIntrospector(),
+      new JaxbAnnotationIntrospector()
+    )
+    mapper.getDeserializationConfig().withAnnotationIntrospector(introspectorPair)
+
+    // Return the representation
+    mapper.readValue(json, m.erasure).asInstanceOf[R]
+  }
+}
+
 /**
  * Representation is the parent class for all representations handled by
  * NarcolepsyClient. A representation is REST speak for the instantiated form
