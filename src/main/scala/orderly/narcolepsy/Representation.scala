@@ -21,41 +21,8 @@ import java.text.SimpleDateFormat
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.Marshaller
 
-// Jackson
-import org.codehaus.jackson.map._
-import org.codehaus.jackson.map.introspect._
-import org.codehaus.jackson.xc._
-
-case class UnmarshalXml(xml: String) {
-
-  def toRepresentation[T <: Representation](implicit m: Manifest[T]): T =
-    toRepresentation[T](m.erasure.asInstanceOf[Class[T]])
-
-  def toRepresentation[T <: Representation](typeT: Class[T]): T =
-    JAXBContext.newInstance(typeT).createUnmarshaller().unmarshal(
-      new StringReader(xml)
-    ).asInstanceOf[T]
-}
-
-case class UnmarshalJson(json: String) {
-
-  def toRepresentation[R <: Representation](implicit m: Manifest[R]): R = {
-
-    val mapper = new ObjectMapper()
-    mapper.configure(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE, true)
-    mapper.getDeserializationConfig().setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"))
-
-    // Use Jackson annotations but fall back to JAXB
-    val introspectorPair = new AnnotationIntrospector.Pair(
-      new JacksonAnnotationIntrospector(),
-      new JaxbAnnotationIntrospector()
-    )
-    mapper.getDeserializationConfig().withAnnotationIntrospector(introspectorPair)
-
-    // Return the representation
-    mapper.readValue(json, m.erasure).asInstanceOf[R]
-  }
-}
+// Narcolepsy
+import marshallers._
 
 /**
  * Representation is the parent class for all representations handled by
@@ -64,49 +31,6 @@ case class UnmarshalJson(json: String) {
  * Scala class that has been marshalled from XML/JSON/whatever by JAXB, Jackson
  * or similar.
  */
-abstract class Representation {
+abstract class Representation extends XmlMarshaller with JsonMarshaller {
 
-  /**
-   * Marshals this representation into XML
-   */
-  def marshalToXml(): String = {
-    val context = JAXBContext.newInstance(this.getClass())
-    val writer = new StringWriter
-    context.createMarshaller.marshal(this, writer)
-
-    writer.toString()
-  }
-
-  /**
-   * Marshals this representation into JSON via Jackson
-   * (using JAXB annotations)
-   */
-  def marshalToJson(): String = {
-
-    // Define the Jackson mapper and configure it
-    val mapper = new ObjectMapper()
-
-    // Determine whether we should be showing a root value, aka a "top level segment",
-    // as per http://stackoverflow.com/questions/5728276/jackson-json-top-level-segment-inclusion
-    val rootKey = this match {
-      case r:RepresentationWrapper => false // Don't include as we get the root key for free
-      case _ => true // Yes include a root key
-    }
-    mapper.configure(SerializationConfig.Feature.WRAP_ROOT_VALUE, rootKey)
-
-    // Translates typical camel case Java property names to lower case JSON element names, separated by underscore
-    mapper.setPropertyNamingStrategy(new PropertyNamingStrategy.LowerCaseWithUnderscoresStrategy())
-
-    // Use Jackson annotations first, fall back to JAXB ones
-    val introspectorPair = new AnnotationIntrospector.Pair(
-      new JacksonAnnotationIntrospector(),
-      new JaxbAnnotationIntrospector()
-    )
-
-    mapper.getSerializationConfig().setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"))
-    mapper.getSerializationConfig().withAnnotationIntrospector(introspectorPair)
-
-    val writer = mapper.defaultPrettyPrintingWriter
-    writer.writeValueAsString(this)
-  }
 }

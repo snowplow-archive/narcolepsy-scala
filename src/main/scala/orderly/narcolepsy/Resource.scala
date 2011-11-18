@@ -18,9 +18,10 @@ import java.io.StringReader
 // JAXB and XML
 import javax.xml.bind.JAXBContext
 
-// Orderly
+// Narcolepsy
 import adapters._
 import utils._
+import marshallers._
 
 /**
  * Resource defines a mapping from a URL slug (e.g. "products") to a Representation object.
