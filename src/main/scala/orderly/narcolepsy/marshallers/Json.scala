@@ -12,16 +12,13 @@
  */
 package orderly.narcolepsy.marshallers
 
-// Java
-import java.text.SimpleDateFormat
-
 // Jackson
 import org.codehaus.jackson.map._
 import org.codehaus.jackson.map.introspect._
 import org.codehaus.jackson.xc._
 
 // Narcolepsy
-import orderly.narcolepsy.{Representation, RepresentationWrapper}
+import orderly.narcolepsy._
 
 /**
  * Mini-DSL to unmarshal a JSON string into a Representation.
@@ -31,11 +28,14 @@ import orderly.narcolepsy.{Representation, RepresentationWrapper}
  */
 case class UnmarshalJson(json: String) {
 
-  def toRepresentation[T <: Representation](implicit m: Manifest[T]): T = {
+  def toRepresentation[T <: Representation](implicit m: Manifest[T]): T =
+   toRepresentation[T](m.erasure.asInstanceOf[Class[T]])
+
+  def toRepresentation[T <: Representation](typeT: Class[T]): T = {
 
     val mapper = new ObjectMapper()
-    mapper.configure(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE, true)
-    mapper.getDeserializationConfig().setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"))
+    mapper.configure(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE, needRootKey(this))
+    mapper.getDeserializationConfig().setDateFormat(getDateFormat)
 
     // Use Jackson annotations but fall back to JAXB
     val introspectorPair = new AnnotationIntrospector.Pair(
@@ -45,7 +45,7 @@ case class UnmarshalJson(json: String) {
     mapper.getDeserializationConfig().withAnnotationIntrospector(introspectorPair)
 
     // Return the representation
-    mapper.readValue(json, m.erasure).asInstanceOf[T]
+    mapper.readValue(json, typeT).asInstanceOf[T]
   }
 }
 
@@ -60,13 +60,7 @@ trait JsonMarshaller {
     // Define the Jackson mapper and configure it
     val mapper = new ObjectMapper()
 
-    // Determine whether we should be showing a root value, aka a "top level segment",
-    // as per http://stackoverflow.com/questions/5728276/jackson-json-top-level-segment-inclusion
-    val rootKey = this match {
-      case r:RepresentationWrapper => false // Don't include as we get the root key for free
-      case _ => true // Yes include a root key
-    }
-    mapper.configure(SerializationConfig.Feature.WRAP_ROOT_VALUE, rootKey)
+    mapper.configure(SerializationConfig.Feature.WRAP_ROOT_VALUE, needRootKey(this))
 
     // Translates typical camel case Java property names to lower case JSON element names, separated by underscore
     mapper.setPropertyNamingStrategy(new PropertyNamingStrategy.LowerCaseWithUnderscoresStrategy())
@@ -77,7 +71,7 @@ trait JsonMarshaller {
       new JaxbAnnotationIntrospector()
     )
 
-    mapper.getSerializationConfig().setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"))
+    mapper.getSerializationConfig().setDateFormat(getDateFormat)
     mapper.getSerializationConfig().withAnnotationIntrospector(introspectorPair)
 
     val writer = mapper.defaultPrettyPrintingWriter

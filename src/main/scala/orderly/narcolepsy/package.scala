@@ -12,11 +12,14 @@
  */
 package orderly
 
-// Let's import Maven versioning (we'll give it a friendly synonym below)
+// Java
+import java.text.SimpleDateFormat
+
+// Maven versioning (we'll give it a friendly synonym below)
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion
 
-// Need to import the Narcolepsy Representation
-import orderly.narcolepsy.Representation
+// Narcolepsy
+import orderly.narcolepsy.{Representation, RepresentationWrapper}
 
 /**
  * Core Narcolepsy types for working with REST. They are always available without an explicit export.
@@ -57,4 +60,22 @@ package object narcolepsy {
 
   // To identify a REST server/client version
   type RestfulVersion = DefaultArtifactVersion
+
+  // -------------------------------------------------------------------------------------------------------------------
+  // Helper methods
+  // -------------------------------------------------------------------------------------------------------------------
+
+  /**
+   * Whether or not to add a root key aka "top level segment" when (un)marshalling JSON, as
+   * as per http://stackoverflow.com/questions/5728276/jackson-json-top-level-segment-inclusion
+   */
+  def needRootKey(obj: Any) = obj match {
+    case o:RepresentationWrapper => false // Don't include as we get the root key for free with a wrapper
+    case _ => true                        // Yes include a root key
+  }
+
+  /**
+   * Standardise the date format to use for (un)marshalling
+   */
+  def getDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
 }
