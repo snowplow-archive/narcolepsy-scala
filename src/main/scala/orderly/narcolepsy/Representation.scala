@@ -31,6 +31,6 @@ import marshallers._
  * Scala class that has been marshalled from XML/JSON/whatever by JAXB, Jackson
  * or similar.
  */
-abstract class Representation extends XmlMarshaller with JsonMarshaller {
+trait Representation extends XmlMarshaller with JsonMarshaller {
 
 }
