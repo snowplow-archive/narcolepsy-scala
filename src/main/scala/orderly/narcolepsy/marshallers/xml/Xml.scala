@@ -67,7 +67,7 @@ trait XmlMarshaller {
       context.createMarshaller.marshal(this, writer)
     } else { // Use the custom NonNamespacedXmlStreamWriter to produce XML without the namespace noise everywhere
       val xof = XMLOutputFactory.newFactory()
-      val xsw = xof.createXMLStreamWriter(new StringWriter)
+      val xsw = xof.createXMLStreamWriter(writer)
       context.createMarshaller.marshal(this, new NonNamespacedXmlStreamWriter(xsw))
     }
 
