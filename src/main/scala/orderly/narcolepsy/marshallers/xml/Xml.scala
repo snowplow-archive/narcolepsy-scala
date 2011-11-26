@@ -10,7 +10,7 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package orderly.narcolepsy.marshallers
+package orderly.narcolepsy.marshallers.xml
 
 // Java
 import java.io.StringWriter
@@ -20,6 +20,9 @@ import java.text.SimpleDateFormat
 // JAXB and XML
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.Marshaller
+import javax.xml.stream.XMLInputFactory
+import javax.xml.stream.XMLOutputFactory
+import javax.xml.stream.XMLStreamWriter
 
 // Narcolepsy
 import orderly.narcolepsy.Representation
@@ -55,10 +58,18 @@ trait XmlMarshaller {
   /**
    * Marshals this representation into XML
    */
-  def marshalToXml(): String = {
+  def marshalToXml(namespaced: Boolean = true): String = {
+
     val context = JAXBContext.newInstance(this.getClass())
     val writer = new StringWriter
-    context.createMarshaller.marshal(this, writer)
+
+    if (namespaced) {
+      context.createMarshaller.marshal(this, writer)
+    } else { // Use the custom NonNamespacedXmlStreamWriter to produce XML without the namespace noise everywhere
+      val xof = XMLOutputFactory.newFactory()
+      val xsw = xof.createXMLStreamWriter(new StringWriter)
+      context.createMarshaller.marshal(this, new NonNamespacedXmlStreamWriter(xsw))
+    }
 
     writer.toString()
   }

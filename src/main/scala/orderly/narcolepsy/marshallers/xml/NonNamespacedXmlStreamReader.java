@@ -10,26 +10,25 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package orderly.narcolepsy
+package orderly.narcolepsy.marshallers.xml;
 
-// Java
-import java.io.StringWriter
-import java.io.StringReader
-import java.text.SimpleDateFormat
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.util.StreamReaderDelegate;
 
-// JAXB and XML
-import javax.xml.bind.JAXBContext
-import javax.xml.bind.Marshaller
+public class NonNamespacedXmlStreamReader extends StreamReaderDelegate {
 
-// Narcolepsy
-import marshallers.json._
-import marshallers.xml._
+    public NonNamespacedXmlStreamReader(XMLStreamReader xmlStreamReader) {
+        super(xmlStreamReader);
+    }
 
-/**
- * Representation is the parent class for all representations handled by
- * NarcolepsyClient. A representation is REST speak for the instantiated form
- * of a REST resource. For the purposes of Narcolepsy, a Representation is a
- * Scala class that has been marshalled from XML/JSON/whatever by JAXB, Jackson
- * or similar.
- */
-trait Representation extends XmlMarshaller with JsonMarshaller
+    @Override
+    public String getAttributeNamespace(int index) {
+        String attributeName = getAttributeLocalName(index);
+        if("type".equals(attributeName) || "nil".equals(attributeName)) {
+            return "http://www.w3.org/2001/XMLSchema-instance";
+        }
+        return super.getAttributeNamespace(index);
+    }
+
+
+}

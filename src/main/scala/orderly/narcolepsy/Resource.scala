@@ -21,7 +21,8 @@ import javax.xml.bind.JAXBContext
 // Narcolepsy
 import adapters._
 import utils._
-import marshallers._
+import marshallers.json._
+import marshallers.xml._
 
 /**
  * Resource defines a mapping from a URL slug (e.g. "products") to a Representation object.
