@@ -15,9 +15,8 @@ package orderly.narcolepsy.representations
 // Scala
 import scala.reflect.BeanProperty
 
-// JAXB and XML
-import javax.xml.bind.annotation.XmlAttribute
-import javax.xml.bind.annotation.XmlRootElement
+// JAXB
+import javax.xml.bind.annotation._
 
 /**
  * Singleton to construct an AtomLink. (Content) type defaults
@@ -47,7 +46,8 @@ object AtomLink {
  * on a specific resource. For more on this see this excellent blog post:
  * http://www.zienit.nl/blog/2010/01/rest/hateoas-by-example
  */
-@XmlRootElement(name="link", namespace="http://www.w3.org/2005/Atom")
+@XmlRootElement(name="link") //, namespace="http://www.w3.org/2005/Atom")
+@XmlAccessorType(XmlAccessType.FIELD)
 class AtomLink {
 
   @XmlAttribute
