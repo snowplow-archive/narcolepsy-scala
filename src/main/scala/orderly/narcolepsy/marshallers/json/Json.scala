@@ -37,7 +37,7 @@ case class UnmarshalJson(json: String) {
     mapper.configure(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE, needRootKey(this))
     mapper.getDeserializationConfig().setDateFormat(getDateFormat)
 
-    // Use Jackson annotations but fall back to JAXB
+    // Use Jackson annotations first then fall back on JAXB annotations
     val introspectorPair = new AnnotationIntrospector.Pair(
       new JacksonAnnotationIntrospector(),
       new JaxbAnnotationIntrospector()
@@ -65,7 +65,7 @@ trait JsonMarshaller {
     // Translates typical camel case Java property names to lower case JSON element names, separated by underscore
     mapper.setPropertyNamingStrategy(new PropertyNamingStrategy.LowerCaseWithUnderscoresStrategy())
 
-    // Use Jackson annotations first, fall back to JAXB ones
+    // Use Jackson annotations first then fall back on JAXB annotations
     val introspectorPair = new AnnotationIntrospector.Pair(
       new JacksonAnnotationIntrospector(),
       new JaxbAnnotationIntrospector()
