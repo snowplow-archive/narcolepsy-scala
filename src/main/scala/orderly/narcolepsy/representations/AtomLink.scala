@@ -18,6 +18,9 @@ import scala.reflect.BeanProperty
 // JAXB
 import javax.xml.bind.annotation._
 
+// Jackson
+import org.codehaus.jackson.annotate._
+
 /**
  * Singleton to construct an AtomLink. (Content) type defaults
  * to application/xml if not explicitly set
@@ -47,6 +50,7 @@ object AtomLink {
  * http://www.zienit.nl/blog/2010/01/rest/hateoas-by-example
  */
 @XmlRootElement(name="link") //, namespace="http://www.w3.org/2005/Atom")
+@JsonProperty("link")
 @XmlAccessorType(XmlAccessType.FIELD)
 class AtomLink {
 
