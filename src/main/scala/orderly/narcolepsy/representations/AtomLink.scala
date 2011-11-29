@@ -19,7 +19,7 @@ import scala.reflect.BeanProperty
 import javax.xml.bind.annotation._
 
 // Jackson
-import org.codehaus.jackson.annotate._
+import org.codehaus.jackson.map.annotate._
 
 /**
  * Singleton to construct an AtomLink. (Content) type defaults
