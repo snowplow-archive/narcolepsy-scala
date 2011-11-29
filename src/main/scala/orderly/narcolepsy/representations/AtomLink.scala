@@ -50,7 +50,6 @@ object AtomLink {
  * http://www.zienit.nl/blog/2010/01/rest/hateoas-by-example
  */
 @XmlRootElement(name="link") //, namespace="http://www.w3.org/2005/Atom")
-@JsonProperty("link")
 @XmlAccessorType(XmlAccessType.FIELD)
 class AtomLink {
 
