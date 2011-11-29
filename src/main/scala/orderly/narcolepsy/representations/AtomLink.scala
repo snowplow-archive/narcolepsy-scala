@@ -33,7 +33,7 @@ object AtomLink {
   def apply(
     rel:  String,
     href: String,
-    `type`: String = "application/xml"): AtomLink = {
+    `type`: String = "text/xml"): AtomLink = {
 
     val al = new AtomLink
     al.rel = rel
