@@ -33,9 +33,13 @@ case class UnmarshalJson(json: String) {
 
   def toRepresentation[T <: Representation](typeT: Class[T]): T = {
 
+    // Define the Jackson mapper and configure it
     val mapper = new ObjectMapper()
     mapper.configure(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE, needRootKey(this))
     mapper.getDeserializationConfig().setDateFormat(getDateFormat)
+
+    // Translates typical camel case Java property names to lower case JSON element names, separated by underscore
+    mapper.setPropertyNamingStrategy(new PropertyNamingStrategy.LowerCaseWithUnderscoresStrategy())
 
     // Use Jackson annotations first then fall back on JAXB annotations
     val introspectorPair = new AnnotationIntrospector.Pair(
@@ -59,8 +63,8 @@ trait JsonMarshaller {
 
     // Define the Jackson mapper and configure it
     val mapper = new ObjectMapper()
-
     mapper.configure(SerializationConfig.Feature.WRAP_ROOT_VALUE, needRootKey(this))
+    mapper.getSerializationConfig().setDateFormat(getDateFormat)
 
     // Translates typical camel case Java property names to lower case JSON element names, separated by underscore
     mapper.setPropertyNamingStrategy(new PropertyNamingStrategy.LowerCaseWithUnderscoresStrategy())
@@ -70,8 +74,6 @@ trait JsonMarshaller {
       new JacksonAnnotationIntrospector(),
       new JaxbAnnotationIntrospector()
     )
-
-    mapper.getSerializationConfig().setDateFormat(getDateFormat)
     mapper.getSerializationConfig().withAnnotationIntrospector(introspectorPair)
 
     val writer = mapper.defaultPrettyPrintingWriter
