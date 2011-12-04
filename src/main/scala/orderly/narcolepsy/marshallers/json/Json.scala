@@ -12,6 +12,9 @@
  */
 package orderly.narcolepsy.marshallers.json
 
+// Java
+import java.text.SimpleDateFormat
+
 // Jackson
 import org.codehaus.jackson.map._
 import org.codehaus.jackson.map.introspect._
