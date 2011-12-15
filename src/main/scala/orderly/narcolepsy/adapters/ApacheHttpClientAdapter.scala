@@ -39,9 +39,10 @@ trait ApacheHttpClientAdapter extends HttpAdapter {
 
   // Borrow these from the Client...
   self: {
-    val username: String
-    val password: String
-    val apiUri:   String
+    val username:       String
+    val password:       String
+    val apiUri:         String
+    val apiContentType: String
   } =>
 
   // Private immutable copy of an Apache HttpClient, we use this to access the API
@@ -74,10 +75,11 @@ trait ApacheHttpClientAdapter extends HttpAdapter {
     // Configure the authentication
     httpClient.getCredentialsProvider().setCredentials(
       new AuthScope(request.getURI.getHost, request.getURI.getPort),
-      new UsernamePasswordCredentials("username TODO", "password TODO") // TODO need to set these to vars
+      new UsernamePasswordCredentials(username, password)
     )
 
     // Attach the XML to the request if we have some - how we pass it in depends on whether it's a POST or PUT
+    request.setHeader("Accept", apiContentType)
     /* TODO - also figure out how encodeXML works with JSON
     request match {
       case r:HttpPut => r.setEntity(encodeXML("", xml.get))
