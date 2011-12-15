@@ -108,8 +108,12 @@ class Resource[
   def getUri(uri: String, wrapped: Boolean): GetResponse[R] = {
     val (code, headers, body) = client.execute(GetMethod, None, uri) // Execute the API call using GET. Injected dependency using Cake pattern
 
-    // TODO: add some validation / error handling
-    val errored = false // TODO placeholder for now
+    // TODO: add some proper validation / error handling, not this hacky stuff
+    val errored = (code != 200)
+    if (errored) {
+      Console.println("Response code: %s".format(code))
+      Console.println(body)
+    }
 
     // Whether we unmarshal a singular representation or a representation wrapper depends on wrapped:
     val r = if (wrapped) {
