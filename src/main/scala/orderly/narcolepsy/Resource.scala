@@ -119,6 +119,8 @@ class Resource[
 
     // Whether we unmarshal a singular representation or a representation wrapper depends on wrapped:
 
+    Console.println("Value of wrapped is %s".format(wrapped))
+
     val r = if (wrapped) {
       Right(UnmarshalJson(body.get).toRepresentation[RW](typeRW).toList)
     } else {
