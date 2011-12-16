@@ -30,7 +30,7 @@ import orderly.narcolepsy._
  * Design as per Neil Essy's answer on:
  * http://stackoverflow.com/questions/8162345/how-do-i-create-a-class-hierarchy-of-typed-factory-method-constructors-and-acces
  */
-case class UnmarshalJson(json: String) {
+case class UnmarshalJson(json: String, rootKey: Boolean = false) {
 
   def toRepresentation[T <: Representation](implicit m: Manifest[T]): T =
    toRepresentation[T](m.erasure.asInstanceOf[Class[T]])
@@ -40,9 +40,7 @@ case class UnmarshalJson(json: String) {
     // Define the Jackson mapper and configure it
     val mapper = new ObjectMapper()
 
-    Console.println("needRootKey = %s".format(needRootKey(this)))
-    Console.println("needRootKey = %s".format(needRootKey(typeT)))
-    // mapper.configure(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE, needRootKey(this))
+    mapper.configure(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE, rootKey)
     mapper.getDeserializationConfig().setDateFormat(getDateFormat)
 
     // Translates typical camel case Java property names to lower case JSON element names, separated by underscore

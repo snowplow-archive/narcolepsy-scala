@@ -110,21 +110,15 @@ class Resource[
 
     // TODO: add some proper validation / error handling, not this hacky stuff
     val errored = (code != 200)
-    // if (errored) {
 
-      Console.println("Response code: %s".format(code))
-      Console.println(body.get)
-    // }
-
+    Console.println("Response code: %s".format(code))
+    Console.println(body.get)
 
     // Whether we unmarshal a singular representation or a representation wrapper depends on wrapped:
-
-    Console.println("Value of wrapped is %s".format(wrapped))
-
     val r = if (wrapped) {
-      Right(UnmarshalJson(body.get).toRepresentation[RW](typeRW).toList)
+      Right(UnmarshalJson(body.get, rootKey=false).toRepresentation[RW](typeRW).toList)
     } else {
-      Left(UnmarshalJson(body.get).toRepresentation[R](typeR))
+      Left(UnmarshalJson(body.get, rootKey=true).toRepresentation[R](typeR))
     }
     // TODO: add some validation / error handling
 

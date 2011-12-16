@@ -67,7 +67,7 @@ package object narcolepsy {
 
   /**
    * Whether or not to add a root key aka "top level segment" when (un)marshalling JSON, as
-   * as per http://stackoverflow.com/questions/5728276/jackson-json-top-level-segment-inclusion
+   * per http://stackoverflow.com/questions/5728276/jackson-json-top-level-segment-inclusion
    */
   def needRootKey(obj: Any) = obj match {
     case o:RepresentationWrapper => false // Don't include as we get the root key for free with a wrapper
