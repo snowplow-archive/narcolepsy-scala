@@ -22,10 +22,6 @@ trait Listable[+R <: Representation] {
    * Every Wrapper should implement the toList method to turn the
    * RepresentationWrapper into a List[Representation] for easier
    * mapping/folding etc in Scala
-   * Weirdly I need to write [R <: etc below rather than just
-   * List[Representation] because otherwise I get a compiler
-   * error where I call toList on account of this problem:
-   * http://scala-programming-language.1934581.n4.nabble.com/Surprising-type-mismatch-with-generics-td2257197.html
    */
   def toList: List[R]
 

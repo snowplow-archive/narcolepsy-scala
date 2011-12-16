@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat
 import org.codehaus.jackson.map._
 import org.codehaus.jackson.map.introspect._
 import org.codehaus.jackson.xc._
+import org.codehaus.jackson.map.`type`.TypeFactory
 
 // Narcolepsy
 import orderly.narcolepsy._
@@ -52,7 +53,7 @@ case class UnmarshalJson(json: String) {
     mapper.getDeserializationConfig().withAnnotationIntrospector(introspectorPair)
 
     // Return the representation
-    mapper.readValue(json, typeT).asInstanceOf[T]
+    mapper.readValue(json, /*TypeFactory.`type`(*/typeT).asInstanceOf[T]
   }
 }
 
