@@ -30,8 +30,9 @@ import marshallers.xml._
  * of Representation or RepresentationWrapper to instantiate for a given resource access
  */
 class Resource[
-  R  <: Representation,
-  RW <: RepresentationWrapper with Listable[R]](
+  R <: Representation,
+  /* S <: Representation, */
+  RW <: RepresentationWrapper[_ <: Representation]](
   slug: String,
   typeR:  Class[R],
   typeRW: Class[RW]
@@ -56,7 +57,7 @@ class Resource[
    * Retrieve (GET) a resource, self-assembly version without parameters
    * @return RESTful response from the API
    */
-  def get(): GetResponse[R] =
+  def get(): GetResponse[R, RW] =
     get(None, None, true) // Expecting a wrapper representation (plural) back
 
   /**
@@ -64,7 +65,7 @@ class Resource[
    * @param params Map of parameters (one or more of 'filter', 'display', 'sort', 'limit')
    * @return RESTful response from the API
    */
-  def get(params: RestfulParams): GetResponse[R] =
+  def get(params: RestfulParams): GetResponse[R, RW] =
     get(None, Some(params), false) // Not expecting a wrapper representation back
 
   /**
@@ -72,7 +73,7 @@ class Resource[
    * @param id Resource ID to retrieve
    * @return RESTful response from the API
    */
-  def get(id: String): GetResponse[R] =
+  def get(id: String): GetResponse[R, RW] =
     get(Some(id), None, false) // Not expecting a wrapper back
 
   /**
@@ -81,7 +82,7 @@ class Resource[
    * @param params Map of parameters (one or more of 'filter', 'display', 'sort', 'limit')
    * @return RESTful response from the API
    */
-  def get(id: String, params: RestfulParams): GetResponse[R] =
+  def get(id: String, params: RestfulParams): GetResponse[R, RW] =
     get(Some(id), Some(params), false) // Not expecting a wrapper back
 
   /**
@@ -90,7 +91,7 @@ class Resource[
    * @param params Optional Map of parameters (one or more of 'filter', 'display', 'sort', 'limit')
    * @return RESTful response from the API
    */
-  protected def get(id: Option[String], params: Option[RestfulParams], wrapped: Boolean): GetResponse[R] = {
+  protected def get(id: Option[String], params: Option[RestfulParams], wrapped: Boolean): GetResponse[R, RW] = {
     getUri(
       (slug +
       (if (id.isDefined) "/%s".format(id.get) else "") +
@@ -105,7 +106,7 @@ class Resource[
    * @param wrapped Whether the returned representation will be a wrapper representation or a singular one
    * @return RESTful response from the API
    */
-  def getUri(uri: String, wrapped: Boolean): GetResponse[R] = {
+  def getUri(uri: String, wrapped: Boolean): GetResponse[R, RW] = {
     val (code, headers, body) = client.execute(GetMethod, None, uri) // Execute the API call using GET. Injected dependency using Cake pattern
 
     // TODO: add some proper validation / error handling, not this hacky stuff
@@ -116,7 +117,7 @@ class Resource[
 
     // Whether we unmarshal a singular representation or a representation wrapper depends on wrapped:
     val r = if (wrapped) {
-      Right(UnmarshalJson(body.get, rootKey=false).toRepresentation[RW](typeRW).toList)
+      Right(UnmarshalJson(body.get, rootKey=false).toRepresentation[RW](typeRW))
     } else {
       Left(UnmarshalJson(body.get, rootKey=true).toRepresentation[R](typeR))
     }

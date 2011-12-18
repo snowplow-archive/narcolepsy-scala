@@ -40,4 +40,4 @@ trait Listable[+R <: Representation] {
  * RepresentationWrapper is a subclass of Representation (to get the marshalling goodness),
  * designed to hold a list of individual Representations.
  */
-trait RepresentationWrapper extends Representation with Listable[Representation]
+trait RepresentationWrapper[R <: Representation] extends Representation with Listable[R]

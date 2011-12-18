@@ -43,7 +43,7 @@ package object narcolepsy {
   // 1. Return code
   // 2. Either a subclass of Representation or a List of the same
   // 3. Is the Representation an error Representation?
-  type GetResponse[R] = (Int, Either[R, List[R]], Boolean)
+  type GetResponse[R, RW] = (Int, Either[R, RW], Boolean)
 
   // Response from a DELETE request
   // 1. Return code
@@ -70,7 +70,7 @@ package object narcolepsy {
    * per http://stackoverflow.com/questions/5728276/jackson-json-top-level-segment-inclusion
    */
   def needRootKey(obj: Any) = obj match {
-    case o:RepresentationWrapper => false // Don't include as we get the root key for free with a wrapper
+    case o:RepresentationWrapper[_] => false // Don't include as we get the root key for free with a wrapper
     case _ => true                        // Yes include a root key
   }
 
