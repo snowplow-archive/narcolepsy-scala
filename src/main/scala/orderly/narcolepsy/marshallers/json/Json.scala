@@ -19,10 +19,11 @@ import java.text.SimpleDateFormat
 import org.codehaus.jackson.map._
 import org.codehaus.jackson.map.introspect._
 import org.codehaus.jackson.xc._
-import org.codehaus.jackson.map.`type`.TypeFactory
+// import org.codehaus.jackson.map.`type`.TypeFactory
 
 // Narcolepsy
 import orderly.narcolepsy._
+import orderly.narcolepsy.marshallers._
 
 /**
  * Mini-DSL to unmarshal a JSON string into a Representation.
@@ -30,10 +31,7 @@ import orderly.narcolepsy._
  * Design as per Neil Essy's answer on:
  * http://stackoverflow.com/questions/8162345/how-do-i-create-a-class-hierarchy-of-typed-factory-method-constructors-and-acces
  */
-case class UnmarshalJson(json: String, rootKey: Boolean = false) {
-
-  def toRepresentation[T <: Representation](implicit m: Manifest[T]): T =
-   toRepresentation[T](m.erasure.asInstanceOf[Class[T]])
+case class UnmarshalJson(json: String, rootKey: Boolean = false) extends Unmarshaller {
 
   def toRepresentation[T <: Representation](typeT: Class[T]): T = {
 

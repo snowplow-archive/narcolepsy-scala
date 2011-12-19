@@ -26,17 +26,9 @@ import javax.xml.stream.XMLStreamWriter
 
 // Narcolepsy
 import orderly.narcolepsy.Representation
+import orderly.narcolepsy.marshallers._
 
-case class UnmarshalXml(xml: String) {
-
-  /**
-   * Turns the case class's xml into a Representation subclass.
-   *
-   * Example usage;
-   * val order = UnmarshalXml(xml).toRepresentation[Order]
-   */
-  def toRepresentation[T <: Representation](implicit m: Manifest[T]): T =
-    toRepresentation[T](m.erasure.asInstanceOf[Class[T]])
+case class UnmarshalXml(xml: String, rootKey: Boolean = false) extends Unmarshaller {
 
   /**
    * Turns the case class's xml into a Representation subclass - use

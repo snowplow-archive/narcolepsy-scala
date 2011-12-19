@@ -115,11 +115,17 @@ class Resource[
     Console.println("Response code: %s".format(code))
     Console.println(body.get)
 
+    val unmarshaller = this.client.contentType match {
+      case Some("application/json") => UnmarshalJson(body.get, rootKey=(!wrapped)) // TODO: why is this Some() - content type really ought to just be a String by this point, not an Option(String)
+      case Some("text/xml") => UnmarshalXml(body.get, rootKey=(!wrapped))
+      case _ => throw new ClientConfigurationException("Narcolepsy can only unmarshall JSON and XML currently") // TODO change exception type
+    }
+
     // Whether we unmarshal a singular representation or a representation wrapper depends on wrapped:
     val r = if (wrapped) {
-      Right(UnmarshalJson(body.get, rootKey=false).toRepresentation[RW](typeRW))
+      Right(unmarshaller.toRepresentation[RW](typeRW))
     } else {
-      Left(UnmarshalJson(body.get, rootKey=true).toRepresentation[R](typeR))
+      Left(unmarshaller.toRepresentation[R](typeR))
     }
     // TODO: add some validation / error handling
 
