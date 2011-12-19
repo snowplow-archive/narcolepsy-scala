@@ -28,7 +28,7 @@ import javax.xml.stream.XMLStreamWriter
 import orderly.narcolepsy.Representation
 import orderly.narcolepsy.marshallers._
 
-case class UnmarshalXml(xml: String, rootKey: Boolean = false) extends Unmarshaller {
+case class UnmarshalXml(xml: String) extends Unmarshaller {
 
   /**
    * Turns the case class's xml into a Representation subclass - use
@@ -39,10 +39,16 @@ case class UnmarshalXml(xml: String, rootKey: Boolean = false) extends Unmarshal
    * (where you have grabbed and stored typeOfT using another
    * implicit Manifest at the point of declaring T.
    */
-  def toRepresentation[T <: Representation](typeT: Class[T]): T =
-    JAXBContext.newInstance(typeT).createUnmarshaller().unmarshal(
+  def toRepresentation[T <: Representation](typeT: Class[T]): T = {
+
+    val context = JAXBContext.newInstance(typeT)
+
+    val unmarshaller = context.createUnmarshaller()
+
+    unmarshaller.unmarshal(
       new StringReader(xml)
     ).asInstanceOf[T]
+  }
 }
 
 trait XmlMarshaller {

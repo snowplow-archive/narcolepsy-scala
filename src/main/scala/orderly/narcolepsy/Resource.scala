@@ -106,8 +106,8 @@ class Resource[
    * @param wrapped Whether the returned representation will be a wrapper representation or a singular one
    * @return RESTful response from the API
    */
-  def getUri(uri: String, wrapped: Boolean): GetResponse[R, RW] = {
-    val (code, headers, body) = client.execute(GetMethod, None, uri) // Execute the API call using GET. Injected dependency using Cake pattern
+  def getUri(uri: String, wrapped: Boolean, jsonRoot: Option[Boolean] = None): GetResponse[R, RW] = {
+    val (code, headers, body) = client.execute(GetMethod, None, uri)
 
     // TODO: add some proper validation / error handling, not this hacky stuff
     val errored = (code != 200)
@@ -116,8 +116,16 @@ class Resource[
     Console.println(body.get)
 
     val unmarshaller = this.client.contentType match {
-      case Some("application/json") => UnmarshalJson(body.get, rootKey=(!wrapped)) // TODO: why is this Some() - content type really ought to just be a String by this point, not an Option(String)
-      case Some("text/xml") => UnmarshalXml(body.get, rootKey=(!wrapped))
+      case Some("application/json") => { // TODO: why is this Some() - content type really ought to just be a String by this point, not an Option(String)
+
+        // If jsonRoot not explicitly set, set to the opposite of wrapped (because wrapped
+        // representations typically have their "root" already included in the Jackson definition)
+        val hasRoot = jsonRoot.getOrElse(!(wrapped))
+
+        // Unmarshall the JSON
+        UnmarshalJson(body.get, hasRoot)
+      }
+      case Some("text/xml") => UnmarshalXml(body.get)
       case _ => throw new ClientConfigurationException("Narcolepsy can only unmarshall JSON and XML currently") // TODO change exception type
     }
 
