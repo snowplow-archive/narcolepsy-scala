@@ -13,7 +13,7 @@
 import sbt._
 import Keys._
 
-object ClientBuild extends Build {
+object NarcolepsyBuild extends Build {
 
   import Dependencies._
   import BuildSettings._
