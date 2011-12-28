@@ -1,6 +1,6 @@
 # Narcolepsy - A declarative framework for building RESTful API clients in Scala
 
-narcolepsy-scala is a Scala framework to help you work quickly and safely with third-party RESTful web services. Narcolepsy is modelled closely after [Squeryl](http://squeryl.org/): it provides a typesafe, ORM-like abstraction layer on top of HTTP method-based, resource-oriented web services. As such it works best with APIs which conform closely to the RESTful ideal.
+Narcolepsy is a Scala framework to help you work quickly and safely with third-party RESTful web services. Narcolepsy is modelled closely after [Squeryl](http://squeryl.org/): it provides a typesafe, ORM-like abstraction layer on top of HTTP method-based, resource-oriented web services. As such it works best with APIs which conform closely to the RESTful ideal.
 
 # Health warning
 
@@ -16,7 +16,7 @@ Narcolepsy is designed as an extensible toolkit which you implement and configur
 
 # Who shouldn't use Narcolepsy
 
-Narcolepsy probably isn't for you if one of the following things is true:
+Narcolepsy probably isn't for you if any of the following things is true:
 
 * The target web service is fragile or frequently changing
 * You only need to extract a small subset of data from the target web service
@@ -26,6 +26,6 @@ In these cases, we recommend using the excellent [Unfiltered](http://unfiltered.
 
 # Technologies
 
-Narcolepsy uses Jackson for JSON marshalling and unmarshalling, and JAXB for XML. In theory Narcolepsy can work with any JAXB implementation - it has been tested with the Oracle Glassfish reference implementation, and also with the Eclipse Foundation's EclipseLink MOXy. Some of Narcolepsy's functionality (for example supporting underscored or hyphenated element names) are only compatible with MOXy.
+Narcolepsy uses Jackson for JSON marshalling and unmarshalling, and JAXB for XML. In theory Narcolepsy can work with any JAXB implementation - it has been tested with the Oracle Glassfish [JAXB reference implementation](http://jaxb.java.net/), and also with the Eclipse Foundation's [EclipseLink MOXy](http://eclipse.org/eclipselink/moxy.php). Some of Narcolepsy's functionality (for example supporting underscored or hyphenated element names) are only compatible with MOXy.
 
 By default 
