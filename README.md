@@ -1,4 +1,4 @@
-Narcolepsy - A declarative framework for building RESTful API clients in Scala.
+# Narcolepsy - A declarative framework for building RESTful API clients in Scala.
 
 narcolepsy-scala is a Scala framework to help you work quickly and safely with third-party RESTful web services. Narcolepsy is modelled closely after Squeryl: it provides a typesafe, ORM-like abstraction layer on top of HTTP method-based, resource-oriented web services. As such it works best with APIs which conform closely to the RESTful ideal.
 
