@@ -10,12 +10,9 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package co.orderly.narcolepsy.representations
+package co.orderly.narcolepsy.marshallers
 
-// Narcolepsy
-import co.orderly.narcolepsy.RepresentationWrapper
-
-class DummyRepresentationWrapper extends RepresentationWrapper[DummyRepresentation] {
-
-  def toList: List[DummyRepresentation] = Nil
-}
+/**
+ * Empty trait for now, but extended by any format-specific marshaller
+ */
+trait Marshaller

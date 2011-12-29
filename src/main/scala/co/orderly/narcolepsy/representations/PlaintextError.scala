@@ -1,5 +1,3 @@
-package co.orderly.narcolepsy.representations
-
 /*
  * Copyright (c) 2011 Orderly Ltd. All rights reserved.
  *
@@ -12,11 +10,18 @@ package co.orderly.narcolepsy.representations
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
+package co.orderly.narcolepsy.representations
+
 // Orderly
 import co.orderly.narcolepsy.Representation
 
-class PlaintextError extends Representation {
-}
-
-// TODO: add in error message
-// TODO: add in source (as an error message can originate within Narcolepsy)
+/**
+ * PlaintextError is a very simple Representation generated within Narcolepsy
+ * to store a plaintext error returned by the web service (or set by Narcolepsy
+ * itself) in place of the expected structured (JSON/XML) representation
+ *
+ * message is the plaintext error message itself
+ *
+ * internal flags that this error message occurred inside of Narcolepsy itself
+ */
+case class PlaintextError(message: String, internal: Boolean = false) extends Representation

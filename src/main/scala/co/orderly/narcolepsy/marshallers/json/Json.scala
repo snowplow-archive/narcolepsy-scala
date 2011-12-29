@@ -23,7 +23,7 @@ import org.codehaus.jackson.xc._
 
 // Narcolepsy
 import co.orderly.narcolepsy._
-import marshallers.Unmarshaller
+import marshallers.{Unmarshaller, Marshaller}
 
 /**
  * Mini-DSL to unmarshal a JSON string into a Representation.
@@ -56,7 +56,7 @@ case class UnmarshalJson(json: String, rootKey: Boolean = false) extends Unmarsh
   }
 }
 
-trait JsonMarshaller {
+trait JsonMarshaller extends Marshaller {
 
   /**
    * Marshals this representation into JSON via Jackson

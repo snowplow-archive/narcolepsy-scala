@@ -24,11 +24,11 @@ import javax.xml.stream.XMLStreamWriter
 
 // JAXB
 import javax.xml.bind.JAXBContext
-import javax.xml.bind.Marshaller
+// import javax.xml.bind.Marshaller
 
 // Narcolepsy
 import co.orderly.narcolepsy._
-import marshallers.Unmarshaller
+import marshallers.{Unmarshaller, Marshaller}
 import namespaces.NonNamespacedXmlStreamWriter
 
 case class UnmarshalXml(xml: String) extends Unmarshaller {
@@ -57,7 +57,7 @@ case class UnmarshalXml(xml: String) extends Unmarshaller {
   }
 }
 
-trait XmlMarshaller {
+trait XmlMarshaller extends Marshaller {
 
   /**
    * Marshals this representation into XML
