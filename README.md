@@ -4,7 +4,7 @@ Narcolepsy is a Scala framework to help you work efficiently and safely with thi
 
 # Health warning
 
-Narcolepsy is highly incomplete. Error handling, POST, PUT and DELETE are all still to come. Apologies - we wanted to release early (not least because SBT doesn't support private GitHub repositories as dependencies). If there is a specific feature you would like to see sooner rather than later, please create a [GitHub issue](https://github.com/orderly/narcolepsy-scala/issues) for it.
+Narcolepsy is highly incomplete. Error handling, POST and PUT are all still to come. Apologies - we wanted to release early (not least because SBT doesn't support private GitHub repositories as dependencies). If there is a specific feature you would like to see sooner rather than later, please create a [GitHub issue](https://github.com/orderly/narcolepsy-scala/issues) for it.
 
 # How Narcolepsy works
 

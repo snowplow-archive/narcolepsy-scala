@@ -10,12 +10,26 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package orderly.narcolepsy.representations
+package co.orderly.narcolepsy
+
+// Java
+import java.io.StringWriter
+import java.io.StringReader
+import java.text.SimpleDateFormat
+
+// JAXB and XML
+import javax.xml.bind.JAXBContext
+import javax.xml.bind.Marshaller
 
 // Narcolepsy
-import orderly.narcolepsy.RepresentationWrapper
+import marshallers.json._
+import marshallers.xml._
 
-class DummyRepresentationWrapper extends RepresentationWrapper[DummyRepresentation] {
-
-  def toList: List[DummyRepresentation] = Nil
-}
+/**
+ * Representation is the parent class for all representations handled by
+ * NarcolepsyClient. A representation is REST speak for the instantiated form
+ * of a REST resource. For the purposes of Narcolepsy, a Representation is a
+ * Scala class that has been marshalled from XML/JSON/whatever by JAXB, Jackson
+ * or similar.
+ */
+trait Representation extends XmlMarshaller with JsonMarshaller

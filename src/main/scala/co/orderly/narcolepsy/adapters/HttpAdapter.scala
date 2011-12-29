@@ -10,11 +10,11 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package orderly.narcolepsy.adapters
+package co.orderly.narcolepsy.adapters
 
 // Orderly
-import orderly.narcolepsy._
-import orderly.narcolepsy.utils.HttpMethod
+import co.orderly.narcolepsy._
+import utils.HttpMethod
 
 trait HttpAdapter {
 

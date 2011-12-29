@@ -10,7 +10,7 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package orderly.narcolepsy
+package co.orderly.narcolepsy
 
 // Scala
 import collection.mutable.ArrayBuffer
@@ -23,6 +23,10 @@ import collection.mutable.ArrayBuffer
  * https://github.com/max-l/Squeryl/blob/master/src/main/scala/org/squeryl/Schema.scala
  */
 trait Api {
+
+  // -------------------------------------------------------------------------------------------------------------------
+  // Resource handling logic
+  // -------------------------------------------------------------------------------------------------------------------
 
   // Private mutable array to hold the resources defined so far
   private val resources = new ArrayBuffer[Resource[_, _]]
@@ -55,7 +59,7 @@ trait Api {
    * Helper to add a resource into the resource array
    * @param r The resource to add into the resource array
    */
-  private [narcolepsy] def addResource(r: Resource[_, _]) =
+  protected [narcolepsy] def addResource(r: Resource[_, _]) =
     resources.append(r)
 }
 

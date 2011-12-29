@@ -10,7 +10,7 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package orderly.narcolepsy.utils
+package co.orderly.narcolepsy.utils
 
 // Apache HttpClient
 import org.apache.http.client.utils.URLEncodedUtils
@@ -21,7 +21,7 @@ import org.apache.http.message.BasicNameValuePair
 import scalaj.collection.Imports._
 
 // Orderly
-import orderly.narcolepsy._
+import co.orderly.narcolepsy._
 
 object RestfulHelpers {
 

@@ -10,7 +10,7 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package orderly.narcolepsy.utils
+package co.orderly.narcolepsy.utils
 
 /**
  * Trait for the HTTP method case objects
@@ -28,12 +28,12 @@ case object DeleteMethod extends HttpMethod
 case object GetMethod extends HttpMethod
 
 /**
- * POST verb, typically used for xxx
+ * POST verb, typically used for creates
  */
 case object PostMethod extends HttpMethod
 
 /**
- * PUT verb, typically used for xxx
+ * PUT verb, typically used for updates
  */
 case object PutMethod extends HttpMethod
 

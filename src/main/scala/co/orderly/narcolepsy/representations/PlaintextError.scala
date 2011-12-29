@@ -1,3 +1,5 @@
+package co.orderly.narcolepsy.representations
+
 /*
  * Copyright (c) 2011 Orderly Ltd. All rights reserved.
  *
@@ -10,10 +12,8 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package orderly.narcolepsy.utils
-
 // Orderly
-import orderly.narcolepsy.Representation
+import co.orderly.narcolepsy.Representation
 
 class PlaintextError extends Representation {
 }

@@ -10,11 +10,14 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package orderly.narcolepsy.marshallers.xml;
+package co.orderly.narcolepsy.marshallers.xml.namespaces;
 
+// JAXB
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+
+// TODO: port this to Scala
 
 public class NonNamespacedXmlStreamWriter implements XMLStreamWriter {
 

@@ -10,23 +10,26 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package orderly.narcolepsy.marshallers.xml
+package co.orderly.narcolepsy.marshallers.xml
 
 // Java
 import java.io.StringWriter
 import java.io.StringReader
 import java.text.SimpleDateFormat
 
-// JAXB and XML
-import javax.xml.bind.JAXBContext
-import javax.xml.bind.Marshaller
+// XML
 import javax.xml.stream.XMLInputFactory
 import javax.xml.stream.XMLOutputFactory
 import javax.xml.stream.XMLStreamWriter
 
+// JAXB
+import javax.xml.bind.JAXBContext
+import javax.xml.bind.Marshaller
+
 // Narcolepsy
-import orderly.narcolepsy.Representation
-import orderly.narcolepsy.marshallers._
+import co.orderly.narcolepsy._
+import marshallers.Unmarshaller
+import namespaces.NonNamespacedXmlStreamWriter
 
 case class UnmarshalXml(xml: String) extends Unmarshaller {
 
@@ -40,6 +43,9 @@ case class UnmarshalXml(xml: String) extends Unmarshaller {
    * implicit Manifest at the point of declaring T.
    */
   def toRepresentation[T <: Representation](typeT: Class[T]): T = {
+
+    // TODO: need to add non-namespaced support in (although not sure
+    // it is strictly necessary - seems to work fine without)
 
     val context = JAXBContext.newInstance(typeT)
 

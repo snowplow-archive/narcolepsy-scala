@@ -10,10 +10,13 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package orderly.narcolepsy.marshallers.xml;
+package co.orderly.narcolepsy.marshallers.xml.namespaces;
 
+// JAXB
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.util.StreamReaderDelegate;
+
+// TODO: port this to Scala
 
 public class NonNamespacedXmlStreamReader extends StreamReaderDelegate {
 

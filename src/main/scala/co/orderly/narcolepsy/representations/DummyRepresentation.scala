@@ -10,24 +10,9 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package orderly.narcolepsy.utils
+package orderly.narcolepsy.representations
 
-/**
- * Trait for the error format case objects
- */
-trait ErrorFormat
+// Narcolepsy
+import co.orderly.narcolepsy.Representation
 
-/**
- * Meaning that this API returns all errors as its own custom form of ErrorRepresentation
- */
-case object RepresentationErrors extends ErrorFormat
-
-/**
- * Meaning that this API returns all errors as plaintext
- */
-case object PlaintextErrors extends ErrorFormat
-
-/**
- * Meaning that this API returns errors as a mix of plaintext and its own custom form of ErrorRepresentation
- */
-case object MixedErrors extends ErrorFormat
+class DummyRepresentation extends Representation

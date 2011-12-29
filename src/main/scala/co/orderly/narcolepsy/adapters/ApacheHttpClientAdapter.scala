@@ -10,7 +10,7 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package orderly.narcolepsy.adapters
+package co.orderly.narcolepsy.adapters
 
 // Java
 import java.net.URLEncoder
@@ -32,8 +32,8 @@ import org.apache.http.protocol.HTTP
 import scala.io.Source
 
 // Orderly
-import orderly.narcolepsy._
-import orderly.narcolepsy.utils._
+import co.orderly.narcolepsy._
+import co.orderly.narcolepsy.utils._ // Full path because Apache HttpClient has a utils sub-package too
 
 trait ApacheHttpClientAdapter extends HttpAdapter {
 

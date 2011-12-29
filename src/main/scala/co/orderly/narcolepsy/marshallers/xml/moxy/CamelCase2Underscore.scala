@@ -10,19 +10,26 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-import sbt._
-import Keys._
+package co.orderly.narcolepsy.marshallers.xml.moxy
 
-object BuildSettings {
+// MOXy
+import org.eclipse.persistence.oxm.XMLNameTransformer
 
-  lazy val basicSettings = Seq[Setting[_]](
-    organization  := "orderly",
-    version       := "0.1",
-    description   := "Narcolepsy is a Scala framework for building typesafe clients for RESTful web services",
-    scalaVersion  := "2.9.1",
-    scalacOptions := Seq("-deprecation", "-encoding", "utf8"),
-    resolvers     ++= Dependencies.resolutionRepos
-  )
+/**
+ * MOXy-specific name transformer:
+ *
+ * Scala var customerAddressId becomes XML element <customer_address_id>
+ *
+ * Works both for marshalling and unmarshalling
+ */
+class CamelCase2Underscore extends XMLNameTransformer {
+ 
+  def transformRootElementName(name: String): String = name
+ 
+  def transformTypeName(name: String): String = name
 
-  lazy val narcolepsySettings = basicSettings
+  def transformAttributeName(name: String): String = name
+
+  def transformElementName(name: String): String =
+    name.toList.map(c => if(c.isUpper) "_" + c.toLower else c).mkString
 }

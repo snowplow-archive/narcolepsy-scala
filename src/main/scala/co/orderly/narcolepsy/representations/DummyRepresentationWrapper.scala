@@ -10,19 +10,12 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-import sbt._
-import Keys._
+package orderly.narcolepsy.representations
 
-object BuildSettings {
+// Narcolepsy
+import co.orderly.narcolepsy.RepresentationWrapper
 
-  lazy val basicSettings = Seq[Setting[_]](
-    organization  := "orderly",
-    version       := "0.1",
-    description   := "Narcolepsy is a Scala framework for building typesafe clients for RESTful web services",
-    scalaVersion  := "2.9.1",
-    scalacOptions := Seq("-deprecation", "-encoding", "utf8"),
-    resolvers     ++= Dependencies.resolutionRepos
-  )
+class DummyRepresentationWrapper extends RepresentationWrapper[DummyRepresentation] {
 
-  lazy val narcolepsySettings = basicSettings
+  def toList: List[DummyRepresentation] = Nil
 }

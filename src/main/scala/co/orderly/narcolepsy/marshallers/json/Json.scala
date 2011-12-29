@@ -10,7 +10,7 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package orderly.narcolepsy.marshallers.json
+package co.orderly.narcolepsy.marshallers.json
 
 // Java
 import java.text.SimpleDateFormat
@@ -22,8 +22,8 @@ import org.codehaus.jackson.xc._
 // import org.codehaus.jackson.map.`type`.TypeFactory
 
 // Narcolepsy
-import orderly.narcolepsy._
-import orderly.narcolepsy.marshallers._
+import co.orderly.narcolepsy._
+import marshallers.Unmarshaller
 
 /**
  * Mini-DSL to unmarshal a JSON string into a Representation.

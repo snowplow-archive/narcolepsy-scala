@@ -19,7 +19,7 @@ import scala.reflect.BeanProperty
 import javax.xml.bind.annotation._
 
 // Jackson
-import org.codehaus.jackson.map.annotate._
+import org.codehaus.jackson.annotate._
 
 /**
  * Singleton to construct an AtomLink. (Content) type defaults
@@ -53,14 +53,17 @@ object AtomLink {
 @XmlAccessorType(XmlAccessType.FIELD)
 class AtomLink {
 
+  @JsonProperty
   @XmlAttribute
   @BeanProperty
   var rel: String = _
 
+  @JsonProperty
   @XmlAttribute
   @BeanProperty
   var href: String = _
 
+  @JsonProperty
   @XmlAttribute
   @BeanProperty
   var `type`: String = _
