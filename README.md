@@ -27,7 +27,7 @@ In these cases, we strongly recommend using the excellent [Unfiltered](http://un
 
 # Technologies
 
-Narcolepsy uses [Jackson](http://jackson.codehaus.org/) for JSON (un)marshalling, and JAXB for XML (un)marshalling. In theory Narcolepsy can work with any JAXB implementation - it has been tested with the Oracle Glassfish [JAXB reference implementation](http://jaxb.java.net/), and also with the Eclipse Foundation's [EclipseLink MOXy](http://eclipse.org/eclipselink/moxy.php). A small subset of Narcolepsy's XML functionality is only compatible with MOXy; MOXy-only functionality is sandboxed in the [moxy sub-package](https://github.com/orderly/narcolepsy-scala/tree/master/src/main/scala/co/orderly/narcolepsy/marshallers/xml/moxy).
+Narcolepsy uses [Jackson](http://jackson.codehaus.org/) for JSON (un)marshalling, and JAXB for XML (un)marshalling. In theory Narcolepsy can work with any JAXB implementation - it has been tested with the Oracle Glassfish [JAXB reference implementation](http://jaxb.java.net/), and also with the Eclipse Foundation's [EclipseLink MOXy](http://eclipse.org/eclipselink/moxy.php). A small subset of Narcolepsy's XML functionality is only compatible with MOXy, but this functionality is sandboxed in the [moxy sub-package](https://github.com/orderly/narcolepsy-scala/tree/master/src/main/scala/co/orderly/narcolepsy/marshallers/xml/moxy).
 
 Although we write our binding classes for Typesafe mode in Scala, Jackson and JAXB are pure-Java technologies, so writing your bindings in Java (or generating them using e.g. [xjc](http://docs.oracle.com/javase/6/docs/technotes/tools/share/xjc.html)) should work fine as well.
 
