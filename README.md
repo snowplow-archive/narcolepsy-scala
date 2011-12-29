@@ -8,7 +8,7 @@ Narcolepsy is highly incomplete. Error handling, non-HTTP-based authentication, 
 
 # How Narcolepsy works
 
-Narcolepsy is designed as a framework which you extend and configure on a per-web service basis. An example of a Narcolepsy-based web service client is [Prestasac](https://github.com/orderly/codeigniter-paypal-ipn), a Scala client for PrestaShop. Narcolepsy supports two distinct modes of operation:
+Narcolepsy is designed as a framework which you extend and configure on a per-web service basis. An example of a Narcolepsy-based client is [Prestasac](https://github.com/orderly/codeigniter-paypal-ipn), a Scala client for the PrestaShop web service. Narcolepsy supports two distinct modes of operation:
 
 * **Raw** - for testing out different interactions with the target web service. This mode is similar to the excellent [resty](https://github.com/micha/resty) command-line tool. This mode is available "out of the box" with Narcolepsy and should work with most RESTful web services with zero additional coding
 * **Typesafe** - for when you understand the target representations and are ready to formalise your interactions by defining typesafe bindings for these representations. For this mode, you have to write class definitions for all of the representations that you care about. Once you have done this, users of your Narcolepsy-based client library can interact with the web service's representations as a set of typesafe objects
