@@ -1,6 +1,6 @@
 # Narcolepsy - A Scala framework for building typesafe API clients
 
-Narcolepsy is a Scala framework to help you build clients for third-party RESTful web services with maximum typesafety and minimum moving parts. Narcolepsy is modelled closely after [Squeryl](http://squeryl.org/): it provides a typesafe, ORM-like abstraction layer on top of HTTP method-based, resource-oriented web services. As such it works best with APIs which conform closely to the [RESTful ideal](http://blog.steveklabnik.com/posts/2011-07-03-nobody-understands-rest-or-http).
+Narcolepsy is a Scala framework to help you build clients for third-party RESTful web services with maximum typesafety and minimal moving parts. Narcolepsy is modelled closely after [Squeryl](http://squeryl.org/): it provides a typesafe, ORM-like abstraction layer on top of HTTP method-based, resource-oriented web services. As such it works best with APIs which conform closely to the [RESTful ideal](http://blog.steveklabnik.com/posts/2011-07-03-nobody-understands-rest-or-http).
 
 # Health warning
 
