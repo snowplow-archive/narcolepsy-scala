@@ -24,7 +24,6 @@ import javax.xml.stream.XMLStreamWriter
 
 // JAXB
 import javax.xml.bind.JAXBContext
-// import javax.xml.bind.Marshaller
 
 // Narcolepsy
 import co.orderly.narcolepsy._
