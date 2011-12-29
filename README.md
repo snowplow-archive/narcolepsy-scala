@@ -8,10 +8,10 @@ Narcolepsy is highly incomplete. Error handling, non-HTTP-based authentication, 
 
 # How Narcolepsy works
 
-Narcolepsy is designed as an extensible toolkit which you implement and configure on a per-web service basis. An example of a Narcolepsy-based web service client is [Prestasac](https://github.com/orderly/codeigniter-paypal-ipn), a Scala client for PrestaShop. Narcolepsy supports two distinct modes of operation:
+Narcolepsy is designed as a framework which you extend and configure on a per-web service basis. An example of a Narcolepsy-based web service client is [Prestasac](https://github.com/orderly/codeigniter-paypal-ipn), a Scala client for PrestaShop. Narcolepsy supports two distinct modes of operation:
 
-* **Raw** - use **Raw** mode to test out different interactions with the target web service. This mode is similar to the excellent [resty](https://github.com/micha/resty) command-line tool. Unlike **Typesafe** mode below, **Raw** mode is available "out of the box" with Narcolepsy and should work with most RESTful web services with zero additional coding
-* **Typesafe** - this mode is for when you have a full understanding of the target representations, and are ready to formalise your interactions by defining typesafe bindings for these representations. To enable this mode, you will need to setup class definitions for all of the representations that you care out. Once you have done this, users of your Narcolepsy-based client library can interact with the web service's representations as a set of typesafe objects
+* **Raw** - for testing out different interactions with the target web service. This mode is similar to the excellent [resty](https://github.com/micha/resty) command-line tool. **Raw** mode is available "out of the box" with Narcolepsy and should work with most RESTful web services with zero additional coding
+* **Typesafe** - for when you have a full understanding of the target representations, and are ready to formalise your interactions by defining typesafe bindings for these representations. To enable this mode, you will need to setup class definitions for all of the representations that you care out. Once you have done this, users of your Narcolepsy-based client library can interact with the web service's representations as a set of typesafe objects
 
 Currently Narcolepsy works with XML and JSON-based web services only. We plan to support [JSON Schema](http://json-schema.org/) and [Apache Avro](http://avro.apache.org/docs/1.4.0/index.html) in due course.
 
