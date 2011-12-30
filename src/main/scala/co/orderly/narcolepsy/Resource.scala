@@ -61,7 +61,7 @@ class Resource[
 
   /**
    * Retrieve (GET) a resource, self-assembly version with parameters
-   * @param params Map of parameters (one or more of 'filter', 'display', 'sort', 'limit')
+   * @param params Map of parameters (e.g. 'filter' or 'sort') plus values
    * @return RESTful response from the API
    */
   def get(params: RestfulParams): GetResponse[R, RW] =
@@ -78,7 +78,7 @@ class Resource[
   /**
    * Retrieve (GET) a resource, self-assembly version with parameters
    * @param id Resource ID to retrieve
-   * @param params Map of parameters (one or more of 'filter', 'display', 'sort', 'limit')
+   * @param params Map of parameters (e.g. 'filter' or 'sort') plus values
    * @return RESTful response from the API
    */
   def get(id: String, params: RestfulParams): GetResponse[R, RW] =
@@ -87,7 +87,8 @@ class Resource[
   /**
    * Retrieve (GET) a resource, master version using Options (not invoked directly)
    * @param id Optional resource ID to retrieve
-   * @param params Optional Map of parameters (one or more of 'filter', 'display', 'sort', 'limit')
+   * @param params Optional map of parameters (e.g. 'filter' or 'sort') plus values
+   * @param wrapped Whether we expect back a wrapped set of multiple representations or a single representation
    * @return RESTful response from the API
    */
   protected def get(id: Option[String], params: Option[RestfulParams], wrapped: Boolean): GetResponse[R, RW] = {
@@ -102,15 +103,18 @@ class Resource[
   /**
    * Retrieve (GET) a resource, URL version
    * @param uri A URL which explicitly sets the resource type, ID(s) and parameters to retrieve
-   * @param wrapped Whether the returned representation will be a wrapper representation or a singular one
+   * @param wrapped Whether we expect back a wrapped set of multiple representations or a single representation
+   * @param jsonRoot TODO get rid of this - shouldn't be part of the call, should be an attribute on the Client definition
    * @return RESTful response from the API
    */
   def getUri(uri: String, wrapped: Boolean, jsonRoot: Option[Boolean] = None): GetResponse[R, RW] = {
     val (code, headers, body) = client.execute(GetMethod, None, uri)
 
     // TODO: add some proper validation / error handling, not this hacky stuff
+    // Let's have a lambda/function for error detection
     val errored = (code != 200)
 
+    // TODO: get rid of these debug messages
     Console.println("Response code: %s".format(code))
     Console.println(body.get)
 

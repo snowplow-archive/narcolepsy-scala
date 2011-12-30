@@ -14,6 +14,9 @@ package co.orderly.narcolepsy
 
 // Scala
 import collection.mutable.ArrayBuffer
+import marshallers.json.UnmarshalJson._
+import marshallers.xml.UnmarshalXml._
+import utils.{GetMethod, RestfulHelpers}
 
 /**
  * Api allows you to define a mapping of RESTful resource names (e.g. "products")
@@ -25,7 +28,7 @@ import collection.mutable.ArrayBuffer
 trait Api {
 
   // -------------------------------------------------------------------------------------------------------------------
-  // Resource handling logic
+  // Resource-handling logic
   // -------------------------------------------------------------------------------------------------------------------
 
   // Private mutable array to hold the resources defined so far
@@ -46,21 +49,96 @@ trait Api {
   }
 
   /**
+   * Helper to add a resource into the resource array
+   * @param r The resource to add into the resource array
+   */
+  protected [narcolepsy] def addResource(r: Resource[_, _]) =
+    resources.append(r)
+
+  // -------------------------------------------------------------------------------------------------------------------
+  // Client-handling logic
+  // -------------------------------------------------------------------------------------------------------------------
+
+  // Private var to hold the client used to access this resource
+  private var client: Client = _
+
+  /**
    * Use this to attach an API client to each resource currently defined within the
    * Api. Note that the Resource class's attachClient can be called directly to
    * attach a specific API client to an individual resource type.
    * @param client The API client to attach to each resource
    */
   def attachClient(client: Client) {
+
+    // First attach to the API
+    this.client = client
+
+    // Now attach to each Resource defined with this API
     resources.foreach(_.attachClient(client))
   }
 
+  // -------------------------------------------------------------------------------------------------------------------
+  // GET verb methods
+  // -------------------------------------------------------------------------------------------------------------------
+
   /**
-   * Helper to add a resource into the resource array
-   * @param r The resource to add into the resource array
+   * Retrieve (GET) a resource, self-assembly version without parameters
+   * @param resource URL slug of resource to retrieve
+   * @return RESTful response from the API
    */
-  protected [narcolepsy] def addResource(r: Resource[_, _]) =
-    resources.append(r)
+  def get(resource: String): RestfulResponse =
+    get(resource, None, None)
+
+  /**
+   * Retrieve (GET) a resource, self-assembly version with parameters
+   * @param resource URL slug of resource to retrieve
+   * @param params Map of parameters (one or more of 'filter', 'display', 'sort', 'limit')
+   * @return RESTful response from the API
+   */
+  def get(resource: String, params: RestfulParams): RestfulResponse =
+    get(resource, None, Some(params))
+
+  /**
+   * Retrieve (GET) a resource, self-assembly version without parameters
+   * @param resource URL slug of resource to retrieve
+   * @param id Resource ID to retrieve
+   * @return RESTful response from the API
+   */
+  def get(resource: String, id: String): RestfulResponse =
+    get(resource, Some(id), None)
+
+  /**
+   * Retrieve (GET) a resource, self-assembly version with parameters
+   * @param resource URL slug of resource to retrieve
+   * @param id Resource ID to retrieve
+   * @param params Map of parameters (e.g. 'filter' or 'sort') plus values
+   * @return RESTful response from the API
+   */
+  def get(resource: String, id: String, params: RestfulParams): RestfulResponse =
+    get(resource, Some(id), Some(params))
+
+  /**
+   * Retrieve (GET) a resource, master version using Options (not invoked directly)
+   * @param resource URL slug of resource to retrieve
+   * @param id Optional resource ID to retrieve
+   * @param params Optional map of parameters (e.g. 'filter' or 'sort') plus values
+   * @return RESTful response from the API
+   */
+  protected def get(resource: String, id: Option[String], params: Option[RestfulParams]): RestfulResponse = {
+    getUri(
+      (resource +
+      (if (id.isDefined) "/%s".format(id.get) else "") +
+      (if (params.isDefined) "?%s".format(RestfulHelpers.canonicalize(params.get)) else ""))
+    )
+  }
+
+  /**
+   * Retrieve (GET) a resource, URL version
+   * @param uri A URL which explicitly sets the resource type, ID(s) and parameters to retrieve
+   * @return RESTful response from the API
+   */
+  def getUri(uri: String): RestfulResponse =
+    this.client.execute(GetMethod, None, uri)
 }
 
 /**
