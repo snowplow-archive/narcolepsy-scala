@@ -13,7 +13,7 @@
 package co.orderly.narcolepsy.adapters
 
 // Java
-import java.net.URLEncoder
+import java.net.{URLEncoder, URI}
 import java.io.InputStream
 
 // Apache HttpClient
@@ -58,7 +58,14 @@ trait ApacheHttpClientAdapter extends HttpAdapter {
    */
   def execute(requestMethod: HttpMethod, requestData: Option[String], requestUri: String): RestfulResponse = {
 
-    val uri = apiUri + "/" + requestUri
+    // Validate the URI string
+    // TODO: this would really be common to all adapters. Should be moved out of here
+    val uriString = apiUri + requestUri
+    val uri = try {
+      new URI(uriString)
+    } catch {
+      case _ => throw new HttpAdapterException("Web service URI for action is malformed: %s".format(uriString))
+    }
 
     // Construct the right type of HttpRequest object for our given HttpMethod,
     // and validate that our requestData payload is set appropriately
