@@ -101,7 +101,18 @@ trait Api {
   /**
    * Retrieve (GET) a resource, self-assembly version without parameters
    * @param resource URL slug of resource to retrieve
-   * @param id Resource ID to retrieve
+   * @param id Resource ID to retrieve, in Integer form
+   * @return RESTful response from the API
+   */
+  def get(resource: String, id: Int): RestfulResponse =
+    get(resource, Some(id.toString()), None)
+
+  // TODO: add UUID version too
+
+  /**
+   * Retrieve (GET) a resource, self-assembly version without parameters
+   * @param resource URL slug of resource to retrieve
+   * @param id Resource ID to retrieve, in String form
    * @return RESTful response from the API
    */
   def get(resource: String, id: String): RestfulResponse =
@@ -110,7 +121,19 @@ trait Api {
   /**
    * Retrieve (GET) a resource, self-assembly version with parameters
    * @param resource URL slug of resource to retrieve
-   * @param id Resource ID to retrieve
+   * @param id Resource ID to retrieve, in Integer form
+   * @param params Map of parameters (e.g. 'filter' or 'sort') plus values
+   * @return RESTful response from the API
+   */
+  def get(resource: String, id: Int, params: RestfulParams): RestfulResponse =
+    get(resource, Some(id.toString()), Some(params))
+
+  // TODO: add UUID version too
+
+  /**
+   * Retrieve (GET) a resource, self-assembly version with parameters
+   * @param resource URL slug of resource to retrieve
+   * @param id Resource ID to retrieve, in String form
    * @param params Map of parameters (e.g. 'filter' or 'sort') plus values
    * @return RESTful response from the API
    */
@@ -120,7 +143,7 @@ trait Api {
   /**
    * Retrieve (GET) a resource, master version using Options (not invoked directly)
    * @param resource URL slug of resource to retrieve
-   * @param id Optional resource ID to retrieve
+   * @param id Optional resource ID to retrieve, in String form
    * @param params Optional map of parameters (e.g. 'filter' or 'sort') plus values
    * @return RESTful response from the API
    */
@@ -139,6 +162,12 @@ trait Api {
    */
   def getUri(uri: String): RestfulResponse =
     this.client.execute(GetMethod, None, uri)
+
+  // -------------------------------------------------------------------------------------------------------------------
+  // DELETE verb methods
+  // -------------------------------------------------------------------------------------------------------------------
+
+  // TODO: add these in!
 }
 
 /**

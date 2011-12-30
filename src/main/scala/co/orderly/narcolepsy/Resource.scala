@@ -69,15 +69,36 @@ class Resource[
 
   /**
    * Retrieve (GET) a resource, self-assembly version without parameters
-   * @param id Resource ID to retrieve
+   * @param id Resource ID to retrieve, in Integer form
+   * @return RESTful response from the API
+   */
+  def get(id: Int): GetResponse[R, RW] =
+    get(Some(id.toString()), None, false) // Not expecting a wrapper back
+
+  // TODO: add UUID version
+
+  /**
+   * Retrieve (GET) a resource, self-assembly version without parameters
+   * @param id Resource ID to retrieve, in String form
    * @return RESTful response from the API
    */
   def get(id: String): GetResponse[R, RW] =
     get(Some(id), None, false) // Not expecting a wrapper back
 
   /**
+    * Retrieve (GET) a resource, self-assembly version with parameters
+    * @param id Resource ID to retrieve, in Integer form
+    * @param params Map of parameters (e.g. 'filter' or 'sort') plus values
+    * @return RESTful response from the API
+    */
+  def get(id: Int, params: RestfulParams): GetResponse[R, RW] =
+    get(Some(id.toString()), Some(params), false) // Not expecting a wrapper back
+
+  // TODO: add UUID version
+
+  /**
    * Retrieve (GET) a resource, self-assembly version with parameters
-   * @param id Resource ID to retrieve
+   * @param id Resource ID to retrieve, in String form
    * @param params Map of parameters (e.g. 'filter' or 'sort') plus values
    * @return RESTful response from the API
    */
@@ -86,7 +107,7 @@ class Resource[
 
   /**
    * Retrieve (GET) a resource, master version using Options (not invoked directly)
-   * @param id Optional resource ID to retrieve
+   * @param id Optional resource ID to retrieve, in String form
    * @param params Optional map of parameters (e.g. 'filter' or 'sort') plus values
    * @param wrapped Whether we expect back a wrapped set of multiple representations or a single representation
    * @return RESTful response from the API
@@ -166,6 +187,8 @@ class Resource[
   // TODO: this is PrestaShop-specific behaviour, need to sort this out
   def delete(ids: Array[String]): DeleteResponse[R] =
     deleteUri(slug + "/?id=[%s]".format(ids.mkString(",")))
+
+  // TODO: add in Int and UUID versions
 
   /**
    * Delete (DELETE) a resource, URL version
