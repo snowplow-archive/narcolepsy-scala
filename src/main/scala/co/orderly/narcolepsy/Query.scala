@@ -12,3 +12,21 @@
  */
 package co.orderly.narcolepsy
 
+class Query {
+  def debugPrint(verbose: Boolean): this.type = { val _verbose = verbose; this }
+  def throwIfError(): this.type = { this }
+  def get(tpe: String, id: Int): QueryResult[RestfulResponse] =
+    new QueryResult[RestfulResponse] {
+       def run(): RestfulResponse = null // code to make rest call goes here
+    }
+}
+
+trait QueryResult[A] { self =>
+  def map[B](f: (A) => B): QueryResult[B] = new QueryResult[B] {
+    def run(): B = f(self.run())
+  }
+  def flatMap[B](f: (A) => QueryResult[B]) = new QueryResult[B] {
+    def run(): B = f(self.run()).run()
+  }
+  def run(): A
+}
