@@ -14,8 +14,8 @@ package co.orderly.narcolepsy
 
 // Scala
 import collection.mutable.ArrayBuffer
-import marshallers.json.UnmarshalJson._
-import marshallers.xml.UnmarshalXml._
+import marshallers.jackson.UnmarshalJson
+import marshallers.jaxb.UnmarshalXml
 import utils.{GetMethod, RestfulHelpers}
 
 /**

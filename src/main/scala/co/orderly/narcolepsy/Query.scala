@@ -12,24 +12,3 @@
  */
 package co.orderly.narcolepsy
 
-// Java
-import java.io.StringWriter
-import java.io.StringReader
-import java.text.SimpleDateFormat
-
-// JAXB and XML
-import javax.xml.bind.JAXBContext
-import javax.xml.bind.Marshaller
-
-// Narcolepsy
-import marshallers.jackson.JacksonMarshaller
-import marshallers.jaxb.JaxbMarshaller
-
-/**
- * Representation is the parent class for all representations handled by
- * NarcolepsyClient. A representation is REST speak for the instantiated form
- * of a REST resource. For the purposes of Narcolepsy, a Representation is a
- * Scala class that has been marshalled from XML/JSON/whatever by JAXB, Jackson
- * or similar.
- */
-trait Representation // extends JaxbMarshaller with JacksonMarshaller
