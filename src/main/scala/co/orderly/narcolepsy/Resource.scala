@@ -139,6 +139,9 @@ class Resource[
     Console.println("Response code: %s".format(code))
     Console.println(body.get)
 
+    // TODO: this unmarshalling code should be taken out of here. Should be associated to the Representations - i.e. a representation
+    // TODO should have its own view on how it's unmarshalled
+
     val unmarshaller = this.client.contentType match {
       case Some("application/json") => { // TODO: why is this Some() - content type really ought to just be a String by this point, not an Option(String)
 

@@ -15,4 +15,10 @@ package co.orderly.narcolepsy.marshallers
 /**
  * Empty trait for now, but extended by any format-specific marshaller
  */
-trait Marshaller
+trait Marshaller {
+
+  /**
+   * Abstract method to marshal a given representation
+   */
+  def marshal(): String
+}

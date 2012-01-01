@@ -10,7 +10,7 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package co.orderly.narcolepsy.marshallers.xml
+package co.orderly.narcolepsy.marshallers.jaxb
 
 // Java
 import java.io.StringWriter
@@ -56,12 +56,18 @@ case class UnmarshalXml(xml: String) extends Unmarshaller {
   }
 }
 
-trait XmlMarshaller extends Marshaller {
+trait JaxbMarshaller extends Marshaller {
 
   /**
-   * Marshals this representation into XML
+   * Marshals this representation into XML using JAXB
    */
-  def marshalToXml(namespaced: Boolean = true): String = {
+  def marshal(): String = {
+
+    // TODO: add in a Marshaller configuration object.
+    // TODO Should include namespaced: Boolean
+
+    // TODO: remove this - this is temporary
+    val namespaced = true
 
     val context = JAXBContext.newInstance(this.getClass())
     val writer = new StringWriter

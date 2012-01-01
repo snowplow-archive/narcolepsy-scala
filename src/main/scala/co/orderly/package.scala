@@ -65,6 +65,8 @@ package object narcolepsy {
   // Helper methods
   // -------------------------------------------------------------------------------------------------------------------
 
+  // TODO: check if this is is still used
+  // TODO: make this a JSON configuration parameter
   /**
    * Whether or not to add a root key aka "top level segment" when (un)marshalling JSON, as
    * per http://stackoverflow.com/questions/5728276/jackson-json-top-level-segment-inclusion
@@ -74,6 +76,7 @@ package object narcolepsy {
     case _ => true                        // Yes include a root key
   }
 
+  // TODO: make this a JSON configuration parameter to the client (along with needRootKey)
   /**
    * Standardise the date format to use for (un)marshalling
    */

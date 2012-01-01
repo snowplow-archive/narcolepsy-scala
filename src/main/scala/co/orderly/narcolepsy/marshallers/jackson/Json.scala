@@ -10,7 +10,7 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package co.orderly.narcolepsy.marshallers.json
+package co.orderly.narcolepsy.marshallers.jackson
 
 // Java
 import java.text.SimpleDateFormat
@@ -56,13 +56,16 @@ case class UnmarshalJson(json: String, rootKey: Boolean = false) extends Unmarsh
   }
 }
 
-trait JsonMarshaller extends Marshaller {
+trait JacksonMarshaller extends Marshaller {
 
   /**
    * Marshals this representation into JSON via Jackson
-   * (using JAXB annotations)
+   * (using Jackson / JAXB annotations)
    */
-  def marshalToJson(): String = {
+  def marshal(): String = {
+
+    // TODO: we need to inject a JacksonConfiguration into this OR make it easy to override JacksonMarshaller
+    // TODO in an individual Narcolepsy client
 
     // Define the Jackson mapper and configure it
     val mapper = new ObjectMapper()
