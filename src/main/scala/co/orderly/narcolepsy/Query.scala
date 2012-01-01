@@ -12,14 +12,81 @@
  */
 package co.orderly.narcolepsy
 
-class Query {
-  def debugPrint(verbose: Boolean): this.type = { val _verbose = verbose; this }
-  def throwIfError(): this.type = { this }
+// Java
+import java.util.UUID
+
+abstract class Query(resource: String) {
+
+  protected var payload: Option[String] = None // Payload trait allows building this
+
+  protected var id: Option[String] = None // Id trait allows building this
+
+  protected var params: Option[Map[String, String]] = None // Parameter name-value pairs are squirted into the querystring
+
+  protected var print: Boolean = false
+
+  protected var slug: String = resource
+
+  def debugPrint(): this.type = {
+    this.print = true
+    this
+  }
+
+  def overrideSlug(slug: String): this.type = {
+    this.slug = slug
+    this
+  }
+
+  // TODO: add option to throw an exception if a non-success error code retrieved
+
+  /*
   def get(tpe: String, id: Int): QueryResult[RestfulResponse] =
     new QueryResult[RestfulResponse] {
        def run(): RestfulResponse = null // code to make rest call goes here
-    }
+    } */
 }
+
+trait Payload extends Query {
+
+  def setPayload(payload: String): this.type = {
+    this.payload = Option(payload)
+    this
+  }
+}
+
+trait Id extends Query {
+
+  def setId(id: String): this.type = {
+    this.id = Option(id)
+    this
+  }
+
+  def setId(id: Int): this.type = {
+    this.id = Option(id.toString())
+    this
+  }
+
+  def setId(id: UUID): this.type = {
+    this.id = Option(id.toString())
+    this
+  }
+}
+
+// TODO: make these typesafe (so I get a compile time error if a GetQuery hasn't setId())
+
+// Get is for retrieving a singular representation
+class GetQuery(resource: String) extends Query(resource) with Id
+
+// Gets is for retrieving a list of multiple representations
+class GetsQuery(resource: String) extends Query(resource)
+
+class DeleteQuery(resource: String) extends Query(resource) with Id
+
+class PutQuery(resource: String) extends Query(resource) with Id with Payload
+
+class PostQuery(resource: String) extends Query(resource) with Payload
+
+// TODO: add HEAD
 
 trait QueryResult[A] { self =>
   def map[B](f: (A) => B): QueryResult[B] = new QueryResult[B] {

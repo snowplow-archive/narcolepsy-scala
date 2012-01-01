@@ -49,15 +49,31 @@ class Resource[
   }
 
   // -------------------------------------------------------------------------------------------------------------------
+  // Query (API execution) logic
+  // -------------------------------------------------------------------------------------------------------------------
+
+  def get(): GetQuery = new GetQuery(slug)
+
+  def gets(): GetsQuery = new GetsQuery(slug)
+
+  def put(): PutQuery = new PutQuery(slug)
+
+  def post(): PostQuery = new PostQuery(slug)
+
+  def delete(): DeleteQuery = new DeleteQuery(slug)
+
+  // TODO: add HEAD
+
+  // -------------------------------------------------------------------------------------------------------------------
   // GET verb methods
   // -------------------------------------------------------------------------------------------------------------------
 
   /**
    * Retrieve (GET) a resource, self-assembly version without parameters
    * @return RESTful response from the API
-   */
+   *
   def get(): GetResponse[R, RW] =
-    get(None, None, true) // Expecting a wrapper representation (plural) back
+    get(None, None, true) // Expecting a wrapper representation (plural) back  */
 
   /**
    * Retrieve (GET) a resource, self-assembly version with parameters
