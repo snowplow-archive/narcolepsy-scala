@@ -14,9 +14,6 @@ package co.orderly.narcolepsy
 
 // Scala
 import collection.mutable.ArrayBuffer
-import marshallers.jackson.UnmarshalJson
-import marshallers.jaxb.UnmarshalXml
-import utils.{GetMethod, RestfulHelpers}
 
 /**
  * Api allows you to define a mapping of RESTful resource names (e.g. "products")
@@ -76,103 +73,10 @@ trait Api {
     // Now attach to each Resource defined with this API
     resources.foreach(_.attachClient(client))
   }
-
-  // -------------------------------------------------------------------------------------------------------------------
-  // GET verb methods
-  // -------------------------------------------------------------------------------------------------------------------
-
-  /**
-   * Retrieve (GET) a resource, self-assembly version without parameters
-   * @param resource URL slug of resource to retrieve
-   * @return RESTful response from the API
-   */
-  def get(resource: String): RestfulResponse =
-    get(resource, None, None)
-
-  /**
-   * Retrieve (GET) a resource, self-assembly version with parameters
-   * @param resource URL slug of resource to retrieve
-   * @param params Map of parameters (one or more of 'filter', 'display', 'sort', 'limit')
-   * @return RESTful response from the API
-   */
-  def get(resource: String, params: RestfulParams): RestfulResponse =
-    get(resource, None, Some(params))
-
-  /**
-   * Retrieve (GET) a resource, self-assembly version without parameters
-   * @param resource URL slug of resource to retrieve
-   * @param id Resource ID to retrieve, in Integer form
-   * @return RESTful response from the API
-   */
-  def get(resource: String, id: Int): RestfulResponse =
-    get(resource, Some(id.toString()), None)
-
-  // TODO: add UUID version too
-
-  /**
-   * Retrieve (GET) a resource, self-assembly version without parameters
-   * @param resource URL slug of resource to retrieve
-   * @param id Resource ID to retrieve, in String form
-   * @return RESTful response from the API
-   */
-  def get(resource: String, id: String): RestfulResponse =
-    get(resource, Some(id), None)
-
-  /**
-   * Retrieve (GET) a resource, self-assembly version with parameters
-   * @param resource URL slug of resource to retrieve
-   * @param id Resource ID to retrieve, in Integer form
-   * @param params Map of parameters (e.g. 'filter' or 'sort') plus values
-   * @return RESTful response from the API
-   */
-  def get(resource: String, id: Int, params: RestfulParams): RestfulResponse =
-    get(resource, Some(id.toString()), Some(params))
-
-  // TODO: add UUID version too
-
-  /**
-   * Retrieve (GET) a resource, self-assembly version with parameters
-   * @param resource URL slug of resource to retrieve
-   * @param id Resource ID to retrieve, in String form
-   * @param params Map of parameters (e.g. 'filter' or 'sort') plus values
-   * @return RESTful response from the API
-   */
-  def get(resource: String, id: String, params: RestfulParams): RestfulResponse =
-    get(resource, Some(id), Some(params))
-
-  /**
-   * Retrieve (GET) a resource, master version using Options (not invoked directly)
-   * @param resource URL slug of resource to retrieve
-   * @param id Optional resource ID to retrieve, in String form
-   * @param params Optional map of parameters (e.g. 'filter' or 'sort') plus values
-   * @return RESTful response from the API
-   */
-  protected def get(resource: String, id: Option[String], params: Option[RestfulParams]): RestfulResponse = {
-    getUri(
-      (resource +
-      (if (id.isDefined) "/%s".format(id.get) else "") +
-      (if (params.isDefined) "?%s".format("BROKEN") else ""))
-    )
-  }
-
-  /**
-   * Retrieve (GET) a resource, URL version
-   * @param uri A URL which explicitly sets the resource type, ID(s) and parameters to retrieve
-   * @return RESTful response from the API
-   */
-  def getUri(uri: String): RestfulResponse =
-    this.client.execute(GetMethod, None, uri)
-
-  // -------------------------------------------------------------------------------------------------------------------
-  // DELETE verb methods
-  // -------------------------------------------------------------------------------------------------------------------
-
-  // TODO: add these in!
 }
 
 /**
  * Flags an exception in the configuration of the API - e.g. when there is a request
  * for a slug which hasn't been defined
  */
-class ApiConfigurationException(message: String = "") extends RuntimeException(message) {
-}
+class ApiConfigurationException(message: String = "") extends RuntimeException(message)

@@ -64,86 +64,8 @@ class Resource[
 
   // TODO: add HEAD
 
-  // -------------------------------------------------------------------------------------------------------------------
-  // GET verb methods
-  // -------------------------------------------------------------------------------------------------------------------
+  /* LEGACY UNMARSHALLING CODE
 
-  /**
-   * Retrieve (GET) a resource, self-assembly version without parameters
-   * @return RESTful response from the API
-   *
-  def get(): GetResponse[R, RW] =
-    get(None, None, true) // Expecting a wrapper representation (plural) back  */
-
-  /**
-   * Retrieve (GET) a resource, self-assembly version with parameters
-   * @param params Map of parameters (e.g. 'filter' or 'sort') plus values
-   * @return RESTful response from the API
-   */
-  def get(params: RestfulParams): GetResponse[R, RW] =
-    get(None, Some(params), false) // Not expecting a wrapper representation back
-
-  /**
-   * Retrieve (GET) a resource, self-assembly version without parameters
-   * @param id Resource ID to retrieve, in Integer form
-   * @return RESTful response from the API
-   */
-  def get(id: Int): GetResponse[R, RW] =
-    get(Some(id.toString()), None, false) // Not expecting a wrapper back
-
-  // TODO: add UUID version
-
-  /**
-   * Retrieve (GET) a resource, self-assembly version without parameters
-   * @param id Resource ID to retrieve, in String form
-   * @return RESTful response from the API
-   */
-  def get(id: String): GetResponse[R, RW] =
-    get(Some(id), None, false) // Not expecting a wrapper back
-
-  /**
-    * Retrieve (GET) a resource, self-assembly version with parameters
-    * @param id Resource ID to retrieve, in Integer form
-    * @param params Map of parameters (e.g. 'filter' or 'sort') plus values
-    * @return RESTful response from the API
-    */
-  def get(id: Int, params: RestfulParams): GetResponse[R, RW] =
-    get(Some(id.toString()), Some(params), false) // Not expecting a wrapper back
-
-  // TODO: add UUID version
-
-  /**
-   * Retrieve (GET) a resource, self-assembly version with parameters
-   * @param id Resource ID to retrieve, in String form
-   * @param params Map of parameters (e.g. 'filter' or 'sort') plus values
-   * @return RESTful response from the API
-   */
-  def get(id: String, params: RestfulParams): GetResponse[R, RW] =
-    get(Some(id), Some(params), false) // Not expecting a wrapper back
-
-  /**
-   * Retrieve (GET) a resource, master version using Options (not invoked directly)
-   * @param id Optional resource ID to retrieve, in String form
-   * @param params Optional map of parameters (e.g. 'filter' or 'sort') plus values
-   * @param wrapped Whether we expect back a wrapped set of multiple representations or a single representation
-   * @return RESTful response from the API
-   */
-  protected def get(id: Option[String], params: Option[RestfulParams], wrapped: Boolean): GetResponse[R, RW] = {
-    getUri(
-      (slug +
-      (if (id.isDefined) "/%s".format(id.get) else "") +
-      (if (params.isDefined) "?%s".format("BROKEN") else "")),
-      wrapped
-    )
-  }
-
-  /**
-   * Retrieve (GET) a resource, URL version
-   * @param uri A URL which explicitly sets the resource type, ID(s) and parameters to retrieve
-   * @param wrapped Whether we expect back a wrapped set of multiple representations or a single representation
-   * @param jsonRoot TODO get rid of this - shouldn't be part of the call, should be an attribute on the Client definition
-   * @return RESTful response from the API
-   */
   def getUri(uri: String, wrapped: Boolean, jsonRoot: Option[Boolean] = None): GetResponse[R, RW] = {
     val (code, headers, body) = client.execute(GetMethod, None, uri)
 
@@ -182,46 +104,5 @@ class Resource[
 
     // Return the GetResponse Tuple3
     (code, r, errored)
-  }
-
-  // -------------------------------------------------------------------------------------------------------------------
-  // DELETE verb methods
-  // -------------------------------------------------------------------------------------------------------------------
-
-  /**
-   * Delete (DELETE) a resource, self-assembly version supporting one ID
-   * This version takes a resource type and an array of IDs to delete
-   * @param resource The type of resource to delete (e.g. "orders")
-   * @param id An ID of this resource type, to delete
-   */
-  def delete(id: String): DeleteResponse[R] =
-    deleteUri(slug + "/" + id)
-
-  /**
-   * Delete (DELETE) a resource, self-assembly version supporting multiple IDs
-   * This version takes a resource type and an array of IDs to delete
-   * @param resource The type of resource to delete (e.g. "orders")
-   * @param ids An array of IDs of this resource type, to delete
-   */
-  // TODO: this is PrestaShop-specific behaviour, need to sort this out
-  def delete(ids: Array[String]): DeleteResponse[R] =
-    deleteUri(slug + "/?id=[%s]".format(ids.mkString(",")))
-
-  // TODO: add in Int and UUID versions
-
-  /**
-   * Delete (DELETE) a resource, URL version
-   * @param url A URL which explicitly sets resource type and resource ID
-   */
-  def deleteUri(uri: String): DeleteResponse[R] = {
-
-    // Perform the DELETE
-    val (code, headers, body) = client.execute(DeleteMethod, None, uri)
-
-    // TODO: add some validation & error handling
-    val errored = false // TODO placeholder for now
-
-    // Return the DeleteResponse Tuple3
-    (code, None, errored) // TODO: update with something other than None
-  }
+  } */
 }

@@ -195,5 +195,4 @@ class PostQuery(client: Client, resource: String) extends Query(PostMethod, clie
 /**
  * Flags that running the Query returned a non-success code
  */
-class RestfulResponseNonSuccessException(message: String = "") extends RuntimeException(message) {
-}
+class RestfulErrorResponseException(message: String = "") extends RuntimeException(message)
