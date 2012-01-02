@@ -157,7 +157,9 @@ trait Id extends Query {
 /**
  * GetQuery is for retrieving a singular representation. Applies the GetMethod and uses the Id trait
  */
-class GetQuery(client: Client, resource: String) extends Query(GetMethod, client, resource) with Id
+class GetQuery(client: Client, resource: String)
+  extends Query(GetMethod, client, resource)
+  with Id
 
 /**
  * GetsQuery is for retrieving a list of multiple representations. From an HTTP/RESTful perspective, a
@@ -166,18 +168,26 @@ class GetQuery(client: Client, resource: String) extends Query(GetMethod, client
  *  - A GetQuery takes an ID and returns a singular representation which can be unmarshalled to a Representation subclass
  *  - A GetsQuery takes no ID and returns a collection-style representation which can be unmarshalled to a RepresentationWrapper subclass
  */
-class GetsQuery(client: Client, resource: String) extends Query(GetMethod, client, resource)
+class GetsQuery(client: Client, resource: String)
+  extends Query(GetMethod, client, resource)
 
 /**
  * DeleteQuery is for deleting a resource. Applies the DeleteMethod and uses the Id trait
  */
-class DeleteQuery(client: Client, resource: String) extends Query(DeleteMethod, client, resource) with Id
+class DeleteQuery(client: Client, resource: String)
+  extends Query(DeleteMethod, client, resource)
+  with Id
 
 // TODO: add doccomment
-class PutQuery(client: Client, resource: String) extends Query(PutMethod, client, resource) with Id with Payload
+class PutQuery(client: Client, resource: String)
+  extends Query(PutMethod, client, resource)
+  with Id
+  with Payload
 
 // TODO: add doccomment
-class PostQuery(client: Client, resource: String) extends Query(PostMethod, client, resource) with Payload
+class PostQuery(client: Client, resource: String)
+  extends Query(PostMethod, client, resource)
+  with Payload
 
 // TODO: add HeadQuery
 
