@@ -190,6 +190,11 @@ trait Id {
     this
   }
 
+  def id(id: Long): this.type = {
+    this._id = Option(id.toString())
+    this
+  }
+
   def id(id: UUID): this.type = {
     this._id = Option(id.toString())
     this
