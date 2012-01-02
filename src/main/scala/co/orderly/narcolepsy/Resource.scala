@@ -40,13 +40,13 @@ class Resource[
   // Query (API execution) logic
   // -------------------------------------------------------------------------------------------------------------------
 
-  def get(): GetQuery = new GetQuery(_client, slug)
+  def get(): GetQuery[R] = new GetQuery[R](_client, slug, typeR)
 
-  def gets(): GetsQuery = new GetsQuery(_client, slug)
+  def gets(): GetsQuery[RW] = new GetsQuery[RW](_client, slug, typeRW)
 
-  def put(): PutQuery = new PutQuery(_client, slug)
+  def put(): PutQuery[R] = new PutQuery[R](_client, slug, typeR)
 
-  def post(): PostQuery = new PostQuery(_client, slug)
+  def post(): PostQuery[R] = new PostQuery[R](_client, slug, typeR)
 
   def delete(): DeleteQuery = new DeleteQuery(_client, slug)
 

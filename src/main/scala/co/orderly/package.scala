@@ -52,8 +52,8 @@ package object narcolepsy {
   // 3. HTTP response body, or None
   type RestfulResponse = (Int, RestfulHeaders, Option[String])
 
-  // Response from a marshalled request - either:
+  // Unmarshalled response from a request - either:
   // 1. An RestfulError class typed with E ErrorRepresentation, or:
   // 2. An R Representation, or None
-  type MarshalledResponse[E <: ErrorRepresentation, R <: Representation] = Either[RestfulError[E], Option[R]]
+  type UnmarshalledResponse[E <: ErrorRepresentation, R <: Representation] = Either[RestfulError[E], Option[R]]
 }

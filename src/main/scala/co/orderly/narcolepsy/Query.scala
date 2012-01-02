@@ -19,8 +19,17 @@ import java.util.UUID
 import adapters._
 import utils._
 
-// TODO: add doccomment
-abstract class Query(method: HttpMethod, client: Client, resource: String) {
+/**
+ * Query is a fluent interface for constructing a call (GET, POST, DELETE, PUT or
+ * similar) to a RESTful web service. It is typed so that the representations
+ * can be (un)marshalled in a typesafe way.
+ */
+abstract class Query[
+  R <: Representation](
+  method: HttpMethod,
+  client: Client,
+  resource: String,
+  typeR: Option[Class[R]]) {
 
   // TODO 1: would be good to make the Query builder typesafe. So e.g. developer gets a compile time error if a GetQuery hasn't setId()
   // TODO: see here for directions: http://www.tikalk.com/java/blog/type-safe-builder-scala-using-type-constraints
@@ -107,6 +116,21 @@ abstract class Query(method: HttpMethod, client: Client, resource: String) {
 
     (code, headers, body)
   }
+
+  /**
+   * unmarshal() executes the query and then unmarshals the result into the appropriate
+   * object type
+   */
+  def unmarshal(): UnmarshalledResponse[_ <: ErrorRepresentation, R] = {
+
+    val (code, _, body) = run()
+
+    if (RestfulHelpers.isError(code)) {
+      Left(RestfulError(code, body, null)) // TODO add marshalling in here
+    } else {
+      Right(null) // TODO add marshalling in here
+    }
+  }
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -117,7 +141,12 @@ abstract class Query(method: HttpMethod, client: Client, resource: String) {
  * Payload allows a Query to have a 'payload' attached. A payload is data submitted to the web service with the
  * request. Typically used by PUT and POST requests.
  */
-trait Payload extends Query {
+trait Payload {
+
+  // Grab _payload from Query
+  self: {
+    var _payload: Option[String]
+  } =>
 
   def payload(payload: String): this.type = {
     this._payload = Option(payload)
@@ -130,7 +159,12 @@ trait Payload extends Query {
  * (already existing) resource, rather than a new resource. Typically used by all DELETE and POST requests, and
  * some GET requests.
  */
-trait Id extends Query {
+trait Id {
+
+  // Grab _id from Query
+  self: {
+    var _id: Option[String]
+  } =>
 
   // TODO: add support for multiple IDs. For example PrestaShop supports DELETEing /?id=45,65. Need to make it play nice with other parameters
 
@@ -157,8 +191,8 @@ trait Id extends Query {
 /**
  * GetQuery is for retrieving a singular representation. Applies the GetMethod and uses the Id trait
  */
-class GetQuery(client: Client, resource: String)
-  extends Query(GetMethod, client, resource)
+class GetQuery[R <: Representation](client: Client, resource: String, typeR: Class[R])
+  extends Query[R](GetMethod, client, resource, Some(typeR))
   with Id
 
 /**
@@ -168,25 +202,25 @@ class GetQuery(client: Client, resource: String)
  *  - A GetQuery takes an ID and returns a singular representation which can be unmarshalled to a Representation subclass
  *  - A GetsQuery takes no ID and returns a collection-style representation which can be unmarshalled to a RepresentationWrapper subclass
  */
-class GetsQuery(client: Client, resource: String)
-  extends Query(GetMethod, client, resource)
+class GetsQuery[RW <: RepresentationWrapper[_ <: Representation]](client: Client, resource: String, typeRW: Class[RW])
+  extends Query[RW](GetMethod, client, resource, Some(typeRW))
 
 /**
  * DeleteQuery is for deleting a resource. Applies the DeleteMethod and uses the Id trait
  */
 class DeleteQuery(client: Client, resource: String)
-  extends Query(DeleteMethod, client, resource)
+  extends Query(DeleteMethod, client, resource, None)
   with Id
 
 // TODO: add doccomment
-class PutQuery(client: Client, resource: String)
-  extends Query(PutMethod, client, resource)
+class PutQuery[R <: Representation](client: Client, resource: String, typeR: Class[R])
+  extends Query[R](PutMethod, client, resource, Some(typeR))
   with Id
   with Payload
 
 // TODO: add doccomment
-class PostQuery(client: Client, resource: String)
-  extends Query(PostMethod, client, resource)
+class PostQuery[R <: Representation](client: Client, resource: String, typeR: Class[R])
+  extends Query[R](PostMethod, client, resource, Some(typeR))
   with Payload
 
 // TODO: add HeadQuery

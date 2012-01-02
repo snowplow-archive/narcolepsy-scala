@@ -50,7 +50,17 @@ object RestfulHelpers {
    * Turns a set of RestfulHeaders (a Map[String, String]) into a single
    * string (with line breaks) ready for printing, logging or similar
    * @param headers The headers to pretty print
+   * @return The headers in format "header-name: header-value\nheader-name: ..."
    */
   def stringify(headers: RestfulHeaders): String =
     headers.map(h => "%s: %s".format(h._1, h._2)).mkString("\n")
+
+  /**
+   * Naive implementation of a function for whether an HTTP status code
+   * represents an error or not. Currently flags all client errors
+   * (4xx) and server errors (5xx) as errors
+   *
+   */
+  def isError(statusCode: Int): Boolean =
+    (statusCode >= 400) // TODO: potentially make more sophisticated?
 }
