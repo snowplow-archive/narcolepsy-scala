@@ -137,8 +137,8 @@ abstract class Query[
         client.contentType match {
 
           // TODO: Remove Some() around the content types. No need for it
-          case Some("application/json") => UnmarshalXml(body.get).toRepresentation[R](typeR)
-          case Some("text/xml") => UnmarshalXml(body.get).toRepresentation[R](typeR)
+          case Some("application/json") => UnmarshalJson(b).toRepresentation[R](typeR)
+          case Some("text/xml") => UnmarshalXml(b).toRepresentation[R](typeR)
           case _ => throw new ClientConfigurationException("Narcolepsy can only unmarshall JSON and XML currently") // TODO change exception type
         }))
     }
