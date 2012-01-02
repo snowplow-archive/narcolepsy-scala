@@ -33,7 +33,7 @@ abstract class Query[
   method: HttpMethod,
   client: Client,
   resource: String,
-  typeR: Option[Class[R]]) {
+  typeR: Class[R]) {
 
   // TODO 1: would be good to make the Query builder typesafe. So e.g. developer gets a compile time error if a GetQuery hasn't setId()
   // TODO: see here for directions: http://www.tikalk.com/java/blog/type-safe-builder-scala-using-type-constraints
@@ -133,12 +133,12 @@ abstract class Query[
     if (RestfulHelpers.isError(code)) {
       Left(RestfulError(code, body, null)) // TODO add error unmarshalling in here
     } else {
-      Right(body flatMap( b =>
+      Right(body map( b =>
         client.contentType match {
 
           // TODO: Remove Some() around the content types. No need for it
-          case Some("application/json") => Right(UnmarshalXml(body.get).toRepresentation[R](typeR))
-          case Some("text/xml") => Right(UnmarshalXml(body.get).toRepresentation[R](typeR))
+          case Some("application/json") => UnmarshalXml(body.get).toRepresentation[R](typeR)
+          case Some("text/xml") => UnmarshalXml(body.get).toRepresentation[R](typeR)
           case _ => throw new ClientConfigurationException("Narcolepsy can only unmarshall JSON and XML currently") // TODO change exception type
         }))
     }
@@ -209,7 +209,7 @@ trait Id {
  * GetQuery is for retrieving a singular representation. Applies the GetMethod and uses the Id trait
  */
 class GetQuery[R <: Representation](client: Client, resource: String, typeR: Class[R])
-  extends Query[R](GetMethod, client, resource, Some(typeR))
+  extends Query[R](GetMethod, client, resource, typeR)
   with Id
 
 /**
@@ -220,24 +220,24 @@ class GetQuery[R <: Representation](client: Client, resource: String, typeR: Cla
  *  - A GetsQuery takes no ID and returns a collection-style representation which can be unmarshalled to a RepresentationWrapper subclass
  */
 class GetsQuery[RW <: RepresentationWrapper[_ <: Representation]](client: Client, resource: String, typeRW: Class[RW])
-  extends Query[RW](GetMethod, client, resource, Some(typeRW))
+  extends Query[RW](GetMethod, client, resource, typeRW)
 
 /**
  * DeleteQuery is for deleting a resource. Applies the DeleteMethod and uses the Id trait
  */
 class DeleteQuery(client: Client, resource: String)
-  extends Query(DeleteMethod, client, resource, None)
+  extends Query(DeleteMethod, client, resource, null) // TODO: null not very clean here
   with Id
 
 // TODO: add doccomment
 class PutQuery[R <: Representation](client: Client, resource: String, typeR: Class[R])
-  extends Query[R](PutMethod, client, resource, Some(typeR))
+  extends Query[R](PutMethod, client, resource, typeR)
   with Id
   with Payload
 
 // TODO: add doccomment
 class PostQuery[R <: Representation](client: Client, resource: String, typeR: Class[R])
-  extends Query[R](PostMethod, client, resource, Some(typeR))
+  extends Query[R](PostMethod, client, resource, typeR)
   with Payload
 
 // TODO: add HeadQuery
