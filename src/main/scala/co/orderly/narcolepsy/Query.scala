@@ -21,7 +21,7 @@ abstract class Query(resource: String) {
 
   protected var id: Option[String] = None // Id trait allows building this
 
-  protected var params: Option[Map[String, String]] = None // Parameter name-value pairs are squirted into the querystring
+  protected var params: Option[RestfulParams] = None // Parameter name-value pairs are squirted into the querystring
 
   protected var print: Boolean = false
 
@@ -35,6 +35,25 @@ abstract class Query(resource: String) {
   def overrideSlug(slug: String): this.type = {
     this.slug = slug
     this
+  }
+
+  def run(): RestfulResponse = {
+
+    val uri = (this.slug +
+      (if (id.isDefined) "/%s".format(id.get) else "") +
+      (if (params.isDefined) "?%s".format(canonicalize(params.get)) else "")
+      )
+  }
+
+  /**
+   * Returns a canonicalized, escaped string of &key=value pairs from a Map of parameters
+   * @param params A map of parameters ('filter', 'display' etc)
+   * @return A canonicalized escaped string of the parameters
+   */
+  protected def canonicalize(params: RestfulParams): String = {
+
+    val nameValues = params.map { param => new BasicNameValuePair(param._1, param._2) }
+    URLEncodedUtils.format(nameValues.toSeq.asJava, CHARSET)
   }
 
   // TODO: add option to throw an exception if a non-success error code retrieved
@@ -73,6 +92,7 @@ trait Id extends Query {
 }
 
 // TODO: make these typesafe (so I get a compile time error if a GetQuery hasn't setId())
+// See here for directions: http://www.tikalk.com/java/blog/type-safe-builder-scala-using-type-constraints
 
 // Get is for retrieving a singular representation
 class GetQuery(resource: String) extends Query(resource) with Id

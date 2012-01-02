@@ -23,11 +23,15 @@ import scalaj.collection.Imports._
 // Orderly
 import co.orderly.narcolepsy._
 
+// TODO: let's get rid of this one
+
 object RestfulHelpers {
 
   // -------------------------------------------------------------------------------------------------------------------
   // Constants used internally by the RestfulHelpers
   // -------------------------------------------------------------------------------------------------------------------
+
+  // TODO: move this into the client definition
 
   // For URL encoding
   protected val CHARSET = HTTP.UTF_8;
@@ -36,14 +40,4 @@ object RestfulHelpers {
   // Useful methods for building RESTful clients
   // -------------------------------------------------------------------------------------------------------------------
 
-  /**
-   * Returns a canonicalized, escaped string of &key=value pairs from a Map of parameters
-   * @param params A map of parameters ('filter', 'display' etc)
-   * @return A canonicalized escaped string of the parameters
-   */
-  def canonicalize(params: RestfulParams): String = {
-
-    val nameValues = params.map { param => new BasicNameValuePair(param._1, param._2) }
-    URLEncodedUtils.format(nameValues.toSeq.asJava, CHARSET)
-  }
 }
