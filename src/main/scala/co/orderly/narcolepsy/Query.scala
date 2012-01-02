@@ -122,8 +122,8 @@ abstract class Query[
   }
 
   /**
-   * unmarshal() executes the query and then unmarshals the result into the appropriate
-   * object type
+   * unmarshal() executes the query using run() and then unmarshals the result into
+   * the appropriate Representation object
    */
   def unmarshal(): UnmarshalledResponse[_ <: ErrorRepresentation, R] = {
 
