@@ -12,18 +12,8 @@
  */
 package co.orderly.narcolepsy
 
-// Java
-import java.io.StringWriter
-import java.io.StringReader
-import java.text.SimpleDateFormat
-
-// JAXB and XML
-import javax.xml.bind.JAXBContext
-import javax.xml.bind.Marshaller
-
-// Narcolepsy
-import marshallers.jackson.JacksonMarshaller
-import marshallers.jaxb.JaxbMarshaller
+// Scala
+import scala.collection.mutable.ArrayBuffer
 
 /**
  * Representation is the parent class for all representations handled by
@@ -33,3 +23,35 @@ import marshallers.jaxb.JaxbMarshaller
  * or similar.
  */
 trait Representation // extends JaxbMarshaller with JacksonMarshaller
+
+// TODO: add doccomment
+trait ErrorRepresentation extends Representation
+
+/**
+ * RepresentationWrapper is a subclass of Representation (to get the marshalling goodness),
+ * designed to hold a list of individual Representations.
+ */
+trait RepresentationWrapper[R <: Representation] extends Representation with Listable[R]
+
+// As per http://stackoverflow.com/questions/7666759/can-i-use-a-type-bound-on-a-scala-abstract-method-and-then-tighten-up-the-defin
+// TODO: add doccomment
+trait Listable[+R <: Representation] {
+
+  /**
+   * Every Wrapper should implement the toList method to turn the
+   * RepresentationWrapper into a List[Representation] for easier
+   * mapping/folding etc in Scala
+   */
+  def toList: List[R]
+
+  // http://stackoverflow.com/questions/663254/scala-covariance-contravariance-question
+  // def fromList[L >: R](representations: List[L])
+
+  // And bear with me again <sorry>
+  // TODO: add explanation for this
+  protected def arrayBufferFromList[L <: Representation](list: List[L]): ArrayBuffer[L] = {
+    val ab = new ArrayBuffer[L]
+    ab ++= list
+    ab
+  }
+}

@@ -12,18 +12,6 @@
  */
 package co.orderly.narcolepsy
 
-// Java
-import java.io.StringReader
-
-// JAXB and XML
-import javax.xml.bind.JAXBContext
-
-// Narcolepsy
-import adapters._
-import utils._
-import marshallers.jackson._
-import marshallers.jaxb._
-
 /**
  * Resource defines a mapping from a URL slug (e.g. "products") to a Representation object.
  * Defining these for each resource in an API object allows Narcolepsy to know which type
@@ -37,30 +25,30 @@ class Resource[
   typeRW: Class[RW]
   ) {
 
-  // Private var to hold the client used to access this resource
-  private var client: Client = _
+  // Holds the client used to access this resource
+  protected var _client: Client = _
 
   // -------------------------------------------------------------------------------------------------------------------
   // Client handling logic
   // -------------------------------------------------------------------------------------------------------------------
 
   def attachClient(client: Client) {
-    this.client = client
+    this._client = client
   }
 
   // -------------------------------------------------------------------------------------------------------------------
   // Query (API execution) logic
   // -------------------------------------------------------------------------------------------------------------------
 
-  def get(): GetQuery = new GetQuery(client, slug)
+  def get(): GetQuery = new GetQuery(_client, slug)
 
-  def gets(): GetsQuery = new GetsQuery(client, slug)
+  def gets(): GetsQuery = new GetsQuery(_client, slug)
 
-  def put(): PutQuery = new PutQuery(client, slug)
+  def put(): PutQuery = new PutQuery(_client, slug)
 
-  def post(): PostQuery = new PostQuery(client, slug)
+  def post(): PostQuery = new PostQuery(_client, slug)
 
-  def delete(): DeleteQuery = new DeleteQuery(client, slug)
+  def delete(): DeleteQuery = new DeleteQuery(_client, slug)
 
   // TODO: add HEAD
 
