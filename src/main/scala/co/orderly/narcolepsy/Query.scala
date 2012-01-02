@@ -15,13 +15,6 @@ package co.orderly.narcolepsy
 // Java
 import java.util.UUID
 
-// Apache HttpClient
-import org.apache.http.client.utils.URLEncodedUtils
-import org.apache.http.message.BasicNameValuePair
-
-// scalaj for asJava
-import scalaj.collection.Imports._
-
 // Narcolepsy
 import adapters._
 import utils._
