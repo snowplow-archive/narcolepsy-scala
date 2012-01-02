@@ -19,7 +19,7 @@ import java.text.SimpleDateFormat
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion
 
 // Narcolepsy
-import narcolepsy.{Representation, RepresentationWrapper}
+import narcolepsy.{Representation, RepresentationWrapper, RestfulError}
 
 /**
  * Core Narcolepsy types for working with REST. They are always available without an explicit export.
@@ -30,29 +30,7 @@ import narcolepsy.{Representation, RepresentationWrapper}
 package object narcolepsy {
 
   // -------------------------------------------------------------------------------------------------------------------
-  // API response types
-  // -------------------------------------------------------------------------------------------------------------------
-
-  // Raw response (prior to massaging into one of the below types)
-  // 1. Return code
-  // 2. Response headers
-  // 2. Response body (Option)
-  type RestfulResponse = (Int, RestfulHeaders, Option[String])
-
-  // Response from a GET request:
-  // 1. Return code
-  // 2. Either a subclass of Representation or a List of the same
-  // 3. Is the Representation an error Representation?
-  type GetResponse[R, RW] = (Int, Either[R, RW], Boolean)
-
-  // Response from a DELETE request
-  // 1. Return code
-  // 2. Either None (no news is good news) or a subclass of Representation
-  // 3. Is the Representation an error Representation?
-  type DeleteResponse[R] = (Int, Option[R], Boolean)
-
-  // -------------------------------------------------------------------------------------------------------------------
-  // Miscellaneous types
+  // Core RESTful types
   // -------------------------------------------------------------------------------------------------------------------
 
   // Simple synonym for the API parameters
@@ -65,23 +43,17 @@ package object narcolepsy {
   type RestfulVersion = DefaultArtifactVersion
 
   // -------------------------------------------------------------------------------------------------------------------
-  // Helper methods
+  // API response types
   // -------------------------------------------------------------------------------------------------------------------
 
-  // TODO: check if this is is still used
-  // TODO: make this a JSON configuration parameter
-  /**
-   * Whether or not to add a root key aka "top level segment" when (un)marshalling JSON, as
-   * per http://stackoverflow.com/questions/5728276/jackson-json-top-level-segment-inclusion
-   */
-  def needRootKey(obj: Any) = obj match {
-    case o:RepresentationWrapper[_] => false // Don't include as we get the root key for free with a wrapper
-    case _ => true                        // Yes include a root key
-  }
+  // Raw response (prior to massaging into one of the below types)
+  // 1. HTTP status code
+  // 2. HTTP response headers
+  // 3. HTTP response body, or None
+  type RestfulResponse = (Int, RestfulHeaders, Option[String])
 
-  // TODO: make this a JSON configuration parameter to the client (along with needRootKey)
-  /**
-   * Standardise the date format to use for (un)marshalling
-   */
-  def getDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+  // Response from a marshalled request - either:
+  // 1. An RestfulError class typed with E ErrorRepresentation, or:
+  // 2. An R Representation, or None
+  type MarshalledResponse[E <: ErrorRepresentation, R <: Representation] = Either[RestfulError[E], Option[R]]
 }

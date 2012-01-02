@@ -20,7 +20,7 @@ import adapters._
 import utils._
 
 // TODO: add doccomment
-abstract class Query(method: HttpMethod, client: Client,  resource: String) {
+abstract class Query(method: HttpMethod, client: Client, resource: String) {
 
   // TODO 1: would be good to make the Query builder typesafe. So e.g. developer gets a compile time error if a GetQuery hasn't setId()
   // TODO: see here for directions: http://www.tikalk.com/java/blog/type-safe-builder-scala-using-type-constraints
@@ -92,14 +92,14 @@ abstract class Query(method: HttpMethod, client: Client,  resource: String) {
       )
 
     if (_print) {
-      Console.println("About to execute API request: /%s".format(uri))
+      Console.println("Executing Narcolepsy query against URI: /%s".format(uri))
     }
 
     val (code, headers, body) = client.execute(method, _payload, uri)
 
     if (_print) {
-      Console.println("Response code: %s".format(code))
-      Console.println("Response headers:\n%s".format(headers.mkString("\n")))
+      Console.println("Response status code: %s".format(code))
+      Console.println("Response headers:\n%s".format(RestfulHelpers.stringify(headers)))
       Console.println("Response body:\n%s".format(body.getOrElse("<< EMPTY >>")))
     }
 
@@ -198,4 +198,4 @@ class PostQuery(client: Client, resource: String)
 /**
  * Flags that running the Query returned a non-success code
  */
-class RestfulErrorResponseException(message: String = "") extends RuntimeException(message)
+class ResponseCodeException(message: String = "") extends RuntimeException(message)

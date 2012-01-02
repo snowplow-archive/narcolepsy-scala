@@ -10,26 +10,9 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package co.orderly.narcolepsy.utils
-
-// TODO: can I blow this away? It seems a bit configuration heavy
+package co.orderly.narcolepsy
 
 /**
- * Trait for the error format case objects
+ * RestfulError holds an error response from a web service
  */
-trait ErrorFormat
-
-/**
- * Meaning that this API returns all errors as its own custom form of ErrorRepresentation
- */
-case object RepresentationErrors extends ErrorFormat
-
-/**
- * Meaning that this API returns all errors as plaintext
- */
-case object PlaintextErrors extends ErrorFormat
-
-/**
- * Meaning that this API returns errors as a mix of plaintext and its own custom form of ErrorRepresentation
- */
-case object MixedErrors extends ErrorFormat
+case class RestfulError[E <: ErrorRepresentation](statusCode: Int, plaintext: String, marshalled: E)

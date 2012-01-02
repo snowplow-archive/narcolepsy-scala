@@ -45,4 +45,12 @@ object RestfulHelpers {
     URLEncodedUtils.format(nameValues.toSeq.asJava, defaultCharSet)
     // TODO: shouldn't assume we want to use UTF8 for URL encoding
   }
+
+  /**
+   * Turns a set of RestfulHeaders (a Map[String, String]) into a single
+   * string (with line breaks) ready for printing, logging or similar
+   * @param headers The headers to pretty print
+   */
+  def stringify(headers: RestfulHeaders): String =
+    headers.map(h => "%s: %s".format(h._1, h._2)).mkString("\n")
 }

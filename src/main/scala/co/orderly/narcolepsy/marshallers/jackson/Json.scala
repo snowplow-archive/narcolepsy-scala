@@ -38,8 +38,9 @@ case class UnmarshalJson(json: String, rootKey: Boolean = false) extends Unmarsh
     // Define the Jackson mapper and configure it
     val mapper = new ObjectMapper()
 
-    mapper.configure(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE, rootKey)
-    mapper.getDeserializationConfig().setDateFormat(getDateFormat)
+    // TODO: turn these into JacksonConfiguration-based or similar
+    // mapper.configure(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE, rootKey)
+    // mapper.getDeserializationConfig().setDateFormat(getDateFormat)
 
     // Translates typical camel case Java property names to lower case JSON element names, separated by underscore
     mapper.setPropertyNamingStrategy(new PropertyNamingStrategy.LowerCaseWithUnderscoresStrategy())
@@ -64,13 +65,13 @@ trait JacksonMarshaller extends Marshaller {
    */
   def marshal(): String = {
 
-    // TODO: we need to inject a JacksonConfiguration into this OR make it easy to override JacksonMarshaller
-    // TODO in an individual Narcolepsy client
-
     // Define the Jackson mapper and configure it
     val mapper = new ObjectMapper()
-    mapper.configure(SerializationConfig.Feature.WRAP_ROOT_VALUE, needRootKey(this))
-    mapper.getSerializationConfig().setDateFormat(getDateFormat)
+
+    // TODO: we need to inject a JacksonConfiguration into this OR make it easy to override JacksonMarshaller
+    // TODO in an individual Narcolepsy client
+    // mapper.configure(SerializationConfig.Feature.WRAP_ROOT_VALUE, needRootKey(this))
+    // mapper.getSerializationConfig().setDateFormat(getDateFormat)
 
     // Translates typical camel case Java property names to lower case JSON element names, separated by underscore
     mapper.setPropertyNamingStrategy(new PropertyNamingStrategy.LowerCaseWithUnderscoresStrategy())
@@ -86,3 +87,30 @@ trait JacksonMarshaller extends Marshaller {
     writer.writeValueAsString(this)
   }
 }
+
+/* Archive of JSONy unmarshalling stuff
+
+
+  // -------------------------------------------------------------------------------------------------------------------
+  // Helper methods
+  // -------------------------------------------------------------------------------------------------------------------
+
+  // TODO: check if this is is still used
+  // TODO: make this a JSON configuration parameter
+  /**
+   * Whether or not to add a root key aka "top level segment" when (un)marshalling JSON, as
+   * per http://stackoverflow.com/questions/5728276/jackson-json-top-level-segment-inclusion
+   */
+  def needRootKey(obj: Any) = obj match {
+    case o:RepresentationWrapper[_] => false // Don't include as we get the root key for free with a wrapper
+    case _ => true                        // Yes include a root key
+  }
+
+  // TODO: make this a JSON configuration parameter to the client (along with needRootKey)
+  /**
+   * Standardise the date format to use for (un)marshalling
+   */
+  def getDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+
+
+*/

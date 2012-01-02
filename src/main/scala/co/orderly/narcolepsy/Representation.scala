@@ -16,7 +16,7 @@ package co.orderly.narcolepsy
 import scala.collection.mutable.ArrayBuffer
 
 /**
- * Representation is the parent class for all representations handled by
+ * Representation is the parent trait for all representations handled by
  * NarcolepsyClient. A representation is REST speak for the instantiated form
  * of a REST resource. For the purposes of Narcolepsy, a Representation is a
  * Scala class that has been marshalled from XML/JSON/whatever by JAXB, Jackson
@@ -24,7 +24,10 @@ import scala.collection.mutable.ArrayBuffer
  */
 trait Representation // extends JaxbMarshaller with JacksonMarshaller
 
-// TODO: add doccomment
+/**
+ * ErrorRepresentation is the parent trait for all representations which
+ * represent some form of error object
+ */
 trait ErrorRepresentation extends Representation
 
 /**
@@ -38,9 +41,9 @@ trait RepresentationWrapper[R <: Representation] extends Representation with Lis
 trait Listable[+R <: Representation] {
 
   /**
-   * Every Wrapper should implement the toList method to turn the
-   * RepresentationWrapper into a List[Representation] for easier
-   * mapping/folding etc in Scala
+   * Every RepresentationWrapper should implement the toList method to
+   * turn the RepresentationWrapper into a List[Representation] for
+   * easier mapping/folding etc in Scala
    */
   def toList: List[R]
 

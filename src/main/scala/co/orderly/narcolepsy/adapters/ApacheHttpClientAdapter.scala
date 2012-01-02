@@ -31,6 +31,7 @@ import org.apache.http.protocol.HTTP
 
 // Scala
 import scala.io.Source
+import scala.collection.immutable.TreeMap
 
 // Narcolepsy
 import co.orderly.narcolepsy.utils._ // Full path because Apache HttpClient has a utils sub-package too
@@ -117,7 +118,8 @@ trait ApacheHttpClientAdapter extends HttpAdapter {
    * @param apacheHeaders An array of HTTP headers in Apache HTTP Header format
    * @return The Narcolepsy-friendly RestfulHeaders
    */
-  protected def convertHeaders(apacheHeaders: Array[Header]): RestfulHeaders = {
-    // TODO: write this code
-  }
+  protected def convertHeaders(apacheHeaders: Array[Header]): RestfulHeaders =
+    (TreeMap.empty[String, String] /: apacheHeaders) {
+      (tree, ah) => tree + (ah.getName() -> ah.getValue())
+    }
 }
