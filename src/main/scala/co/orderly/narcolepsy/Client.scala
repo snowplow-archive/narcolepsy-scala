@@ -51,7 +51,12 @@ abstract class Client(
   val clientName: String
 
   // Define the software version, e.g. 1.1.0 or 2
+  // TODO: replace this
   val clientVersion: RestfulVersion
+
+  // Define the characterset to use (e.g. UTF-8)
+  // TODO: wire in the default character set
+  val charSet: String
 
   // Define the format that errors are returned in
   // Valid formats are plaintext, representation or mixed
@@ -65,6 +70,7 @@ abstract class Client(
 
   // The header variable which contains the version information
   // Set to None if there is no easily available version information in a header
+  // TODO: this is too PrestaShop-specific. Should support a lambda to detect/verify versioning
   val versionHeader: Option[String]
 
   // The default root API URL if supplied. Only makes sense for APIs from SaaS companies with fixed API endpoints

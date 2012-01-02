@@ -151,7 +151,7 @@ trait Api {
     getUri(
       (resource +
       (if (id.isDefined) "/%s".format(id.get) else "") +
-      (if (params.isDefined) "?%s".format(RestfulHelpers.canonicalize(params.get)) else ""))
+      (if (params.isDefined) "?%s".format("BROKEN") else ""))
     )
   }
 

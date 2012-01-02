@@ -52,15 +52,15 @@ class Resource[
   // Query (API execution) logic
   // -------------------------------------------------------------------------------------------------------------------
 
-  def get(): GetQuery = new GetQuery(slug)
+  def get(): GetQuery = new GetQuery(client, slug)
 
-  def gets(): GetsQuery = new GetsQuery(slug)
+  def gets(): GetsQuery = new GetsQuery(client, slug)
 
-  def put(): PutQuery = new PutQuery(slug)
+  def put(): PutQuery = new PutQuery(client, slug)
 
-  def post(): PostQuery = new PostQuery(slug)
+  def post(): PostQuery = new PostQuery(client, slug)
 
-  def delete(): DeleteQuery = new DeleteQuery(slug)
+  def delete(): DeleteQuery = new DeleteQuery(client, slug)
 
   // TODO: add HEAD
 
@@ -132,7 +132,7 @@ class Resource[
     getUri(
       (slug +
       (if (id.isDefined) "/%s".format(id.get) else "") +
-      (if (params.isDefined) "?%s".format(RestfulHelpers.canonicalize(params.get)) else "")),
+      (if (params.isDefined) "?%s".format("BROKEN") else "")),
       wrapped
     )
   }

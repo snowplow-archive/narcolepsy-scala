@@ -38,6 +38,7 @@ import co.orderly.narcolepsy.utils._ // Full path because Apache HttpClient has 
 trait ApacheHttpClientAdapter extends HttpAdapter {
 
   // Borrow these from the Client...
+  // TODO nicer to just include a ClientConfiguration object, less verbose...
   self: {
     val username:       String
     val password:       String
@@ -85,7 +86,7 @@ trait ApacheHttpClientAdapter extends HttpAdapter {
       new UsernamePasswordCredentials(username, password)
     )
 
-    // Attach the XML to the request if we have some - how we pass it in depends on whether it's a POST or PUT
+    // Attach the payload to the request if we have some - how we pass it in depends on whether it's a POST or PUT
     request.setHeader("Accept", apiContentType)
     /* TODO - also figure out how encodeXML works with JSON
     request match {

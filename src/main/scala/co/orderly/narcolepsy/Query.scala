@@ -15,105 +15,185 @@ package co.orderly.narcolepsy
 // Java
 import java.util.UUID
 
-abstract class Query(resource: String) {
+// Apache HttpClient
+import org.apache.http.client.utils.URLEncodedUtils
+import org.apache.http.message.BasicNameValuePair
 
-  protected var payload: Option[String] = None // Payload trait allows building this
+// scalaj for asJava
+import scalaj.collection.Imports._
 
-  protected var id: Option[String] = None // Id trait allows building this
+// Narcolepsy
+import adapters._
+import utils._
 
-  protected var params: Option[RestfulParams] = None // Parameter name-value pairs are squirted into the querystring
+// TODO: add doccomment
+abstract class Query(method: HttpMethod, client: Client,  resource: String) {
 
-  protected var print: Boolean = false
+  // TODO 1: would be good to make the Query builder typesafe. So e.g. developer gets a compile time error if a GetQuery hasn't setId()
+  // TODO: see here for directions: http://www.tikalk.com/java/blog/type-safe-builder-scala-using-type-constraints
 
-  protected var slug: String = resource
+  // TODO 2: it would also be quite nice to make the Query builder immutable, rather than use vars
 
-  def debugPrint(): this.type = {
-    this.print = true
+  // -------------------------------------------------------------------------------------------------------------------
+  // Flags for the stateful builder
+  // -------------------------------------------------------------------------------------------------------------------
+
+  protected var _payload: Option[String] = None
+
+  protected var _id: Option[String] = None
+
+  protected var _params: Option[RestfulParams] = None
+
+  protected var _slug: String = resource
+
+  protected var _print: Boolean = false
+
+  protected var _exception: Boolean = false
+
+  // -------------------------------------------------------------------------------------------------------------------
+  // Fluent methods which can be used in any Query builder
+  // -------------------------------------------------------------------------------------------------------------------
+
+  /**
+   * Add this method to set on debug-style printing of the query execution
+   * @return The updated Query builder
+   */
+  def print(): this.type = {
+    this._print = true
     this
-  }
-
-  def overrideSlug(slug: String): this.type = {
-    this.slug = slug
-    this
-  }
-
-  def run(): RestfulResponse = {
-
-    val uri = (this.slug +
-      (if (id.isDefined) "/%s".format(id.get) else "") +
-      (if (params.isDefined) "?%s".format(canonicalize(params.get)) else "")
-      )
   }
 
   /**
-   * Returns a canonicalized, escaped string of &key=value pairs from a Map of parameters
-   * @param params A map of parameters ('filter', 'display' etc)
-   * @return A canonicalized escaped string of the parameters
+   * Add this method to override the resource 'slug' used for this query
+   * @param slug
+   * @return The updated Query builder
    */
-  protected def canonicalize(params: RestfulParams): String = {
-
-    val nameValues = params.map { param => new BasicNameValuePair(param._1, param._2) }
-    URLEncodedUtils.format(nameValues.toSeq.asJava, CHARSET)
+  def slug(slug: String): this.type = {
+    this._slug = slug
+    this
   }
 
-  // TODO: add option to throw an exception if a non-success error code retrieved
+  /**
+   * Add this method to throw an exception if we received an HTTP error code back from the web service
+   * @return The updated Query builder
+   */
+  def exception(): this.type = {
+    this._exception = true
+    this
+  }
 
-  /*
-  def get(tpe: String, id: Int): QueryResult[RestfulResponse] =
-    new QueryResult[RestfulResponse] {
-       def run(): RestfulResponse = null // code to make rest call goes here
-    } */
+  // -------------------------------------------------------------------------------------------------------------------
+  // Execution methods for the Query
+  // -------------------------------------------------------------------------------------------------------------------
+
+  /**
+   * run() executes the query using all of the parameters set (or not set) through
+   * the builder.
+   * @return A RestfulResponse tuple of return code, headers and body
+   */
+  def run(): RestfulResponse = {
+
+    val uri = (_slug +
+      (if (_id.isDefined) "/%s".format(_id.get) else "") +
+      (if (_params.isDefined) "?%s".format(RestfulHelpers.canonicalize(_params.get)) else "")
+      )
+
+    if (_print) {
+      Console.println("About to execute API request: /%s".format(uri))
+    }
+
+    val (code, headers, body) = client.execute(method, _payload, uri)
+
+    if (_print) {
+      Console.println("Response code: %s".format(code))
+      Console.println("Response headers:\n%s".format(headers.mkString("\n")))
+      Console.println("Response body:\n%s".format(body.getOrElse("<< EMPTY >>")))
+    }
+
+    // TODO: check if we have an error and throw if we do
+
+    (code, headers, body)
+  }
 }
 
+// -------------------------------------------------------------------------------------------------------------------
+// Specific fluent functionalities only found on some Query subclasses
+// -------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Payload allows a Query to have a 'payload' attached. A payload is data submitted to the web service with the
+ * request. Typically used by PUT and POST requests.
+ */
 trait Payload extends Query {
 
-  def setPayload(payload: String): this.type = {
-    this.payload = Option(payload)
+  def payload(payload: String): this.type = {
+    this._payload = Option(payload)
     this
   }
 }
 
+/**
+ * Id allows a Query to have a resource ID attached. This is used by any Query which wants to operate on a specific
+ * (already existing) resource, rather than a new resource. Typically used by all DELETE and POST requests, and
+ * some GET requests.
+ */
 trait Id extends Query {
 
-  def setId(id: String): this.type = {
-    this.id = Option(id)
+  // TODO: add support for multiple IDs. For example PrestaShop supports DELETEing /?id=45,65. Need to make it play nice with other parameters
+
+  def id(id: String): this.type = {
+    this._id = Option(id)
     this
   }
 
-  def setId(id: Int): this.type = {
-    this.id = Option(id.toString())
+  def id(id: Int): this.type = {
+    this._id = Option(id.toString())
     this
   }
 
-  def setId(id: UUID): this.type = {
-    this.id = Option(id.toString())
+  def id(id: UUID): this.type = {
+    this._id = Option(id.toString())
     this
   }
 }
 
-// TODO: make these typesafe (so I get a compile time error if a GetQuery hasn't setId())
-// See here for directions: http://www.tikalk.com/java/blog/type-safe-builder-scala-using-type-constraints
+// -------------------------------------------------------------------------------------------------------------------
+// Define the concrete Query subclasses using the traits above
+// -------------------------------------------------------------------------------------------------------------------
 
-// Get is for retrieving a singular representation
-class GetQuery(resource: String) extends Query(resource) with Id
+/**
+ * GetQuery is for retrieving a singular representation. Applies the GetMethod and uses the Id trait
+ */
+class GetQuery(client: Client, resource: String) extends Query(GetMethod, client, resource) with Id
 
-// Gets is for retrieving a list of multiple representations
-class GetsQuery(resource: String) extends Query(resource)
+/**
+ * GetsQuery is for retrieving a list of multiple representations. From an HTTP/RESTful perspective, a
+ * GetQuery and a GetsQuery are identical: they both execute a GET. From a Narcolepsy typesafety
+ * perspective they are quite different:
+ *  - A GetQuery takes an ID and returns a singular representation which can be unmarshalled to a Representation subclass
+ *  - A GetsQuery takes no ID and returns a collection-style representation which can be unmarshalled to a RepresentationWrapper subclass
+ */
+class GetsQuery(client: Client, resource: String) extends Query(GetMethod, client, resource)
 
-class DeleteQuery(resource: String) extends Query(resource) with Id
+/**
+ * DeleteQuery is for deleting a resource. Applies the DeleteMethod and uses the Id trait
+ */
+class DeleteQuery(client: Client, resource: String) extends Query(DeleteMethod, client, resource) with Id
 
-class PutQuery(resource: String) extends Query(resource) with Id with Payload
+// TODO: add doccomment
+class PutQuery(client: Client, resource: String) extends Query(PutMethod, client, resource) with Id with Payload
 
-class PostQuery(resource: String) extends Query(resource) with Payload
+// TODO: add doccomment
+class PostQuery(client: Client, resource: String) extends Query(PostMethod, client, resource) with Payload
 
-// TODO: add HEAD
+// TODO: add HeadQuery
 
-trait QueryResult[A] { self =>
-  def map[B](f: (A) => B): QueryResult[B] = new QueryResult[B] {
-    def run(): B = f(self.run())
-  }
-  def flatMap[B](f: (A) => QueryResult[B]) = new QueryResult[B] {
-    def run(): B = f(self.run()).run()
-  }
-  def run(): A
+// -------------------------------------------------------------------------------------------------------------------
+// Exceptions
+// -------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Flags that running the Query returned a non-success code
+ */
+class RestfulResponseNonSuccessException(message: String = "") extends RuntimeException(message) {
 }
