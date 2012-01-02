@@ -19,6 +19,10 @@ import java.util.UUID
 import adapters._
 import utils._
 
+// TODO: remove these
+import marshallers.jackson.UnmarshalJson
+import marshallers.jaxb.UnmarshalXml
+
 /**
  * Query is a fluent interface for constructing a call (GET, POST, DELETE, PUT or
  * similar) to a RESTful web service. It is typed so that the representations
@@ -125,10 +129,18 @@ abstract class Query[
 
     val (code, _, body) = run()
 
+    // TODO: I want to decouple this using implicit objects and conversions, Spray-style
     if (RestfulHelpers.isError(code)) {
-      Left(RestfulError(code, body, null)) // TODO add marshalling in here
+      Left(RestfulError(code, body, null)) // TODO add error unmarshalling in here
     } else {
-      Right(null) // TODO add marshalling in here
+      Right(body flatMap( b =>
+        client.contentType match {
+
+          // TODO: Remove Some() around the content types. No need for it
+          case Some("application/json") => Right(UnmarshalXml(body.get).toRepresentation[R](typeR))
+          case Some("text/xml") => Right(UnmarshalXml(body.get).toRepresentation[R](typeR))
+          case _ => throw new ClientConfigurationException("Narcolepsy can only unmarshall JSON and XML currently") // TODO change exception type
+        }))
     }
   }
 }
