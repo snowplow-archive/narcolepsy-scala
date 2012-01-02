@@ -10,10 +10,10 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package co.orderly.narcolepsy.adapters
+package co.orderly.narcolepsy
+package adapters
 
-// Orderly
-import co.orderly.narcolepsy._
+// Narcolepsy
 import utils.HttpMethod
 
 trait HttpAdapter {
@@ -22,7 +22,6 @@ trait HttpAdapter {
    * Handles an HTTP request to the web service
    * @param requestMethod HttpMethod to apply to this request
    * @param requestData The payload
-   * TODO: shouldn't be a String, should be a list of something.
    * @param requestUri Relative path to resource. Attach rootUri to get the absolute URI
    * @return The RestfulResponse (response code, response body and response header)
    */
@@ -33,5 +32,4 @@ trait HttpAdapter {
  * Flags an exception in the configuration of an HTTP library adapter - i.e. a subclass of the
  * above trait
  */
-class HttpAdapterException(message: String = "") extends RuntimeException(message) {
-}
+class HttpAdapterException(message: String = "") extends RuntimeException(message)

@@ -37,7 +37,7 @@ package object narcolepsy {
   // 1. Return code
   // 2. Response headers
   // 2. Response body (Option)
-  type RestfulResponse = (Int, List[String], Option[String])
+  type RestfulResponse = (Int, RestfulHeaders, Option[String])
 
   // Response from a GET request:
   // 1. Return code
@@ -57,6 +57,9 @@ package object narcolepsy {
 
   // Simple synonym for the API parameters
   type RestfulParams = Map[String, String]
+
+  // Simple synonym for HTTP headers
+  type RestfulHeaders = Map[String, String]
 
   // To identify a REST server/client version
   type RestfulVersion = DefaultArtifactVersion

@@ -43,5 +43,6 @@ object RestfulHelpers {
 
     val nameValues = params.map { param => new BasicNameValuePair(param._1, param._2) }
     URLEncodedUtils.format(nameValues.toSeq.asJava, defaultCharSet)
+    // TODO: shouldn't assume we want to use UTF8 for URL encoding
   }
 }

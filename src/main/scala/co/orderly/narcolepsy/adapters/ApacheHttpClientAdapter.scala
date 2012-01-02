@@ -10,14 +10,15 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package co.orderly.narcolepsy.adapters
+package co.orderly.narcolepsy
+package adapters
 
 // Java
 import java.net.{URLEncoder, URI}
 import java.io.InputStream
 
 // Apache HttpClient
-import org.apache.http.StatusLine
+import org.apache.http.{Header, StatusLine}
 import org.apache.http.message._
 import org.apache.http.auth._
 import org.apache.http.params._
@@ -31,8 +32,7 @@ import org.apache.http.protocol.HTTP
 // Scala
 import scala.io.Source
 
-// Orderly
-import co.orderly.narcolepsy._
+// Narcolepsy
 import co.orderly.narcolepsy.utils._ // Full path because Apache HttpClient has a utils sub-package too
 
 trait ApacheHttpClientAdapter extends HttpAdapter {
@@ -53,7 +53,6 @@ trait ApacheHttpClientAdapter extends HttpAdapter {
    * Handles an HTTP request to the web service
    * @param requestMethod HttpMethod to apply to this request
    * @param requestData The payload
-   * TODO: shouldn't be a String, should be a list of something.
    * @param requestUri Relative path to resource. Attach rootUri to get the absolute URI
    * @return The RestfulResponse (response code, response body and response header)
    */
@@ -98,7 +97,7 @@ trait ApacheHttpClientAdapter extends HttpAdapter {
     // Execute the request and retrieve the response code and headers
     val response = httpClient.execute(request)
     val code = response.getStatusLine().getStatusCode() // TODO are we throwing away any info here?
-    val headers = response.getAllHeaders()
+    val headers = convertHeaders(response.getAllHeaders())
 
     // Now get the response body if we have one
     val responseEntity = Option(response.getEntity())
@@ -109,6 +108,16 @@ trait ApacheHttpClientAdapter extends HttpAdapter {
 
     // Finally let's return the RestfulResponse
     // TODO: headers not working
-    (code, Nil, data)
+    (code, headers, data)
+  }
+
+  /**
+   * Converts a Java Array of Apache HTTP Headers into a Narcolepsy-friendly
+   * RestfulHeaders type (a Map[String, String]).
+   * @param apacheHeaders An array of HTTP headers in Apache HTTP Header format
+   * @return The Narcolepsy-friendly RestfulHeaders
+   */
+  protected def convertHeaders(apacheHeaders: Array[Header]): RestfulHeaders = {
+    // TODO: write this code
   }
 }
