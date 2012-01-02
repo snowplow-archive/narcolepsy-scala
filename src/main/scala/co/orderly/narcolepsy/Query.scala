@@ -89,7 +89,7 @@ abstract class Query(method: HttpMethod, client: Client,  resource: String) {
   /**
    * run() executes the query using all of the parameters set (or not set) through
    * the builder.
-   * @return A RestfulResponse tuple of return code, headers and body
+   * @return A RestfulResponse tuple of return code, HTTP headers and body
    */
   def run(): RestfulResponse = {
 
