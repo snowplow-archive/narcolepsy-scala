@@ -84,6 +84,13 @@ abstract class Client(
   val minVersionSupported: Option[RestfulVersion]
   val maxVersionSupported: Option[RestfulVersion]
 
+  /*
+  lazy val SprayCanVersion: String = {
+
+    new BufferedReader(new InputStreamReader(getClass.getResourceAsStream("/version"))).readLine()
+
+  } */
+
   // -------------------------------------------------------------------------------------------------------------------
   // Validation to check that the constructor arguments are okay
   // -------------------------------------------------------------------------------------------------------------------
