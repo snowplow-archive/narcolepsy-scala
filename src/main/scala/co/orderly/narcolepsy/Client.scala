@@ -118,7 +118,7 @@ abstract class Client(
     userAgent = _userAgent,
     rootUri = _rootUri,
     contentType = _contentType
-  )
+    )
 }
 
 /**
@@ -131,7 +131,8 @@ case class ClientConfiguration(name: String,
   version: String,
   userAgent: String,
   rootUri: String,
-  contentType: String)
+  contentType: String
+  )
 
 /**
  * Flags an exception in the configuration of a client - i.e. the subclassing of the
