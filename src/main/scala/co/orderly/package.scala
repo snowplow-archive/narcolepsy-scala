@@ -12,6 +12,9 @@
  */
 package co.orderly
 
+// Apache HttpClient
+import org.apache.http.protocol.HTTP
+
 // Narcolepsy
 import narcolepsy.{Representation, RepresentationWrapper, RestfulError}
 

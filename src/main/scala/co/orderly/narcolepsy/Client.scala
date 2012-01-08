@@ -12,7 +12,8 @@
  */
 package co.orderly.narcolepsy
 
-// TODO: add imports for version capture
+// Java
+import java.io.{BufferedReader, InputStreamReader}
 
 // Orderly
 import utils._
