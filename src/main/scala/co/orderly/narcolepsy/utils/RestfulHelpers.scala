@@ -17,8 +17,8 @@ import org.apache.http.client.utils.URLEncodedUtils
 import org.apache.http.protocol.HTTP
 import org.apache.http.message.BasicNameValuePair
 
-// scalaj for asJava
-import scalaj.collection.Imports._
+// Scala
+import scala.collection.JavaConversions._
 
 // Orderly
 import co.orderly.narcolepsy._
@@ -37,7 +37,7 @@ object RestfulHelpers {
   def canonicalize(params: RestfulParams, encoding: String): String = {
 
     val nameValues = params.map { param => new BasicNameValuePair(param._1, param._2) }
-    URLEncodedUtils.format(nameValues.toSeq.asJava, encoding) // TODO: would be nice to remove scalaj as dependency
+    URLEncodedUtils.format(nameValues.toSeq, encoding) // TODO: would be nice to remove scalaj as dependency
   }
 
   /**

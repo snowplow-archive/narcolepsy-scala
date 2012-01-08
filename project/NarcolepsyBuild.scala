@@ -28,8 +28,6 @@ object NarcolepsyBuild extends Build {
     .settings(narcolepsySettings: _*)
     .settings(
       libraryDependencies ++= Seq(
-        Runtime.scalaj,
-        Runtime.maven,
         Runtime.httpCore,
         Runtime.httpClient,
         Runtime.jackCore,
