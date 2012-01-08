@@ -101,7 +101,7 @@ abstract class Query[
 
     val uri = (_slug +
       (if (_id.isDefined) "/%s".format(_id.get) else "") +
-      (if (_params.isDefined) "?%s".format(RestfulHelpers.canonicalize(_params.get)) else "")
+      (if (_params.isDefined) "?%s".format(RestfulHelpers.canonicalize(_params.get, client.configuration.encoding)) else "")
       )
 
     if (_print) {
