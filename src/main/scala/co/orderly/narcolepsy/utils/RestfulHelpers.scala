@@ -23,27 +23,21 @@ import scalaj.collection.Imports._
 // Orderly
 import co.orderly.narcolepsy._
 
+/**
+ * Useful methods for building RESTful clients
+ */
 object RestfulHelpers {
-
-  // -------------------------------------------------------------------------------------------------------------------
-  // Useful methods for building RESTful clients
-  // -------------------------------------------------------------------------------------------------------------------
-
-  /**
-   * Default character set is UTF8
-   */
-  def defaultCharSet: String = HTTP.UTF_8
 
   /**
    * Returns a canonicalized, escaped string of &key=value pairs from a Map of parameters
    * @param params A map of parameters ('filter', 'display' etc)
+   * @param encoding What character encoding to use for the canonicalized string
    * @return A canonicalized escaped string of the parameters
    */
-  def canonicalize(params: RestfulParams): String = {
+  def canonicalize(params: RestfulParams, encoding: String): String = {
 
     val nameValues = params.map { param => new BasicNameValuePair(param._1, param._2) }
-    URLEncodedUtils.format(nameValues.toSeq.asJava, defaultCharSet)
-    // TODO: shouldn't assume we want to use UTF8 for URL encoding
+    URLEncodedUtils.format(nameValues.toSeq.asJava, encoding) // TODO: would be nice to remove scalaj as dependency
   }
 
   /**

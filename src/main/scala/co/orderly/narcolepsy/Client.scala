@@ -12,6 +12,8 @@
  */
 package co.orderly.narcolepsy
 
+// TODO: add imports for version capture
+
 // Orderly
 import utils._
 import adapters._
@@ -33,81 +35,67 @@ import adapters._
  *
  * For more on Narcolepsy see the GitHub project: https://github.com/orderly/narcolepsy
  */
-abstract class Client(
+absract class Client(
   val rootUri:      Option[String],
   val contentType:  Option[String],
   val username:     String,
   val password:     String) extends HttpAdapter {
 
-  // TODO: let's use the Cake pattern to decouple all of this from the HttpClient implementation
-  // TODO: http://jonasboner.com/2008/10/06/real-world-scala-dependency-injection-di.html
-
   // -------------------------------------------------------------------------------------------------------------------
   // Need to populate the below vals to define a new NarcolepsyClient
   // -------------------------------------------------------------------------------------------------------------------
 
-  // To provide a human readable name for this client, e.g. "Shopify Scala client"
-  val clientName: String
-
-  // Define the software version, e.g. 1.1.0 or 2
-  // TODO: replace this
-  val clientVersion: RestfulVersion
-
-  // Define the characterset to use (e.g. UTF-8)
-  // TODO: wire in the default character set
-  val charSet: String
-
-  // Define the format that errors are returned in
-  // Valid formats are plaintext, representation or mixed
-  val errorFormat: ErrorFormat
+  // To provide a human readable name for this client, e.g. "PrestaShop Scala client"
+  protected def clientName: String
 
   // To store the content types (e.g. XML, JSON) supported by this RESTful web service
-  val supportedContentTypes: List[String] // TODO: change contentType to a Spray variable
-
-  // The default content type if none is supplied
-  val defaultContentType: Option[String] // TODO: change contentType to a Spray variable
-
-  // The header variable which contains the version information
-  // Set to None if there is no easily available version information in a header
-  // TODO: this is too PrestaShop-specific. Should support a lambda to detect/verify versioning
-  val versionHeader: Option[String]
-
-  // The default root API URL if supplied. Only makes sense for APIs from SaaS companies with fixed API endpoints
-  // Set to None if a default root API does not make sense for this API
-  val defaultRootUri: Option[String]
+  protected val supportedContentTypes: List[String]
 
   // Map resource slug names against the Representation subclasses required by this RESTful API
-  val apiResources: Api
+  protected val apiResources: Api
 
-  // The minimum version of the RESTful API supported. RestfulVersion taken from Maven versioning
-  // TODO: implement all this (quite bespoke per API?)
-  val minVersionSupported: Option[RestfulVersion]
-  val maxVersionSupported: Option[RestfulVersion]
+  // -------------------------------------------------------------------------------------------------------------------
+  // You can override the following defaults in your NarcolepsyClient if you want
+  // -------------------------------------------------------------------------------------------------------------------
 
-  /*
-  lazy val SprayCanVersion: String = {
+  // The default root API URL if supplied. Only makes sense for APIs for hosted services with fixed API endpoints
+  // Set to None if a default root API does not make sense for this API
+  protected val defaultRootUri: Option[String] = None
 
-    new BufferedReader(new InputStreamReader(getClass.getResourceAsStream("/version"))).readLine()
+  // The default content type if none is supplied
+  protected val defaultContentType: Option[String] = None
 
-  } */
+  // Define the characterset to use (e.g. UTF-8)
+  protected val encoding: String = DefaultEncoding
+
+  // -------------------------------------------------------------------------------------------------------------------
+  // Calculated / automatically detected variables
+  // -------------------------------------------------------------------------------------------------------------------
+
+  // Define the software version, e.g. 1.1.0 or 3.0 m2
+  private val clientVersion = new BufferedReader(new InputStreamReader(getClass.getResourceAsStream("/version"))).readLine()
+
+  // How the client should identify itself to the RESTful API
+  private val userAgent = "%s/%s [NarcolepsyClient]".format(clientName, clientVersion)
 
   // -------------------------------------------------------------------------------------------------------------------
   // Validation to check that the constructor arguments are okay
   // -------------------------------------------------------------------------------------------------------------------
 
   // Check we have a rootUri and add a trailing slash if necessary
-  val trailSlash = (uri: String) => if (uri.matches(".*/")) uri else (uri + "/")
-  val apiUri = trailSlash((rootUri, defaultRootUri) match {
+  private val trailSlash = (uri: String) => if (uri.matches(".*/")) uri else (uri + "/")
+  private val apiUri = trailSlash((rootUri, defaultRootUri) match {
     case (Some(uri), _) => uri
     case (None, Some(uri)) => uri
     case _ => throw new ClientConfigurationException("No rootUri or defaultRootUri provided")
   })
 
   // Check that we have a content type
-  val apiContentType = (contentType, defaultContentType) match {
-    case (Some(ct), _) => ct
-    case (None, Some(ct)) => ct
-    case _ => throw new ClientConfigurationException("No contentType or defaultContentType provided")
+  private val apiContentType = (contentType, defaultContentType, supportedContentTypes) match {
+    case (Some(ct), _, _) => ct // If we have a contentType passed in, use that
+    case (None, Some(ct), _) => ct // Else if we have a default content type, use that
+    case (_, _, ct :: Nil) => ct /// FInally grab the only support type that is set
+    case _ => throw new ClientConfigurationException("No contentType, single supportedContentTYpes or defaultContentType provided")
   }
 
   // Now let's validate that the content type passed in is legitimate for this API
@@ -116,16 +104,21 @@ abstract class Client(
   }
 
   // -------------------------------------------------------------------------------------------------------------------
-  // Set additional variables
+  // Finally we build a 'clean' configuration object for use in an HttpAdapter
   // -------------------------------------------------------------------------------------------------------------------
 
-  // How the client should identify itself to the RESTful API
-  val userAgent = "%s/%s [NarcolepsyClient]".format(clientName, clientVersion)
+  object Configuration {
+    val name = clientName
+    val version = clientVersion
+    val apiUri = this.apiUri
+    val apiContentType = this.apiContentType
+    val encoding = this.encoding
+  }
+
 }
 
 /**
  * Flags an exception in the configuration of a client - i.e. the subclassing of the
  * Client abstract class above
  */
-class ClientConfigurationException(message: String = "") extends RuntimeException(message) {
-}
+class ClientConfigurationException(message: String = "") extends RuntimeException(message)

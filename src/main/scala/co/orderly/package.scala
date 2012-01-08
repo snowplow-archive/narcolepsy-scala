@@ -12,12 +12,6 @@
  */
 package co.orderly
 
-// Java
-import java.text.SimpleDateFormat
-
-// Maven versioning (we'll give it a friendly alias below)
-import org.apache.maven.artifact.versioning.DefaultArtifactVersion
-
 // Narcolepsy
 import narcolepsy.{Representation, RepresentationWrapper, RestfulError}
 
@@ -30,17 +24,27 @@ import narcolepsy.{Representation, RepresentationWrapper, RestfulError}
 package object narcolepsy {
 
   // -------------------------------------------------------------------------------------------------------------------
+  // RESTful package constants
+  // -------------------------------------------------------------------------------------------------------------------
+
+  // Default character set is UTF8
+  val DefaultEncoding: String = HTTP.UTF_8
+
+  // -------------------------------------------------------------------------------------------------------------------
   // Core RESTful types
   // -------------------------------------------------------------------------------------------------------------------
 
   // Simple synonym for the API parameters
   type RestfulParams = Map[String, String]
 
+  // For an HTTP status code
+  type RestfulStatusCode = Int
+
   // Simple synonym for HTTP headers
   type RestfulHeaders = Map[String, String]
 
-  // To identify a REST server/client version
-  type RestfulVersion = DefaultArtifactVersion
+  // For an HTTP body
+  type RestfulBody = Option[String]
 
   // -------------------------------------------------------------------------------------------------------------------
   // API response types
@@ -50,7 +54,7 @@ package object narcolepsy {
   // 1. HTTP status code
   // 2. HTTP response headers
   // 3. HTTP response body, or None
-  type RestfulResponse = (Int, RestfulHeaders, Option[String])
+  type RestfulResponse = (RestfulStatusCode, RestfulHeaders, RestfulBody)
 
   // Unmarshalled response from a request - either:
   // 1. An RestfulError class typed with E ErrorRepresentation, or:
