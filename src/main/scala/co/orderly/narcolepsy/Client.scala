@@ -35,7 +35,7 @@ import adapters._
  *
  * For more on Narcolepsy see the GitHub project: https://github.com/orderly/narcolepsy
  */
-absract class Client(
+abstract class Client(
   val rootUri:      Option[String],
   val contentType:  Option[String],
   val username:     String,
@@ -46,20 +46,21 @@ absract class Client(
   // -------------------------------------------------------------------------------------------------------------------
 
   // To provide a human readable name for this client, e.g. "PrestaShop Scala client"
-  protected def clientName: String
+  protected def name: String
 
   // To store the content types (e.g. XML, JSON) supported by this RESTful web service
-  protected val supportedContentTypes: List[String]
+  protected val contentTypes: List[String]
 
   // Map resource slug names against the Representation subclasses required by this RESTful API
-  protected val apiResources: Api
+  protected val resources: Api
 
   // -------------------------------------------------------------------------------------------------------------------
   // You can override the following defaults in your NarcolepsyClient if you want
   // -------------------------------------------------------------------------------------------------------------------
 
   // The default root API URL if supplied. Only makes sense for APIs for hosted services with fixed API endpoints
-  // Set to None if a default root API does not make sense for this API
+  // Set to None if a default root API does not make sense for this API, or if supportedContentTypes
+  // is
   protected val defaultRootUri: Option[String] = None
 
   // The default content type if none is supplied
@@ -72,11 +73,11 @@ absract class Client(
   // Calculated / automatically detected variables
   // -------------------------------------------------------------------------------------------------------------------
 
-  // Define the software version, e.g. 1.1.0 or 3.0 m2
-  private val clientVersion = new BufferedReader(new InputStreamReader(getClass.getResourceAsStream("/version"))).readLine()
+  // Define the version of this client, e.g. 1.1.0 or 3.0 m2
+  private val _version = new BufferedReader(new InputStreamReader(getClass.getResourceAsStream("/version"))).readLine()
 
   // How the client should identify itself to the RESTful API
-  private val userAgent = "%s/%s [NarcolepsyClient]".format(clientName, clientVersion)
+  private val _userAgent = "%s/%s [NarcolepsyClient]".format(name, _version)
 
   // -------------------------------------------------------------------------------------------------------------------
   // Validation to check that the constructor arguments are okay
@@ -84,38 +85,52 @@ absract class Client(
 
   // Check we have a rootUri and add a trailing slash if necessary
   private val trailSlash = (uri: String) => if (uri.matches(".*/")) uri else (uri + "/")
-  private val apiUri = trailSlash((rootUri, defaultRootUri) match {
+  private val _rootUri = trailSlash((rootUri, defaultRootUri) match {
     case (Some(uri), _) => uri
     case (None, Some(uri)) => uri
     case _ => throw new ClientConfigurationException("No rootUri or defaultRootUri provided")
   })
 
   // Check that we have a content type
-  private val apiContentType = (contentType, defaultContentType, supportedContentTypes) match {
+  private val _contentType = (contentType, defaultContentType, contentTypes) match {
     case (Some(ct), _, _) => ct // If we have a contentType passed in, use that
     case (None, Some(ct), _) => ct // Else if we have a default content type, use that
-    case (_, _, ct :: Nil) => ct /// FInally grab the only support type that is set
-    case _ => throw new ClientConfigurationException("No contentType, single supportedContentTYpes or defaultContentType provided")
+    case (_, _, ct :: Nil) => ct /// Finally if supportedContentTypes is a list with one element, grab that
+    case _ => throw new ClientConfigurationException("Cannot determine content type to use - please set contentType, defaultContentType or define a one-element contentTypes list")
   }
 
-  // Now let's validate that the content type passed in is legitimate for this API
-  if (!(supportedContentTypes contains apiContentType)) {
-    throw new ClientConfigurationException("Content type " + apiContentType + " is not supported")
+  // Now let's validate that the content type is legitimate for this API
+  if (!(contentTypes contains _contentType)) {
+    throw new ClientConfigurationException("Content type " + _contentType + " is not supported")
   }
 
   // -------------------------------------------------------------------------------------------------------------------
   // Finally we build a 'clean' configuration object for use in an HttpAdapter
   // -------------------------------------------------------------------------------------------------------------------
 
-  object Configuration {
-    val name = clientName
-    val version = clientVersion
-    val apiUri = this.apiUri
-    val apiContentType = this.apiContentType
-    val encoding = this.encoding
-  }
-
+  val configuration = ClientConfiguration(
+    name = name,
+    encoding = encoding,
+    username = username,
+    password = password,
+    version = _version,
+    userAgent = _userAgent,
+    rootUri = _rootUri,
+    contentType = _contentType
+  )
 }
+
+/**
+ * To store a complete configuration for a client. Used by the HttpAdapters
+ */
+case class ClientConfiguration(name: String,
+  encoding: String,
+  username: String,
+  password: String,
+  version: String,
+  userAgent: String,
+  rootUri: String,
+  contentType: String)
 
 /**
  * Flags an exception in the configuration of a client - i.e. the subclassing of the

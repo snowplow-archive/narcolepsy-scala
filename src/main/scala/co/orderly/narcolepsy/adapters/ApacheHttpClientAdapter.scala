@@ -41,10 +41,7 @@ trait ApacheHttpClientAdapter extends HttpAdapter {
   // Borrow these from the Client...
   // TODO nicer to just include a ClientConfiguration object, less verbose...
   self: {
-    val username:       String
-    val password:       String
-    val apiUri:         String
-    val apiContentType: String
+    val configuration: ClientConfiguration
   } =>
 
   // Private immutable copy of an Apache HttpClient, we use this to access the API
@@ -61,7 +58,7 @@ trait ApacheHttpClientAdapter extends HttpAdapter {
 
     // Validate the URI string
     // TODO: this would really be common to all adapters. Should be moved out of here
-    val uriString = apiUri + requestUri
+    val uriString = configuration.rootUri + requestUri
     val uri = try {
       new URI(uriString)
     } catch {
@@ -83,11 +80,11 @@ trait ApacheHttpClientAdapter extends HttpAdapter {
     // Configure the authentication
     httpClient.getCredentialsProvider().setCredentials(
       new AuthScope(request.getURI.getHost, request.getURI.getPort),
-      new UsernamePasswordCredentials(username, password)
+      new UsernamePasswordCredentials(configuration.username, configuration.password)
     )
 
     // Attach the payload to the request if we have some - how we pass it in depends on whether it's a POST or PUT
-    request.setHeader("Accept", apiContentType)
+    request.setHeader("Accept", configuration.contentType)
     /* TODO - also figure out how encodeXML works with JSON
     request match {
       case r:HttpPut => r.setEntity(encodeXML("", xml.get))
