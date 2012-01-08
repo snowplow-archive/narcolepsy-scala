@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Orderly Ltd. All rights reserved.
+ * Copyright (c) 2012 Orderly Ltd. All rights reserved.
  *
  * This program is licensed to you under the Apache License Version 2.0,
  * and you may not use this file except in compliance with the Apache License Version 2.0.
@@ -28,13 +28,13 @@ import adapters._
  * The Narcolepsy Client provides a higher-level of abstraction than that typically found in a
  * RESTful API toolkit like spray-client or Apache HttpClient. Creating an API-specific client
  * using Narcolepsy should be as simple as providing some configuration variables, generating
- * the JAXB representation definitions and mapping those representations to resource slugs.
+ * YOUR representation definitions and mapping those representations to resource slugs.
  *
  * Narcolepsy is licensed under the Apache License, Version 2.0.
  *
  * For a better understanding of RESTful web service clients, please read XXX
  *
- * For more on Narcolepsy see the GitHub project: https://github.com/orderly/narcolepsy
+ * For more on Narcolepsy see the GitHub project: https://github.com/orderly/narcolepsy-scala
  */
 abstract class Client(
   val rootUri:      Option[String],
