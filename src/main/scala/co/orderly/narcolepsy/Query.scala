@@ -61,7 +61,7 @@ abstract class Query[
   // -------------------------------------------------------------------------------------------------------------------
 
   /**
-   * Add this method to set on debug-style printing of the query execution
+   * Switches on debug-style printing of the query execution
    * @return The updated Query builder
    */
   def print(): this.type = {
@@ -70,7 +70,7 @@ abstract class Query[
   }
 
   /**
-   * Add this method to override the resource 'slug' used for this query
+   * Overrides the resource 'slug' used for this query
    * @param slug
    * @return The updated Query builder
    */
@@ -80,7 +80,7 @@ abstract class Query[
   }
 
   /**
-   * Add this method to throw an exception if we received an HTTP error code back from the web service
+   * Throws an exception if we received an HTTP error code back from the web service
    * @return The updated Query builder
    */
   def exception(): this.type = {
@@ -93,7 +93,7 @@ abstract class Query[
   // -------------------------------------------------------------------------------------------------------------------
 
   /**
-   * run() executes the query using all of the parameters set (or not set) through
+   * Executes the query using all of the parameters set (or not set) through
    * the builder.
    * @return A RestfulResponse tuple of return code, HTTP headers and body
    */
@@ -122,7 +122,7 @@ abstract class Query[
   }
 
   /**
-   * unmarshal() executes the query using run() and then unmarshals the result into
+   * Executes the query using run() and then unmarshals the result into
    * the appropriate Representation object
    */
   def unmarshal(): UnmarshalledResponse[_ <: ErrorRepresentation, R] = {

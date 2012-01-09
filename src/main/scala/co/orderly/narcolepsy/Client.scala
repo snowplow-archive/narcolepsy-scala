@@ -59,12 +59,11 @@ abstract class Client(
   // You can override the following defaults in your NarcolepsyClient if you want
   // -------------------------------------------------------------------------------------------------------------------
 
-  // The default root API URL if supplied. Only makes sense for APIs for hosted services with fixed API endpoints
-  // Set to None if a default root API does not make sense for this API, or if supportedContentTypes
-  // is
+  // The default root API URL if supplied. Only makes sense for APIs for hosted services with fixed API endpoints.
+  // Set to None if a default root API does not make sense for this API
   protected val defaultRootUri: Option[String] = None
 
-  // The default content type if none is supplied
+  // The default content type
   protected val defaultContentType: Option[String] = None
 
   // Define the characterset to use (e.g. UTF-8)
