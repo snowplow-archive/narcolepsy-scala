@@ -84,16 +84,16 @@ abstract class Client(
   // Check we have a rootUri and add a trailing slash if necessary
   private val trailSlash = (uri: String) => if (uri.matches(".*/")) uri else (uri + "/")
   private val _rootUri = trailSlash((rootUri, defaultRootUri) match {
-    case (Some(uri), _) => uri
-    case (None, Some(uri)) => uri
+    case (Some(uri), _) => uri    // rootUri takes precedence
+    case (None, Some(uri)) => uri // defaultRootUri comes second
     case _ => throw new ClientConfigurationException("No rootUri or defaultRootUri provided")
   })
 
   // Check that we have a content type
   private val _contentType = (contentType, defaultContentType, contentTypes) match {
-    case (Some(ct), _, _) => ct // If we have a contentType passed in, use that
+    case (Some(ct), _, _) => ct    // By default if we have a contentType passed in, use that
     case (None, Some(ct), _) => ct // Else if we have a default content type, use that
-    case (_, _, ct :: Nil) => ct /// Finally if supportedContentTypes is a list with one element, grab that
+    case (_, _, ct :: Nil) => ct   // Finally if supportedContentTypes is a list with one element, grab that
     case _ => throw new ClientConfigurationException("Cannot determine content type to use - please set contentType, defaultContentType or define a one-element contentTypes list")
   }
 
