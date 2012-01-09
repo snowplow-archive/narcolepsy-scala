@@ -12,9 +12,6 @@
  */
 package co.orderly.narcolepsy
 
-// Java
-import java.io.{BufferedReader, InputStreamReader}
-
 // Orderly
 import utils._
 import adapters._
@@ -49,6 +46,9 @@ abstract class Client(
   // To provide a human readable name for this client, e.g. "PrestaShop Scala client"
   protected def name: String
 
+  // Define the version of this client, e.g. 1.1.0 or 3.0 m2
+  protected def version: String
+
   // To store the content types (e.g. XML, JSON) supported by this RESTful web service
   protected val contentTypes: List[String]
 
@@ -74,11 +74,8 @@ abstract class Client(
   // Calculated / automatically detected variables
   // -------------------------------------------------------------------------------------------------------------------
 
-  // Define the version of this client, e.g. 1.1.0 or 3.0 m2
-  private val _version = new BufferedReader(new InputStreamReader(getClass.getResourceAsStream("/version"))).readLine()
-
   // How the client should identify itself to the RESTful API
-  private val _userAgent = "%s/%s [NarcolepsyClient]".format(name, _version)
+  private val _userAgent = "%s/%s [NarcolepsyClient]".format(name, version)
 
   // -------------------------------------------------------------------------------------------------------------------
   // Validation to check that the constructor arguments are okay
@@ -111,10 +108,10 @@ abstract class Client(
 
   val configuration = ClientConfiguration(
     name = name,
+    version = version,
     encoding = encoding,
     username = username,
     password = password,
-    version = _version,
     userAgent = _userAgent,
     rootUri = _rootUri,
     contentType = _contentType
@@ -126,9 +123,9 @@ abstract class Client(
  */
 case class ClientConfiguration(name: String,
   encoding: String,
+  version: String,
   username: String,
   password: String,
-  version: String,
   userAgent: String,
   rootUri: String,
   contentType: String
