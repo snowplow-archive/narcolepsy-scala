@@ -19,7 +19,8 @@ package co.orderly.narcolepsy
  */
 class Resource[
   R <: Representation,
-  RW <: RepresentationWrapper[_ <: Representation]](
+  RW <: RepresentationWrapper[SR],
+  SR <: Representation](
   slug: String,
   typeR:  Class[R],
   typeRW: Class[RW]
@@ -40,15 +41,15 @@ class Resource[
   // Query (API execution) logic
   // -------------------------------------------------------------------------------------------------------------------
 
-  def get(): GetQuery[R] = new GetQuery[R](_client, slug, typeR)
+  def get() = new GetQuery[R](_client, slug, typeR)
 
-  def gets(): GetsQuery[RW] = new GetsQuery[RW](_client, slug, typeRW)
+  def gets() = new GetsQuery[RW, SR](_client, slug, typeRW)
 
-  def put(): PutQuery[R] = new PutQuery[R](_client, slug, typeR)
+  def put() = new PutQuery[R](_client, slug, typeR)
 
-  def post(): PostQuery[R] = new PostQuery[R](_client, slug, typeR)
+  def post() = new PostQuery[R](_client, slug, typeR)
 
-  def delete(): DeleteQuery = new DeleteQuery(_client, slug)
+  def delete() = new DeleteQuery(_client, slug)
 
   // TODO: add HEAD
 }
