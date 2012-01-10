@@ -44,19 +44,17 @@ abstract class Query[
   // Flags for the stateful builder
   // -------------------------------------------------------------------------------------------------------------------
 
-  // TODO: remove the _s as these are only protected, not private
+  protected var payload: Option[String] = None
 
-  protected var _payload: Option[String] = None
+  protected var id: Option[String] = None
 
-  protected var _id: Option[String] = None
+  protected var params: Option[RestfulParams] = None
 
-  protected var _params: Option[RestfulParams] = None
+  protected var slug: String = resource
 
-  protected var _slug: String = resource
+  protected var console: Boolean = false
 
-  protected var _print: Boolean = false
-
-  protected var _exception: Boolean = false
+  protected var exception: Boolean = false
 
   // -------------------------------------------------------------------------------------------------------------------
   // Fluent methods which can be used in any Query builder
@@ -66,8 +64,8 @@ abstract class Query[
    * Switches on debug-style printing of the query execution
    * @return The updated Query builder
    */
-  def print(): this.type = {
-    this._print = true
+  def consolePrint(): this.type = {
+    this.console = true
     this
   }
 
@@ -76,8 +74,8 @@ abstract class Query[
    * @param slug
    * @return The updated Query builder
    */
-  def slug(slug: String): this.type = {
-    this._slug = slug
+  def overrideSlug(slug: String): this.type = {
+    this.slug = slug
     this
   }
 
@@ -85,8 +83,8 @@ abstract class Query[
    * Throws an exception if we received an HTTP error code back from the web service
    * @return The updated Query builder
    */
-  def exception(): this.type = {
-    this._exception = true
+  def throwException(): this.type = {
+    this.exception = true
     this
   }
 
@@ -101,18 +99,18 @@ abstract class Query[
    */
   def run(): RestfulResponse = {
 
-    val uri = (_slug +
-      (if (_id.isDefined) "/%s".format(_id.get) else "") +
-      (if (_params.isDefined) "?%s".format(RestfulHelpers.canonicalize(_params.get, client.configuration.encoding)) else "")
+    val uri = (slug +
+      (if (id.isDefined) "/%s".format(id.get) else "") +
+      (if (params.isDefined) "?%s".format(RestfulHelpers.canonicalize(params.get, client.configuration.encoding)) else "")
       )
 
-    if (_print) {
+    if (console) {
       Console.println("Executing Narcolepsy query against URI: /%s".format(uri))
     }
 
-    val (code, headers, body) = client.execute(method, _payload, uri)
+    val (code, headers, body) = client.execute(method, payload, uri)
 
-    if (_print) {
+    if (console) {
       Console.println("Response status code: %s".format(code))
       Console.println("Response headers:\n%s".format(RestfulHelpers.stringify(headers)))
       Console.println("Response body:\n%s".format(body.getOrElse("<< EMPTY >>")))
@@ -159,11 +157,11 @@ trait Payload {
 
   // Grab _payload from Query
   self: {
-    var _payload: Option[String]
+    var payload: Option[String]
   } =>
 
-  def payload(payload: String): this.type = {
-    this._payload = Option(payload)
+  def addPayload(payload: String): this.type = {
+    this.payload = Option(payload)
     this
   }
 }
@@ -177,28 +175,28 @@ trait Id {
 
   // Grab _id from Query
   self: {
-    var _id: Option[String]
+    var id: Option[String]
   } =>
 
   // TODO: add support for multiple IDs. For example PrestaShop supports DELETEing /?id=45,65. Need to make it play nice with other parameters
 
-  def id(id: String): this.type = {
-    this._id = Option(id)
+  def setId(id: String): this.type = {
+    this.id = Option(id)
     this
   }
 
-  def id(id: Int): this.type = {
-    this._id = Option(id.toString())
+  def setId(id: Int): this.type = {
+    this.id = Option(id.toString())
     this
   }
 
-  def id(id: Long): this.type = {
-    this._id = Option(id.toString())
+  def setId(id: Long): this.type = {
+    this.id = Option(id.toString())
     this
   }
 
-  def id(id: UUID): this.type = {
-    this._id = Option(id.toString())
+  def setId(id: UUID): this.type = {
+    this.id = Option(id.toString())
     this
   }
 }
@@ -207,7 +205,7 @@ trait Listable[RW <: RepresentationWrapper[_]] {
 
   self: {
     def unmarshal(): UnmarshalledResponse[_ <: ErrorRepresentation, _ <: RepresentationWrapper[_]]
-    val _exception: Boolean
+    val exception: Boolean
   } =>
 
   /**
