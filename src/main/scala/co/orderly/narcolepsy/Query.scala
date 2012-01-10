@@ -44,6 +44,8 @@ abstract class Query[
   // Flags for the stateful builder
   // -------------------------------------------------------------------------------------------------------------------
 
+  // TODO: remove the _s as these are only protected, not private
+
   protected var _payload: Option[String] = None
 
   protected var _id: Option[String] = None
@@ -201,6 +203,27 @@ trait Id {
   }
 }
 
+trait ListableQuery[SR <: Representation] { // TODO: try Representation if this doesn't work
+
+  self: {
+    def unmarshal(): UnmarshalledResponse[_ <: ErrorRepresentation, RW]
+    val _exception: Boolean
+  } =>
+
+  /**
+   * toList runs a command and unmarshals it, then either decomposes the unmarshalled
+   * object into a List[SR] or returns Nil if that's not possible
+   */
+  def toList(): List[SR] =
+
+    // Pattern match on the unmarshal output
+    unmarshal() match {
+      case Left(error) => Nil // Empty list if we received an error
+      case Right(None) => Nil // Empty list if our unmarshalled object is empty
+      case Right(Some(data)) => data.toList // Turn our unmarshalled object into a list
+    }
+}
+
 // -------------------------------------------------------------------------------------------------------------------
 // Define the concrete Query subclasses using the traits above
 // -------------------------------------------------------------------------------------------------------------------
@@ -219,8 +242,9 @@ class GetQuery[R <: Representation](client: Client, resource: String, typeR: Cla
  *  - A GetQuery takes an ID and returns a singular representation which can be unmarshalled to a Representation subclass
  *  - A GetsQuery takes no ID and returns a collection-style representation which can be unmarshalled to a RepresentationWrapper subclass
  */
-class GetsQuery[RW <: RepresentationWrapper[_ <: Representation]](client: Client, resource: String, typeRW: Class[RW])
-  extends Query[RW](GetMethod, client, resource, typeRW)
+class GetsQuery[RW <: RepresentationWrapper[SR]](client: Client, resource: String, typeRW: Class[RW])
+  extends Query[RW, SR](GetMethod, client, resource, typeRW)
+  with ListableQuery[SR]
 
 /**
  * DeleteQuery is for deleting a resource. Applies the DeleteMethod and uses the Id trait
