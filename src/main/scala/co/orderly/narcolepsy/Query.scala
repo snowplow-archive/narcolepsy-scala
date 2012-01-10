@@ -203,10 +203,10 @@ trait Id {
   }
 }
 
-trait ListableQuery[RW <: RepresentationWrapper[SR], SR <: Representation] {
+trait Listable[RW <: RepresentationWrapper[_]] {
 
   self: {
-    def unmarshal(): UnmarshalledResponse[_ <: ErrorRepresentation, RW]
+    def unmarshal(): UnmarshalledResponse[_ <: ErrorRepresentation, _ <: RepresentationWrapper[_]]
     val _exception: Boolean
   } =>
 
@@ -214,13 +214,13 @@ trait ListableQuery[RW <: RepresentationWrapper[SR], SR <: Representation] {
    * toList runs a command and unmarshals it, then either decomposes the unmarshalled
    * object into a List[SR] or returns Nil if that's not possible
    */
-  def toList(): List[SR] =
+  def toList: List[RW#rtype] =
 
     // Pattern match on the unmarshal output
     unmarshal() match {
       case Left(error) => Nil // Empty list if we received an error
       case Right(None) => Nil // Empty list if our unmarshalled object is empty
-      case Right(Some(data)) => data.toList // Turn our unmarshalled object into a list
+      case Right(Some(data: RepresentationWrapper[RW#rtype])) => data.toList // Turn our unmarshalled object into a list
     }
 }
 
@@ -242,9 +242,9 @@ class GetQuery[R <: Representation](client: Client, resource: String, typeR: Cla
  *  - A GetQuery takes an ID and returns a singular representation which can be unmarshalled to a Representation subclass
  *  - A GetsQuery takes no ID and returns a collection-style representation which can be unmarshalled to a RepresentationWrapper subclass
  */
-class GetsQuery[RW <: RepresentationWrapper[SR], SR <: Representation](client: Client, resource: String, typeRW: Class[RW])
+class GetsQuery[RW <: RepresentationWrapper[_]](client: Client, resource: String, typeRW: Class[RW])
   extends Query[RW](GetMethod, client, resource, typeRW)
-  with ListableQuery[RW, SR]
+  with Listable[RW]
 
 /**
  * DeleteQuery is for deleting a resource. Applies the DeleteMethod and uses the Id trait

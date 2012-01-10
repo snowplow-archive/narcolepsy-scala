@@ -31,14 +31,34 @@ trait Representation // extends JaxbMarshaller with JacksonMarshaller
 trait ErrorRepresentation extends Representation
 
 /**
+ * RepresentationWrapper singleton holds a convenience method for turning
+ * a Scala List into a Java ArrayBuffer
+ */
+object RepresentationWrapper {
+
+  /**
+   * Helper method to convert a Scala List into a Java ArrayBuffer
+   * TODO move out into the Narcolepsy package object
+   * @param list The Scala List to convert
+   * @return The new Java-friendly ArrayBuffer
+   */
+  def arrayBufferFromList[L <: Representation](list: List[L]): ArrayBuffer[L] = {
+    val ab = new ArrayBuffer[L]
+    ab ++= list
+    ab
+  }
+}
+
+/**
  * RepresentationWrapper is a subclass of Representation (to get the marshalling goodness),
  * designed to hold a list of individual Representations.
  */
-trait RepresentationWrapper[R <: Representation] extends Representation with Listable[R]
+trait RepresentationWrapper[R <: Representation] extends Representation {
 
-// As per http://stackoverflow.com/questions/7666759/can-i-use-a-type-bound-on-a-scala-abstract-method-and-then-tighten-up-the-defin
-// TODO: add doccomment
-trait Listable[+R <: Representation] {
+  /**
+   * Every RepresentationWrapper should set rtype equal to the same Representation class as R above
+   */
+  type rtype <: Representation
 
   /**
    * Every RepresentationWrapper should implement the toList method to
@@ -46,15 +66,4 @@ trait Listable[+R <: Representation] {
    * easier mapping/folding etc in Scala
    */
   def toList: List[R]
-
-  // http://stackoverflow.com/questions/663254/scala-covariance-contravariance-question
-  // def fromList[L >: R](representations: List[L])
-
-  // And bear with me again <sorry>
-  // TODO: add explanation for this
-  protected def arrayBufferFromList[L <: Representation](list: List[L]): ArrayBuffer[L] = {
-    val ab = new ArrayBuffer[L]
-    ab ++= list
-    ab
-  }
 }

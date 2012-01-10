@@ -19,8 +19,7 @@ package co.orderly.narcolepsy
  */
 class Resource[
   R <: Representation,
-  RW <: RepresentationWrapper[SR],
-  SR <: Representation](
+  RW <: RepresentationWrapper[_]](
   slug: String,
   typeR:  Class[R],
   typeRW: Class[RW]
@@ -43,7 +42,7 @@ class Resource[
 
   def get() = new GetQuery[R](_client, slug, typeR)
 
-  def gets() = new GetsQuery[RW, SR](_client, slug, typeRW)
+  def gets() = new GetsQuery[RW](_client, slug, typeRW)
 
   def put() = new PutQuery[R](_client, slug, typeR)
 

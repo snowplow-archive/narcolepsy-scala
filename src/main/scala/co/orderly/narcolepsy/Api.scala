@@ -29,7 +29,7 @@ trait Api {
   // -------------------------------------------------------------------------------------------------------------------
 
   // Private mutable array to hold the resources defined so far
-  private val resources = new ArrayBuffer[Resource[_, _, _]]
+  private val resources = new ArrayBuffer[Resource[_, _]]
 
   /**
    * When extending Api, call resource to define individual resources within the Api e.g:
@@ -37,10 +37,10 @@ trait Api {
    * @param slug The URL slug identifying the resource, e.g. "products"
    * @return The instantiated Resource
    */
-  protected def resource[R <: Representation, RW <: RepresentationWrapper[SR], SR <: Representation](slug: String)(implicit manifestR: Manifest[R], manifestRW: Manifest[RW]): Resource[R, RW, SR] = {
+  protected def resource[R <: Representation, RW <: RepresentationWrapper[_]](slug: String)(implicit manifestR: Manifest[R], manifestRW: Manifest[RW]): Resource[R, RW] = {
     val typeR = manifestR.erasure.asInstanceOf[Class[R]]
     val typeRW = manifestRW.erasure.asInstanceOf[Class[RW]]
-    val r = new Resource[R, RW, SR](slug, typeR, typeRW) // Return the new Resource
+    val r = new Resource[R, RW](slug, typeR, typeRW) // Return the new Resource
     addResource(r)
     r
   }
@@ -49,7 +49,7 @@ trait Api {
    * Helper to add a resource into the resource array
    * @param r The resource to add into the resource array
    */
-  protected [narcolepsy] def addResource(r: Resource[_, _, _]) =
+  protected [narcolepsy] def addResource(r: Resource[_, _]) =
     resources.append(r)
 
   // -------------------------------------------------------------------------------------------------------------------
