@@ -14,7 +14,8 @@ import sbt._
 
 object Dependencies {
   val resolutionRepos = Seq(
-    ScalaToolsSnapshots
+    ScalaToolsSnapshots,
+    "EclipseLink Repo" at "http://download.eclipse.org/rt/eclipselink/maven.repo" 
   )
 
   object V {
