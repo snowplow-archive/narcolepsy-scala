@@ -41,4 +41,5 @@ case object PutMethod extends HttpMethod
 /**
  * HEAD verb, typically used for reading metadata only
  */
-case object HeadMethod extends HttpMethod
+// TODO: not currently supported
+// case object HeadMethod extends HttpMethod

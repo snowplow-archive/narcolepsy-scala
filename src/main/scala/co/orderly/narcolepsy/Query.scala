@@ -19,7 +19,7 @@ import java.util.UUID
 import adapters._
 import utils._
 
-// TODO: remove these
+// TODO: remove these when we decouple specific unmarshallers from the Query engine
 import marshallers.jackson.UnmarshalJson
 import marshallers.jaxb.UnmarshalXml
 
