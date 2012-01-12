@@ -15,4 +15,4 @@ package co.orderly.narcolepsy
 /**
  * RestfulError holds an error response from a web service
  */
-case class RestfulError[E <: ErrorRepresentation](statusCode: Int, rawError: Option[String], marshalledError: E)
+case class RestfulError[E <: ErrorRepresentation](statusCode: RestfulStatusCode, rawError: RestfulBody, marshalledError: E)

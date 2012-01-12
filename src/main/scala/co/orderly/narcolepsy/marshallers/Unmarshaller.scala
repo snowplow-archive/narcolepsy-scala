@@ -10,10 +10,8 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package co.orderly.narcolepsy.marshallers
-
-// Narcolepsy
-import co.orderly.narcolepsy.Representation
+package co.orderly.narcolepsy
+package marshallers
 
 trait Unmarshaller {
 

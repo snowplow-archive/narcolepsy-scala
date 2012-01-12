@@ -10,7 +10,9 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package co.orderly.narcolepsy.marshallers.jaxb
+package co.orderly.narcolepsy
+package marshallers
+package jaxb
 
 // Java
 import java.io.StringWriter
@@ -26,8 +28,6 @@ import javax.xml.stream.XMLStreamWriter
 import javax.xml.bind.JAXBContext
 
 // Narcolepsy
-import co.orderly.narcolepsy._
-import marshallers.{Unmarshaller, Marshaller}
 import namespaces.NonNamespacedXmlStreamWriter
 
 case class UnmarshalXml(xml: String) extends Unmarshaller {
