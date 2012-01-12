@@ -251,13 +251,19 @@ class DeleteQuery(client: Client, resource: String)
   extends Query(DeleteMethod, client, resource, null) // TODO: null not very clean here
   with Id
 
-// TODO: add doccomment
+/**
+ * PutQuery is for performing a PUT on a resource. This is typically used for updating
+ * an existing resource
+ */
 class PutQuery[R <: Representation](client: Client, resource: String, typeR: Class[R])
   extends Query[R](PutMethod, client, resource, typeR)
   with Id
   with Payload
 
-// TODO: add doccomment
+/**
+ * PostQuery is for performing a POST on a resource. This is typically used for creating
+ * an all-new resource
+ */
 class PostQuery[R <: Representation](client: Client, resource: String, typeR: Class[R])
   extends Query[R](PostMethod, client, resource, typeR)
   with Payload
