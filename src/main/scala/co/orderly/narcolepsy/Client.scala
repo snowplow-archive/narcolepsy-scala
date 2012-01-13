@@ -89,7 +89,7 @@ abstract class Client(
   })
 
   // Check that we have a content type
-  private val _contentType = (contentType, defaultContentType, contentTypes) match {
+  private val _contentType: String = (contentType, defaultContentType, contentTypes) match {
     case (Some(ct), _, _) => ct    // By default if we have a contentType passed in, use that
     case (None, Some(ct), _) => ct // Else if we have a default content type, use that
     case (_, _, ct :: Nil) => ct   // Finally if supportedContentTypes is a list with one element, grab that

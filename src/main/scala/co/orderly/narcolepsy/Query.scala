@@ -134,12 +134,11 @@ abstract class Query[
       Left(RestfulError(code, body, null)) // TODO add error unmarshalling in here
     } else {
       Right(body map( b =>
-        client.contentType match {
+        client.configuration.contentType match {
 
-          // TODO: Remove Some() around the content types. No need for it
-          case Some("application/json") => UnmarshalJson(b).toRepresentation[R](typeR)
-          case Some("text/xml") => UnmarshalXml(b).toRepresentation[R](typeR)
-          case _ => throw new ClientConfigurationException("Narcolepsy can only unmarshal JSON and XML currently") // TODO change exception type
+          case "application/json" => UnmarshalJson(b).toRepresentation[R](typeR)
+          case "text/xml" => UnmarshalXml(b).toRepresentation[R](typeR)
+          case _ => throw new ClientConfigurationException("Narcolepsy can only unmarshal JSON and XML currently, not %s".format(client.configuration.contentType))
         }))
     }
   }
