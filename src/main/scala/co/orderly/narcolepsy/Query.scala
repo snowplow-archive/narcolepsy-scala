@@ -136,7 +136,7 @@ abstract class Query[
       Right(body map( b =>
         client.configuration.contentType match {
 
-          case "application/json" => UnmarshalJson(b).toRepresentation[R](typeR)
+          case "application/json" => UnmarshalJson(b, true).toRepresentation[R](typeR) // TODO: remove rootKey bool
           case "text/xml" => UnmarshalXml(b).toRepresentation[R](typeR)
           case _ => throw new ClientConfigurationException("Narcolepsy can only unmarshal JSON and XML currently, not %s".format(client.configuration.contentType))
         }))
