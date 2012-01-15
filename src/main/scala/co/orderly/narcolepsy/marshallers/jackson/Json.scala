@@ -21,7 +21,6 @@ import java.text.SimpleDateFormat
 import org.codehaus.jackson.map._
 import org.codehaus.jackson.map.introspect._
 import org.codehaus.jackson.xc._
-// import org.codehaus.jackson.map.`type`.TypeFactory
 
 /**
  * Mini-DSL to unmarshal a JSON string into a Representation.
@@ -36,8 +35,14 @@ case class UnmarshalJson(json: String, rootKey: Boolean = false) extends Unmarsh
     // Define the Jackson mapper and configure it
     val mapper = new ObjectMapper()
 
+    // Determine if we are unmarshalling a RepresentationWrapper subclass or not
+    val isWrapper = typeT match {
+      case x:Class[RepresentationWrapper[_]] => true
+      case _ => false
+    }
+
     // TODO: turn these into JacksonConfiguration-based or similar
-    mapper.configure(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE, rootKey)
+    mapper.configure(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE, (rootKey && (!isWrapper)))
     // mapper.getDeserializationConfig().setDateFormat(getDateFormat)
 
     // Translates typical camel case Java property names to lower case JSON element names, separated by underscore
@@ -51,7 +56,7 @@ case class UnmarshalJson(json: String, rootKey: Boolean = false) extends Unmarsh
     mapper.getDeserializationConfig().withAnnotationIntrospector(introspectorPair)
 
     // Return the representation
-    mapper.readValue(json, /*TypeFactory.`type`(*/typeT).asInstanceOf[T]
+    mapper.readValue(json, typeT).asInstanceOf[T]
   }
 }
 

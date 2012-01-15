@@ -131,7 +131,7 @@ abstract class Query[
 
     // TODO: I want to decouple this using implicit objects and conversions, Spray-style
     if (RestfulHelpers.isError(code)) {
-      Left(RestfulError(code, body, null)) // TODO add error unmarshalling in here
+      Left(RestfulError(code, body, null)) // TODO: add unmarshalling of errors in here
     } else {
       Right(body map( b =>
         client.configuration.contentType match {
@@ -211,7 +211,7 @@ trait Listable[RW <: RepresentationWrapper[_]] {
    * toList runs a command and unmarshals it, then either decomposes the unmarshalled
    * object into a List[SR] or returns Nil if that's not possible
    */
-  def toList: List[RW#rtype] =
+  def toList(): List[RW#rtype] =
 
     // Pattern match on the unmarshal output
     unmarshal() match {
