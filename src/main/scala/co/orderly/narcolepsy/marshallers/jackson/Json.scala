@@ -36,6 +36,7 @@ case class UnmarshalJson(json: String, rootKey: Boolean = false) extends Unmarsh
     val mapper = new ObjectMapper()
 
     // Determine if we are unmarshalling a RepresentationWrapper subclass or not
+    // TODO: this isn't working yet
     val isWrapper = typeT match {
       case x:Class[RepresentationWrapper[_]] => true
       case _ => false
