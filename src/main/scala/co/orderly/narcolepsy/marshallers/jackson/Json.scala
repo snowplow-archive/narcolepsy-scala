@@ -37,7 +37,7 @@ case class UnmarshalJson(json: String, rootKey: Boolean = false) extends Unmarsh
     val mapper = new ObjectMapper()
 
     // TODO: turn these into JacksonConfiguration-based or similar
-    // mapper.configure(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE, rootKey)
+    mapper.configure(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE, rootKey)
     // mapper.getDeserializationConfig().setDateFormat(getDateFormat)
 
     // Translates typical camel case Java property names to lower case JSON element names, separated by underscore
