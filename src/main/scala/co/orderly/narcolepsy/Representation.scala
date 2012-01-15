@@ -31,25 +31,6 @@ trait Representation // extends JaxbMarshaller with JacksonMarshaller
 trait ErrorRepresentation extends Representation
 
 /**
- * RepresentationWrapper singleton holds a convenience method for turning
- * a Scala List into a Java ArrayBuffer
- */
-object RepresentationWrapper {
-
-  /**
-   * Helper method to convert a Scala List into a Java ArrayBuffer
-   * TODO move out into the Narcolepsy package object
-   * @param list The Scala List to convert
-   * @return The new Java-friendly ArrayBuffer
-   */
-  def arrayBufferFromList[L <: Representation](list: List[L]): ArrayBuffer[L] = {
-    val ab = new ArrayBuffer[L]
-    ab ++= list
-    ab
-  }
-}
-
-/**
  * RepresentationWrapper is a subclass of Representation (to get the marshalling goodness),
  * designed to hold a list of individual Representations.
  */
