@@ -34,10 +34,10 @@ import adapters._
  * For more on Narcolepsy see the GitHub project: https://github.com/orderly/narcolepsy-scala
  */
 abstract class Client(
-  val rootUri:      Option[String],
-  val contentType:  Option[String],
-  val username:     String,
-  val password:     String) extends HttpAdapter {
+  private val rootUri:      Option[String],
+  private val contentType:  Option[String],
+  private val username:     String,
+  private val password:     String) extends HttpAdapter {
 
   // -------------------------------------------------------------------------------------------------------------------
   // Need to populate the below vals to define a new NarcolepsyClient
