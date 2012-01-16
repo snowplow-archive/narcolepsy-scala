@@ -28,22 +28,15 @@ import org.codehaus.jackson.xc._
  * Design as per Neil Essy's answer on:
  * http://stackoverflow.com/questions/8162345/how-do-i-create-a-class-hierarchy-of-typed-factory-method-constructors-and-acces
  */
-case class UnmarshalJson(json: String, rootKey: Boolean = false) extends Unmarshaller {
+case class UnmarshalJson(json: String, rootKey: Boolean = false) extends Unmarshaller with JacksonHelpers {
 
   def toRepresentation[T <: Representation](typeT: Class[T]): T = {
 
     // Define the Jackson mapper and configure it
     val mapper = new ObjectMapper()
 
-    // Determine if we are unmarshalling a RepresentationWrapper subclass or not
-    // TODO: this isn't working yet
-    val isWrapper = typeT match {
-      case x:Class[RepresentationWrapper[_]] => true
-      case _ => false
-    }
-
     // TODO: turn these into JacksonConfiguration-based or similar
-    mapper.configure(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE, (rootKey && (!isWrapper)))
+    mapper.configure(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE, (rootKey && (!isWrapper(typeT))))
     // mapper.getDeserializationConfig().setDateFormat(getDateFormat)
 
     // Translates typical camel case Java property names to lower case JSON element names, separated by underscore
@@ -61,7 +54,7 @@ case class UnmarshalJson(json: String, rootKey: Boolean = false) extends Unmarsh
   }
 }
 
-trait JacksonMarshaller extends Marshaller {
+trait JacksonMarshaller extends Marshaller with JacksonHelpers {
 
   /**
    * Marshals this representation into JSON via Jackson
@@ -90,6 +83,19 @@ trait JacksonMarshaller extends Marshaller {
     val writer = mapper.defaultPrettyPrintingWriter
     writer.writeValueAsString(this)
   }
+}
+
+/**
+ * Helpers used by Jackson for both marshalling and unmarshalling.
+ */
+trait JacksonHelpers {
+
+  /**
+   * Uses reflection to determine whether a given reified type subclasses
+   * RepresentationWrapper or not. Used to help determine whether Jackson
+   * should be setting a root key or not.
+   */
+  protected def isWrapper(typeR: Class[_]) = classOf[RepresentationWrapper[_]].isAssignableFrom(typeR)
 }
 
 /* Archive of JSONy unmarshalling stuff
