@@ -25,7 +25,7 @@ import org.apache.http.params._
 import org.apache.http.client._
 import org.apache.http.client.methods._
 import org.apache.http.client.utils.URLEncodedUtils
-import org.apache.http.client.entity.UrlEncodedFormEntity
+import org.apache.http.entity.StringEntity
 import org.apache.http.impl.client._
 import org.apache.http.protocol.HTTP
 
@@ -39,7 +39,6 @@ import co.orderly.narcolepsy.utils._ // Full path because Apache HttpClient has 
 trait ApacheHttpClientAdapter extends HttpAdapter {
 
   // Borrow these from the Client...
-  // TODO nicer to just include a ClientConfiguration object, less verbose...
   self: {
     val configuration: ClientConfiguration
   } =>
@@ -85,12 +84,12 @@ trait ApacheHttpClientAdapter extends HttpAdapter {
 
     // Attach the payload to the request if we have some - how we pass it in depends on whether it's a POST or PUT
     request.setHeader("Accept", configuration.contentType)
-    /* TODO - also figure out how encodeXML works with JSON
+    // TODO - also figure out how encodeXML works with JSON
     request match {
-      case r:HttpPut => r.setEntity(encodeXML("", xml.get))
-      case r:HttpPost => r.setEntity(encodeXML("xml", xml.get))
+      case r:HttpPut => r.setEntity(new StringEntity(requestData.get, configuration.encoding))
+      case r:HttpPost => r.setEntity(new StringEntity(requestData.get, configuration.encoding))
       case _ =>
-    } */
+    }
 
     // Execute the request and retrieve the response code and headers
     val response = httpClient.execute(request)
