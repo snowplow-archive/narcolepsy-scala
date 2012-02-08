@@ -152,6 +152,7 @@ abstract class Query[
  * Payload allows a Query to have a 'payload' attached. A payload is data submitted to the web service with the
  * request. Typically used by PUT and POST requests.
  */
+// TODO: need to update this so that payload can be typed
 trait Payload {
 
   // Grab _payload from Query
