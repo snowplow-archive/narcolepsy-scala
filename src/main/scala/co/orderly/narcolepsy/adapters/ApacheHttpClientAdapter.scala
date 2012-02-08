@@ -100,7 +100,7 @@ trait ApacheHttpClientAdapter extends HttpAdapter {
     val responseEntity = Option(response.getEntity())
     val data = responseEntity match {
       case None => None
-      case _ => Option(Source.fromInputStream(responseEntity.get.getContent()).mkString)
+      case _ => Option(Source.fromInputStream(responseEntity.get.getContent(), configuration.encoding).mkString)
     }
 
     // Finally let's return the RestfulResponse
