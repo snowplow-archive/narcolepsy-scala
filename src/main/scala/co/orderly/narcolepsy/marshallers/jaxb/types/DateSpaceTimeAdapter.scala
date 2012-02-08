@@ -33,12 +33,8 @@ class DateSpaceTimeAdapter extends XmlAdapter[String, JDate] {
   override def marshal(value: JDate): String = dateFormat.format(value)
 
   @throws(classOf[Exception])
-  override def unmarshal(value: String): JDate = {
-
-    if (value == "0000-00-00 00:00:00") { // Lazy APIs use this value where they should use null
-      null
-    } else {
-      dateFormat.parse(value)
-    }
+  override def unmarshal(value: String): JDate = Option(value) match {
+    case Some(date) if date != "0000-00-00 00:00:00" => dateFormat.parse(date)
+    case _ => null
   }
 }
