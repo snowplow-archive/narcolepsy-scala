@@ -86,8 +86,8 @@ trait ApacheHttpClientAdapter extends HttpAdapter {
     request.setHeader("Accept", configuration.contentType)
     // TODO - also figure out how encodeXML works with JSON
     request match {
-      case r:HttpPut => r.setEntity(new StringEntity(requestData.get, configuration.encoding))
-      case r:HttpPost => r.setEntity(new StringEntity(requestData.get, configuration.encoding))
+      case r:HttpPut => r.setEntity(new StringEntity(requestData.get, configuration.contentType, configuration.encoding))
+      case r:HttpPost => r.setEntity(new StringEntity(requestData.get, configuration.contentType, configuration.encoding))
       case _ =>
     }
 
