@@ -62,13 +62,8 @@ trait JaxbMarshaller extends Marshaller {
    * Marshals this representation into XML using JAXB
    */
   // TODO: rename this back to marshal() when it's no longer attached to all Representations
-  def marshalToXml(): String = {
-
-    // TODO: add in a Marshaller configuration object.
-    // TODO Should include namespaced: Boolean
-
-    // TODO: remove this - this is temporary
-    val namespaced = true
+  // TODO: move namespaced into a separate configuration object or similar
+  def marshalToXml(namespaced: Boolean = true): String = {
 
     val context = JAXBContext.newInstance(this.getClass())
     val writer = new StringWriter
