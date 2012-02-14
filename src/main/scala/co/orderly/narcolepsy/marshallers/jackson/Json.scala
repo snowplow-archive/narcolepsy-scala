@@ -60,7 +60,8 @@ trait JacksonMarshaller extends Marshaller with JacksonHelpers {
    * Marshals this representation into JSON via Jackson
    * (using Jackson / JAXB annotations)
    */
-  def marshal(): String = {
+  // TODO: rename this back to marshal() when it's no longer attached to all Representations
+  def marshalToJson(): String = {
 
     // Define the Jackson mapper and configure it
     val mapper = new ObjectMapper()

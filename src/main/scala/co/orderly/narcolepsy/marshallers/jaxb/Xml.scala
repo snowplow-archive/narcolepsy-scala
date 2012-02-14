@@ -61,7 +61,8 @@ trait JaxbMarshaller extends Marshaller {
   /**
    * Marshals this representation into XML using JAXB
    */
-  def marshal(): String = {
+  // TODO: rename this back to marshal() when it's no longer attached to all Representations
+  def marshalToXml(): String = {
 
     // TODO: add in a Marshaller configuration object.
     // TODO Should include namespaced: Boolean

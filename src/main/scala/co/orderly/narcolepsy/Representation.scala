@@ -15,6 +15,10 @@ package co.orderly.narcolepsy
 // Scala
 import scala.collection.mutable.ArrayBuffer
 
+// Narcolepsy
+import marshallers.jackson.JacksonMarshaller
+import marshallers.jaxb.JaxbMarshaller
+
 /**
  * Representation is the parent trait for all representations handled by
  * NarcolepsyClient. A representation is REST speak for the instantiated form
@@ -22,7 +26,12 @@ import scala.collection.mutable.ArrayBuffer
  * Scala class that has been marshalled from XML/JSON/whatever by JAXB, Jackson
  * or similar.
  */
-trait Representation // extends JaxbMarshaller with JacksonMarshaller
+// TODO: I have added Jaxb and Jackson support back in via extends.
+// TODO: In the future this should be decoupled (a Representation
+// TODO: should be marshallable by any given Marshaller technology
+// TODO: - this can be done by making an implicit conversion
+// TODO: available at the correct point.
+trait Representation extends JaxbMarshaller with JacksonMarshaller
 
 /**
  * ErrorRepresentation is the parent trait for all representations which
