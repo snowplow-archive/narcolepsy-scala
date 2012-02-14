@@ -21,5 +21,6 @@ trait Marshaller {
   /**
    * Abstract method to marshal a given representation
    */
-  def marshal(): String
+  // TODO: potentially bring this back in due course
+  // def marshal(): String
 }
