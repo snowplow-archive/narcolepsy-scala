@@ -17,7 +17,7 @@ object BuildSettings {
 
   lazy val basicSettings = Seq[Setting[_]](
     organization  := "orderly",
-    version       := "0.1",
+    version       := "0.1.0",
     description   := "Narcolepsy is a Scala framework for building typesafe clients for RESTful web services",
     scalaVersion  := "2.9.1",
     scalacOptions := Seq("-deprecation", "-encoding", "utf8"),
@@ -27,13 +27,15 @@ object BuildSettings {
   lazy val narcolepsySettings = basicSettings ++ seq(
   
     // Publishing
-    // credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
+    // TODO: update with ivy credentials etc when we start using Nexus
     crossPaths := false,
     publishMavenStyle := true,
     publishTo <<= version { version =>
-      Some { // TODO: add snapshot support, Spray-style 
-        Resolver.sftp("Orderly Maven repository", "xxx", 22, "/var/www/repo.orderly.co/prod/public/releases") as ("xxx", new java.io.File(/*util.Properties.userHome +*/ "/home/xxx/.ssh/id_rsa"))
-      } // if (version.trim.endsWith("SNAPSHOT")) "snapshots/" else"releases/"
+      val keyFile = (Path.userHome / ".ssh" / "admin_keplar.osk")
+      val basePath = "/var/www/repo.orderly.co/prod/public/%s".format {
+        if (version.trim.endsWith("SNAPSHOT")) "snapshots/" else "releases/"
+      }
+      Some(Resolver.sftp("Orderly Maven repository", "prodbox", 8686, basePath) as ("admin", keyFile))
     }
   )
 }
