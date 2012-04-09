@@ -24,5 +24,16 @@ object BuildSettings {
     resolvers     ++= Dependencies.resolutionRepos
   )
 
-  lazy val narcolepsySettings = basicSettings
+  lazy val narcolepsySettings = basicSettings ++ seq(
+  
+    // Publishing
+    // credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
+    crossPaths := false,
+    publishMavenStyle := true,
+    publishTo <<= version { version =>
+      Some { // TODO: add snapshot support, Spray-style 
+        Resolver.sftp("Orderly Maven repository", "xxx", 22, "/var/www/repo.orderly.co/prod/public/releases") as ("xxx", new java.io.File(/*util.Properties.userHome +*/ "/home/xxx/.ssh/id_rsa"))
+      } // if (version.trim.endsWith("SNAPSHOT")) "snapshots/" else"releases/"
+    }
+  )
 }
