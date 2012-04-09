@@ -16,8 +16,8 @@ import Keys._
 object BuildSettings {
 
   lazy val basicSettings = Seq[Setting[_]](
-    organization  := "orderly",
-    version       := "0.1.0",
+    organization  := "co.orderly",
+    version       := "0.1.1",
     description   := "Narcolepsy is a Scala framework for building typesafe clients for RESTful web services",
     scalaVersion  := "2.9.1",
     scalacOptions := Seq("-deprecation", "-encoding", "utf8"),
@@ -29,7 +29,6 @@ object BuildSettings {
     // Publishing
     // TODO: update with ivy credentials etc when we start using Nexus
     crossPaths := false,
-    publishMavenStyle := true,
     publishTo <<= version { version =>
       val keyFile = (Path.userHome / ".ssh" / "admin_keplar.osk")
       val basePath = "/var/www/repo.orderly.co/prod/public/%s".format {
