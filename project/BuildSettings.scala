@@ -17,7 +17,7 @@ object BuildSettings {
 
   lazy val basicSettings = Seq[Setting[_]](
     organization  := "orderly",
-    version       := "0.1.0",
+    version       := "0.1.1",
     description   := "Narcolepsy is a Scala framework for building typesafe clients for RESTful web services",
     scalaVersion  := "2.9.1",
     scalacOptions := Seq("-deprecation", "-encoding", "utf8"),
@@ -33,7 +33,7 @@ object BuildSettings {
     publishTo <<= version { version =>
       val keyFile = (Path.userHome / ".ssh" / "admin_keplar.osk")
       val basePath = "/var/www/repo.orderly.co/prod/public/%s".format {
-        if (version.trim.endsWith("SNAPSHOT")) "snapshots/" else "releases/"
+        if (version.trim.endsWith("SNAPSHOT")) "snapshots/co/" else "releases/co/"
       }
       Some(Resolver.sftp("Orderly Maven repository", "prodbox", 8686, basePath) as ("admin", keyFile))
     }
