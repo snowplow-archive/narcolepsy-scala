@@ -38,6 +38,9 @@ case class JaxbConfiguration(namespaced: Boolean)
 
 /**
  * Case class mini-DSL for unmarshalling via JAXB.
+ *
+ * Design as per Neil Essy's answer on:
+ * http://stackoverflow.com/questions/8162345/how-do-i-create-a-class-hierarchy-of-typed-factory-method-constructors-and-acces
  */
 case class JaxbUnmarshaller(conf: JaxbConfiguration,  xml: String) extends Unmarshaller {
 
@@ -52,8 +55,7 @@ case class JaxbUnmarshaller(conf: JaxbConfiguration,  xml: String) extends Unmar
    */
   def toRepresentation[R <: Representation](typeR: Class[R]): R = {
 
-    // TODO: need to add non-namespaced support in (although not sure
-    // it is strictly necessary - seems to work fine without)
+    // TODO: need to add non-namespaced support in (although not sure it is strictly necessary - seems to work fine without)
 
     val context = JAXBContext.newInstance(typeR)
 
@@ -73,7 +75,7 @@ case class JaxbMarshaller(conf: JaxbConfiguration) extends Marshaller {
   /**
    * Marshals this representation into XML using JAXB
    */
-  def fromRepresentation[](): String = {
+  def fromRepresentation[R <: Representation](representation: R): String = {
 
     val context = JAXBContext.newInstance(this.getClass())
     val writer = new StringWriter

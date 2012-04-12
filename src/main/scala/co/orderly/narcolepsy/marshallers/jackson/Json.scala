@@ -23,26 +23,47 @@ import org.codehaus.jackson.map.introspect._
 import org.codehaus.jackson.xc._
 
 /**
+ * Specify the different strategies for including a root value with a given representation.
+ */
+object RootValueStrategy extends Enumeration {
+  type RootValueStrategy = Value
+  val All, NotWrappers, None = RootValueStrategy
+}
+import RootValueStrategy._
+
+/**
+ * JacksonConfiguration allows the Jackson marshalling and unmarshalling
+ * to be tweaked/customized for a given API.
+ */
+case class JacksonConfiguration(dateFormat: SimpleDateFormat, // new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+                                rootValueStrategy: RootValueStrategy,
+                                propertyNamingStrategy: PropertyNamingStrategy) // new PropertyNamingStrategy.LowerCaseWithUnderscoresStrategy() // Translates typical camel case Java property names to lower case JSON element names, separated by underscore
+
+/**
  * Mini-DSL to unmarshal a JSON string into a Representation.
  *
  * Design as per Neil Essy's answer on:
  * http://stackoverflow.com/questions/8162345/how-do-i-create-a-class-hierarchy-of-typed-factory-method-constructors-and-acces
  */
-case class UnmarshalJson(json: String, rootKey: Boolean = false) extends Unmarshaller with JacksonHelpers {
+case class JacksonUnmarshaller(conf: JacksonConfiguration,  json: String) extends Unmarshaller with JacksonHelpers {
 
-  def toRepresentation[T <: Representation](typeT: Class[T]): T = {
+  def toRepresentation[R <: Representation](typeR: Class[R]): R = {
 
     // Define the Jackson mapper and configure it
     val mapper = new ObjectMapper()
 
-    // TODO: turn these into JacksonConfiguration-based or similar
-    mapper.configure(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE, (rootKey && (!isWrapper(typeT))))
-    // mapper.getDeserializationConfig().setDateFormat(getDateFormat)
+    // Whether or not to add a root key aka "top level segment" when (un)marshalling JSON, as
+    // per http://stackoverflow.com/questions/5728276/jackson-json-top-level-segment-inclusion
+    mapper.configure(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE, unwrapRootValue(conf.rootValueStrategy, typeR))
 
-    // Translates typical camel case Java property names to lower case JSON element names, separated by underscore
-    mapper.setPropertyNamingStrategy(new PropertyNamingStrategy.LowerCaseWithUnderscoresStrategy())
+    // The custom date format to use
+    mapper.getDeserializationConfig().setDateFormat(conf.dateFormat) // TODO: setDateFormat has been deprecated
+
+    // How to name the properties (e.g. lower case with underscores)
+    mapper.setPropertyNamingStrategy(propertyNamingStrategy)
 
     // Use Jackson annotations first then fall back on JAXB annotations
+    // TODO: make this into a FallbackStrategy
     val introspectorPair = new AnnotationIntrospector.Pair(
       new JacksonAnnotationIntrospector(),
       new JaxbAnnotationIntrospector()
@@ -50,10 +71,11 @@ case class UnmarshalJson(json: String, rootKey: Boolean = false) extends Unmarsh
     mapper.getDeserializationConfig().withAnnotationIntrospector(introspectorPair)
 
     // Return the representation
-    mapper.readValue(json, typeT).asInstanceOf[T]
+    mapper.readValue(json, typeR).asInstanceOf[R]
   }
 }
 
+// TODO: update this one.
 trait JacksonMarshaller extends Marshaller with JacksonHelpers {
 
   /**
@@ -68,7 +90,11 @@ trait JacksonMarshaller extends Marshaller with JacksonHelpers {
 
     // TODO: we need to inject a JacksonConfiguration into this OR make it easy to override JacksonMarshaller
     // TODO in an individual Narcolepsy client
+
+   // * Whether or not to add a root key aka "top level segment" when (un)marshalling JSON, as
+   // * per http://stackoverflow.com/questions/5728276/jackson-json-top-level-segment-inclusion
     // mapper.configure(SerializationConfig.Feature.WRAP_ROOT_VALUE, needRootKey(this))
+
     // mapper.getSerializationConfig().setDateFormat(getDateFormat)
 
     // Translates typical camel case Java property names to lower case JSON element names, separated by underscore
@@ -92,36 +118,18 @@ trait JacksonMarshaller extends Marshaller with JacksonHelpers {
 trait JacksonHelpers {
 
   /**
+   * Whether to set unwrap root value to true or false
+   */
+  def unwrapRootValue[R <: Representation](rvs: RootValueStrategy, typeR: Class[R]): Boolean = rvs match {
+    case All         => true
+    case None        => false
+    case NotWrappers => isWrapper(typeR)
+  }
+
+  /**
    * Uses reflection to determine whether a given reified type subclasses
    * RepresentationWrapper or not. Used to help determine whether Jackson
    * should be setting a root key or not.
    */
-  protected def isWrapper(typeR: Class[_]) = classOf[RepresentationWrapper[_]].isAssignableFrom(typeR)
+  private def isWrapper(typeR: Class[_]) = classOf[RepresentationWrapper[_]].isAssignableFrom(typeR)
 }
-
-/* Archive of JSONy unmarshalling stuff
-
-
-  // -------------------------------------------------------------------------------------------------------------------
-  // Helper methods
-  // -------------------------------------------------------------------------------------------------------------------
-
-  // TODO: check if this is is still used
-  // TODO: make this a JSON configuration parameter
-  /**
-   * Whether or not to add a root key aka "top level segment" when (un)marshalling JSON, as
-   * per http://stackoverflow.com/questions/5728276/jackson-json-top-level-segment-inclusion
-   */
-  def needRootKey(obj: Any) = obj match {
-    case o:RepresentationWrapper[_] => false // Don't include as we get the root key for free with a wrapper
-    case _ => true                        // Yes include a root key
-  }
-
-  // TODO: make this a JSON configuration parameter to the client (along with needRootKey)
-  /**
-   * Standardise the date format to use for (un)marshalling
-   */
-  def getDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
-
-
-*/

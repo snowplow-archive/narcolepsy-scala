@@ -14,13 +14,12 @@ package co.orderly.narcolepsy
 package marshallers
 
 /**
- * Empty trait for now, but extended by any format-specific marshaller
+ * Parent marshalling trait, extended by any format-specific marshaller
  */
 trait Marshaller {
 
   /**
-   * Abstract method to marshal a given representation
+   * Abstract method to marshal a given representation into a string
    */
-  // TODO: potentially bring this back in due course
-  // def marshal(): String
+  def fromRepresentation[R <: Representation](representation: R): String
 }
