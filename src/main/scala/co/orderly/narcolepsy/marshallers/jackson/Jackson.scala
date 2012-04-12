@@ -49,65 +49,29 @@ case class JacksonUnmarshaller(conf: JacksonConfiguration,  json: String) extend
 
   def toRepresentation[R <: Representation](typeR: Class[R]): R = {
 
-    // Define the Jackson mapper and configure it
-    val mapper = new ObjectMapper()
-
-    // Whether or not to add a root key aka "top level segment" when (un)marshalling JSON, as
-    // per http://stackoverflow.com/questions/5728276/jackson-json-top-level-segment-inclusion
-    mapper.configure(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE, unwrapRootValue(conf.rootValueStrategy, typeR))
-
-    // The custom date format to use
-    mapper.getDeserializationConfig().setDateFormat(conf.dateFormat) // TODO: setDateFormat has been deprecated
-
-    // How to name the properties (e.g. lower case with underscores)
-    mapper.setPropertyNamingStrategy(propertyNamingStrategy)
-
-    // Use Jackson annotations first then fall back on JAXB annotations
-    // TODO: make this into a FallbackStrategy
-    val introspectorPair = new AnnotationIntrospector.Pair(
-      new JacksonAnnotationIntrospector(),
-      new JaxbAnnotationIntrospector()
-    )
-    mapper.getDeserializationConfig().withAnnotationIntrospector(introspectorPair)
+    val (mapper, ai) = createObjectMapperAndIntrospector(conf)
+    mapper.getDeserializationConfig().withAnnotationIntrospector(ai)
 
     // Return the representation
     mapper.readValue(json, typeR).asInstanceOf[R]
   }
 }
 
-// TODO: update this one.
-trait JacksonMarshaller extends Marshaller with JacksonHelpers {
+/**
+ * Case class mini-DSL for marshalling via Jackson.
+ */
+case class JacksonMarshaller(conf: JaxbConfiguration) extends Marshaller with JacksonHelpers {
 
   /**
    * Marshals this representation into JSON via Jackson
-   * (using Jackson / JAXB annotations)
    */
-  // TODO: rename this back to marshal() when it's no longer attached to all Representations
-  def marshalToJson(): String = {
+  def fromRepresentation[R <: Representation](representation: R): String = {
 
-    // Define the Jackson mapper and configure it
-    val mapper = new ObjectMapper()
+    val (mapper, ai) = createObjectMapperAndIntrospector(conf)
+    mapper.getSerializationConfig().withAnnotationIntrospector(ai)
 
-    // TODO: we need to inject a JacksonConfiguration into this OR make it easy to override JacksonMarshaller
-    // TODO in an individual Narcolepsy client
-
-   // * Whether or not to add a root key aka "top level segment" when (un)marshalling JSON, as
-   // * per http://stackoverflow.com/questions/5728276/jackson-json-top-level-segment-inclusion
-    // mapper.configure(SerializationConfig.Feature.WRAP_ROOT_VALUE, needRootKey(this))
-
-    // mapper.getSerializationConfig().setDateFormat(getDateFormat)
-
-    // Translates typical camel case Java property names to lower case JSON element names, separated by underscore
-    mapper.setPropertyNamingStrategy(new PropertyNamingStrategy.LowerCaseWithUnderscoresStrategy())
-
-    // Use Jackson annotations first then fall back on JAXB annotations
-    val introspectorPair = new AnnotationIntrospector.Pair(
-      new JacksonAnnotationIntrospector(),
-      new JaxbAnnotationIntrospector()
-    )
-    mapper.getSerializationConfig().withAnnotationIntrospector(introspectorPair)
-
-    val writer = mapper.defaultPrettyPrintingWriter
+    // Return a pretty printed String
+    val writer = mapper.defaultPrettyPrintingWriter // Deprecated, replace
     writer.writeValueAsString(this)
   }
 }
@@ -118,9 +82,38 @@ trait JacksonMarshaller extends Marshaller with JacksonHelpers {
 trait JacksonHelpers {
 
   /**
+   * Factory to create and configure a Jackson ObjectMapper based on
+   * the supplied configuration. Same for marshalling and
+   * unmarshalling.
+   */
+  def createObjectMapperAndIntrospector(conf: JacksonConfiguration): (ObjectMapper, AnnotationIntrospector) = {
+
+    val mapper = new ObjectMapper()
+
+    // Whether or not to add a root key aka "top level segment" when (un)marshalling JSON, as
+    // per http://stackoverflow.com/questions/5728276/jackson-json-top-level-segment-inclusion
+    mapper.configure(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE, unwrapRootValue(conf.rootValueStrategy, typeR))
+
+    // The custom date format to use
+    mapper.getDeserializationConfig().setDateFormat(conf.dateFormat) // TODO: setDateFormat has been deprecated
+
+    // How to name the properties (e.g. lower case with underscores)
+    mapper.setPropertyNamingStrategy(conf.propertyNamingStrategy)
+
+    // Use Jackson annotations first then fall back on JAXB annotations
+    // TODO: make this into a FallbackStrategy
+    val introspectorPair = new AnnotationIntrospector.Pair(
+      new JacksonAnnotationIntrospector(),
+      new JaxbAnnotationIntrospector()
+    )
+
+    (mapper, introspectorPair) // Return the tuple
+  }
+
+  /**
    * Whether to set unwrap root value to true or false
    */
-  def unwrapRootValue[R <: Representation](rvs: RootValueStrategy, typeR: Class[R]): Boolean = rvs match {
+  private def unwrapRootValue[R <: Representation](rvs: RootValueStrategy, typeR: Class[R]): Boolean = rvs match {
     case All         => true
     case None        => false
     case NotWrappers => isWrapper(typeR)
