@@ -95,7 +95,7 @@ trait JacksonHelpers {
    * the supplied configuration. Same for marshalling and
    * unmarshalling.
    */
-  def createObjectMapperAndIntrospector[R <: Representation](conf: JacksonConfiguration): (ObjectMapper, AnnotationIntrospector) = {
+  def createObjectMapperAndIntrospector(conf: JacksonConfiguration): (ObjectMapper, AnnotationIntrospector) = {
 
     val mapper = new ObjectMapper()
 
