@@ -55,6 +55,12 @@ abstract class Client(
   // Map resource slug names against the Representation subclasses required by this RESTful API
   protected val resources: Api
 
+  // The marshaller
+  // protected val marshaller:
+
+  // The unmarshaller
+  // TODO
+
   // -------------------------------------------------------------------------------------------------------------------
   // You can override the following defaults in your NarcolepsyClient if you want
   // -------------------------------------------------------------------------------------------------------------------

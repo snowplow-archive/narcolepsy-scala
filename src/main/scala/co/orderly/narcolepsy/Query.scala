@@ -19,10 +19,6 @@ import java.util.UUID
 import adapters._
 import utils._
 
-// TODO: remove these when we decouple specific unmarshallers from the Query engine
-import marshallers.jackson.UnmarshalJson
-import marshallers.jaxb.UnmarshalXml
-
 /**
  * Query is a fluent interface for constructing a call (GET, POST, DELETE, PUT or
  * similar) to a RESTful web service. It is typed so that the representations
@@ -136,8 +132,8 @@ abstract class Query[
       Right(body map( b =>
         client.configuration.contentType match {
 
-          case "application/json" => UnmarshalJson(b, true).toRepresentation[R](typeR) // TODO: remove rootKey bool
-          case "text/xml" => UnmarshalXml(b).toRepresentation[R](typeR)
+          // case "application/json" => null // UnmarshalJson(b, true).toRepresentation[R](typeR) // TODO: remove rootKey bool
+          // case "text/xml" => null // UnmarshalXml(b).toRepresentation[R](typeR)
           case _ => throw new ClientConfigurationException("Narcolepsy can only unmarshal JSON and XML currently, not %s".format(client.configuration.contentType))
         }))
     }

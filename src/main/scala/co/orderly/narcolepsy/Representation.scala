@@ -26,12 +26,7 @@ import marshallers.jaxb.JaxbMarshaller
  * Scala class that has been marshalled from XML/JSON/whatever by JAXB, Jackson
  * or similar.
  */
-// TODO: I have added Jaxb and Jackson support back in via extends.
-// TODO: In the future this should be decoupled (a Representation
-// TODO: should be marshallable by any given Marshaller technology
-// TODO: - this can be done by making an implicit conversion
-// TODO: available at the correct point.
-trait Representation extends JaxbMarshaller with JacksonMarshaller
+trait Representation
 
 /**
  * ErrorRepresentation is the parent trait for all representations which

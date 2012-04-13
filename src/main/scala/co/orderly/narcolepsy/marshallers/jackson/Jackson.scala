@@ -27,7 +27,7 @@ import org.codehaus.jackson.xc._
  */
 object RootValueStrategy extends Enumeration {
   type RootValueStrategy = Value
-  val All, NotWrappers, None = RootValueStrategy
+  val All, NotWrappers, None = Value
 }
 import RootValueStrategy._
 
@@ -50,7 +50,14 @@ case class JacksonUnmarshaller(conf: JacksonConfiguration,  json: String) extend
   def toRepresentation[R <: Representation](typeR: Class[R]): R = {
 
     val (mapper, ai) = createObjectMapperAndIntrospector(conf)
+
     mapper.getDeserializationConfig().withAnnotationIntrospector(ai)
+    mapper.getDeserializationConfig().setDateFormat(conf.dateFormat) // TODO: setDateFormat has been deprecated
+
+    // Whether or not to add a root key aka "top level segment" when (un)marshalling JSON, as
+    // per http://stackoverflow.com/questions/5728276/jackson-json-top-level-segment-inclusion
+    // Unmarshalling only
+    mapper.configure(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE, unwrapRootValue(conf.rootValueStrategy, typeR))
 
     // Return the representation
     mapper.readValue(json, typeR).asInstanceOf[R]
@@ -60,7 +67,7 @@ case class JacksonUnmarshaller(conf: JacksonConfiguration,  json: String) extend
 /**
  * Case class mini-DSL for marshalling via Jackson.
  */
-case class JacksonMarshaller(conf: JaxbConfiguration) extends Marshaller with JacksonHelpers {
+case class JacksonMarshaller(conf: JacksonConfiguration) extends Marshaller with JacksonHelpers {
 
   /**
    * Marshals this representation into JSON via Jackson
@@ -68,7 +75,9 @@ case class JacksonMarshaller(conf: JaxbConfiguration) extends Marshaller with Ja
   def fromRepresentation[R <: Representation](representation: R): String = {
 
     val (mapper, ai) = createObjectMapperAndIntrospector(conf)
+
     mapper.getSerializationConfig().withAnnotationIntrospector(ai)
+    mapper.getSerializationConfig().setDateFormat(conf.dateFormat) // TODO: setDateFormat has been deprecated
 
     // Return a pretty printed String
     val writer = mapper.defaultPrettyPrintingWriter // Deprecated, replace
@@ -86,16 +95,9 @@ trait JacksonHelpers {
    * the supplied configuration. Same for marshalling and
    * unmarshalling.
    */
-  def createObjectMapperAndIntrospector(conf: JacksonConfiguration): (ObjectMapper, AnnotationIntrospector) = {
+  def createObjectMapperAndIntrospector[R <: Representation](conf: JacksonConfiguration): (ObjectMapper, AnnotationIntrospector) = {
 
     val mapper = new ObjectMapper()
-
-    // Whether or not to add a root key aka "top level segment" when (un)marshalling JSON, as
-    // per http://stackoverflow.com/questions/5728276/jackson-json-top-level-segment-inclusion
-    mapper.configure(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE, unwrapRootValue(conf.rootValueStrategy, typeR))
-
-    // The custom date format to use
-    mapper.getDeserializationConfig().setDateFormat(conf.dateFormat) // TODO: setDateFormat has been deprecated
 
     // How to name the properties (e.g. lower case with underscores)
     mapper.setPropertyNamingStrategy(conf.propertyNamingStrategy)
@@ -113,7 +115,7 @@ trait JacksonHelpers {
   /**
    * Whether to set unwrap root value to true or false
    */
-  private def unwrapRootValue[R <: Representation](rvs: RootValueStrategy, typeR: Class[R]): Boolean = rvs match {
+  def unwrapRootValue[R <: Representation](rvs: RootValueStrategy, typeR: Class[R]): Boolean = rvs match {
     case All         => true
     case None        => false
     case NotWrappers => isWrapper(typeR)
