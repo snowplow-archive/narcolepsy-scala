@@ -118,7 +118,7 @@ trait JacksonHelpers {
   def unwrapRootValue[R <: Representation](rvs: RootValueStrategy, typeR: Class[R]): Boolean = rvs match {
     case All         => true
     case None        => false
-    case NotWrappers => isWrapper(typeR)
+    case NotWrappers => !isWrapper(typeR)
   }
 
   /**
