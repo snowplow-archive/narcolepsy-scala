@@ -149,7 +149,7 @@ abstract class Query[
  * request. Typically used by PUT and POST requests.
  */
 // TODO: need to update this so that payload can be typed
-trait Payload {
+trait Payload[R <: Representation] {
 
   // Grab _payload from Query
   self: {
@@ -254,7 +254,7 @@ class DeleteQuery(client: Client, resource: String)
 class PutQuery[R <: Representation](client: Client, resource: String, typeR: Class[R])
   extends Query[R](PutMethod, client, resource, typeR)
   with Id
-  with Payload
+  with Payload[R]
 
 /**
  * PostQuery is for performing a POST on a resource. This is typically used for creating
@@ -262,7 +262,7 @@ class PutQuery[R <: Representation](client: Client, resource: String, typeR: Cla
  */
 class PostQuery[R <: Representation](client: Client, resource: String, typeR: Class[R])
   extends Query[R](PostMethod, client, resource, typeR)
-  with Payload
+  with Payload[R]
 
 // TODO: add HeadQuery
 
