@@ -131,13 +131,13 @@ abstract class Query[
     if (RestfulHelpers.isError(code)) {
       Left(RestfulError(code, body, null)) // TODO: add unmarshalling of errors in here
     } else {
-      Right(body map( b =>
-        client.configuration.contentType match {
+      Right(body map( r => _client.unmarshaller.toRepresentation(r, typeR)))
+        // TODO: pass in client.configuration.contentType
 
           // case "application/json" => null // UnmarshalJson(b, true).toRepresentation[R](typeR) // TODO: remove rootKey bool
           // case "text/xml" => null // UnmarshalXml(b).toRepresentation[R](typeR)
-          case _ => throw new ClientConfigurationException("Narcolepsy can only unmarshal JSON and XML currently, not %s".format(client.configuration.contentType))
-        }))
+        //  case _ => throw new ClientConfigurationException("Narcolepsy can only unmarshal JSON and XML currently, not %s".format(client.configuration.contentType))
+        // }))
     }
   }
 }
@@ -161,7 +161,7 @@ trait Payload[R <: Representation] {
 
   def addPayload(representation: R): this.type = {
 
-    // TODO: add validation if no default content type set
+    // TODO: pass in client.configuration.contentType
 
     this.payload = Option(_client.marshaller.fromRepresentation(representation))
     this

@@ -45,9 +45,9 @@ case class JacksonConfiguration(dateFormat: SimpleDateFormat, // new SimpleDateF
  * Design as per Neil Essy's answer on:
  * http://stackoverflow.com/questions/8162345/how-do-i-create-a-class-hierarchy-of-typed-factory-method-constructors-and-acces
  */
-case class JacksonUnmarshaller(conf: JacksonConfiguration,  json: String) extends Unmarshaller with JacksonHelpers {
+case class JacksonUnmarshaller(conf: JacksonConfiguration) extends Unmarshaller with JacksonHelpers {
 
-  def toRepresentation[R <: Representation](typeR: Class[R]): R = {
+  def toRepresentation[R <: Representation](marshalled: String, typeR: Class[R]): R = {
 
     val (mapper, ai) = createObjectMapperAndIntrospector(conf)
 
@@ -60,7 +60,7 @@ case class JacksonUnmarshaller(conf: JacksonConfiguration,  json: String) extend
     mapper.configure(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE, unwrapRootValue(conf.rootValueStrategy, typeR))
 
     // Return the representation
-    mapper.readValue(json, typeR).asInstanceOf[R]
+    mapper.readValue(marshalled, typeR).asInstanceOf[R]
   }
 }
 

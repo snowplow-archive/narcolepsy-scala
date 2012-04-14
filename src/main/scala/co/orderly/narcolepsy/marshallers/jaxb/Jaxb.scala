@@ -42,7 +42,7 @@ case class JaxbConfiguration(namespaced: Boolean)
  * Design as per Neil Essy's answer on:
  * http://stackoverflow.com/questions/8162345/how-do-i-create-a-class-hierarchy-of-typed-factory-method-constructors-and-acces
  */
-case class JaxbUnmarshaller(conf: JaxbConfiguration,  xml: String) extends Unmarshaller {
+case class JaxbUnmarshaller(conf: JaxbConfiguration) extends Unmarshaller {
 
   /**
    * Turns the case class's xml into a Representation subclass - use
@@ -53,7 +53,7 @@ case class JaxbUnmarshaller(conf: JaxbConfiguration,  xml: String) extends Unmar
    * (where you have grabbed and stored typeOfR using another
    * implicit Manifest at the point of declaring R.
    */
-  def toRepresentation[R <: Representation](typeR: Class[R]): R = {
+  def toRepresentation[R <: Representation](marshalled: String, typeR: Class[R]): R = {
 
     // TODO: need to add non-namespaced support in (although not sure it is strictly necessary - seems to work fine without)
 
@@ -62,7 +62,7 @@ case class JaxbUnmarshaller(conf: JaxbConfiguration,  xml: String) extends Unmar
     val unmarshaller = context.createUnmarshaller()
 
     unmarshaller.unmarshal(
-      new StringReader(xml)
+      new StringReader(marshalled)
     ).asInstanceOf[R]
   }
 }
