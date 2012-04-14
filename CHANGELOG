@@ -1,7 +1,10 @@
+Version 0.2.0 (2012-04-14)
+--------------------------
+Decoupled JAXB & Jackson (un)marshallers
+
 Version 0.1.1 (2012-04-10)
 --------------------------
 Changed org to co.orderly
-
 
 Version 0.1.0 (2012-04-09)
 --------------------------

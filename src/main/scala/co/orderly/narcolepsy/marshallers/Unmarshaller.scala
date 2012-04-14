@@ -21,8 +21,8 @@ trait Unmarshaller {
    * Example usage;
    * val order = UnmarshalXml(xml).toRepresentation[Order]
    */
-  def toRepresentation[T <: Representation](implicit m: Manifest[T]): T =
-    toRepresentation[T](m.erasure.asInstanceOf[Class[T]])
+  def toRepresentation[R <: Representation](implicit m: Manifest[R], marshalled: String): R =
+    toRepresentation[R](marshalled, m.erasure.asInstanceOf[Class[R]])
 
   /**
    * Turns the case class's xml into a Representation subclass - use
@@ -33,5 +33,24 @@ trait Unmarshaller {
    * (where you have grabbed and stored typeOfT using another
    * implicit Manifest at the point of declaring T.
    */
-  def toRepresentation[T <: Representation](typeT: Class[T]): T
+  def toRepresentation[R <: Representation](marshalled: String, typeR: Class[R]): R
+}
+
+/**
+ * A MultiUnmarshaller can choose between different unmarshallers based on
+ * the supplied content type.
+ */
+trait MultiUnmarshaller {
+
+  /**
+   * Abstract method to unmarshal a string into a representation,
+   * based on the supplied content type.
+   */
+  def toRepresentation[R <: Representation](implicit m: Manifest[R], contentType: String, marshalled: String): R =
+    toRepresentation[R](contentType, marshalled, m.erasure.asInstanceOf[Class[R]])
+
+  /**
+   * See equivalent definition in Unmarshaller above.
+   */
+  def toRepresentation[R <: Representation](contentType: String, marshalled: String, typeR: Class[R]): R
 }

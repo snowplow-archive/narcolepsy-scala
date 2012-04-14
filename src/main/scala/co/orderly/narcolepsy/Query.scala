@@ -19,10 +19,6 @@ import java.util.UUID
 import adapters._
 import utils._
 
-// TODO: remove these when we decouple specific unmarshallers from the Query engine
-import marshallers.jackson.UnmarshalJson
-import marshallers.jaxb.UnmarshalXml
-
 /**
  * Query is a fluent interface for constructing a call (GET, POST, DELETE, PUT or
  * similar) to a RESTful web service. It is typed so that the representations
@@ -45,6 +41,8 @@ abstract class Query[
   // -------------------------------------------------------------------------------------------------------------------
 
   protected var payload: Option[String] = None
+
+  protected val _client: Client = client // Because can't explicit self type on a class constructor arg
 
   protected var id: Option[String] = None
 
@@ -133,13 +131,13 @@ abstract class Query[
     if (RestfulHelpers.isError(code)) {
       Left(RestfulError(code, body, null)) // TODO: add unmarshalling of errors in here
     } else {
-      Right(body map( b =>
-        client.configuration.contentType match {
+      Right(body map( r => _client.unmarshaller.toRepresentation(client.configuration.contentType, r, typeR)))
+        // TODO: pass in client.configuration.contentType
 
-          case "application/json" => UnmarshalJson(b, true).toRepresentation[R](typeR) // TODO: remove rootKey bool
-          case "text/xml" => UnmarshalXml(b).toRepresentation[R](typeR)
-          case _ => throw new ClientConfigurationException("Narcolepsy can only unmarshal JSON and XML currently, not %s".format(client.configuration.contentType))
-        }))
+          // case "application/json" => null // UnmarshalJson(b, true).toRepresentation[R](typeR) // TODO: remove rootKey bool
+          // case "text/xml" => null // UnmarshalXml(b).toRepresentation[R](typeR)
+        //  case _ => throw new ClientConfigurationException("Narcolepsy can only unmarshal JSON and XML currently, not %s".format(client.configuration.contentType))
+        // }))
     }
   }
 }
@@ -153,12 +151,21 @@ abstract class Query[
  * request. Typically used by PUT and POST requests.
  */
 // TODO: need to update this so that payload can be typed
-trait Payload {
+trait Payload[R <: Representation] {
 
   // Grab _payload from Query
   self: {
     var payload: Option[String]
+    val _client: Client
   } =>
+
+  def addPayload(representation: R): this.type = {
+    this.payload = Option(_client.marshaller.fromRepresentation(
+      _client.configuration.contentType,
+      representation)
+    )
+    this
+  }
 
   def addPayload(payload: String): this.type = {
     this.payload = Option(payload)
@@ -173,7 +180,7 @@ trait Payload {
  */
 trait Id {
 
-  // Grab _id from Query
+  // Grab id from Query
   self: {
     var id: Option[String]
   } =>
@@ -258,7 +265,7 @@ class DeleteQuery(client: Client, resource: String)
 class PutQuery[R <: Representation](client: Client, resource: String, typeR: Class[R])
   extends Query[R](PutMethod, client, resource, typeR)
   with Id
-  with Payload
+  with Payload[R]
 
 /**
  * PostQuery is for performing a POST on a resource. This is typically used for creating
@@ -266,7 +273,7 @@ class PutQuery[R <: Representation](client: Client, resource: String, typeR: Cla
  */
 class PostQuery[R <: Representation](client: Client, resource: String, typeR: Class[R])
   extends Query[R](PostMethod, client, resource, typeR)
-  with Payload
+  with Payload[R]
 
 // TODO: add HeadQuery
 
