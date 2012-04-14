@@ -160,10 +160,10 @@ trait Payload[R <: Representation] {
   } =>
 
   def addPayload(representation: R): this.type = {
-
-    // TODO: pass in client.configuration.contentType
-
-    this.payload = Option(_client.marshaller.fromRepresentation(_client.configuration.contentType, representation))
+    this.payload = Option(_client.marshaller.fromRepresentation(
+      _client.configuration.contentType,
+      representation)
+    )
     this
   }
 
