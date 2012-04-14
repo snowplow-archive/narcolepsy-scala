@@ -16,8 +16,8 @@ import Keys._
 object BuildSettings {
 
   lazy val basicSettings = Seq[Setting[_]](
-    organization  := "orderly",
-    version       := "0.1.0",
+    organization  := "co.orderly",
+    version       := "0.2.0",
     description   := "Narcolepsy is a Scala framework for building typesafe clients for RESTful web services",
     scalaVersion  := "2.9.1",
     scalacOptions := Seq("-deprecation", "-encoding", "utf8"),
