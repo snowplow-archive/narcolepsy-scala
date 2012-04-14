@@ -131,7 +131,7 @@ abstract class Query[
     if (RestfulHelpers.isError(code)) {
       Left(RestfulError(code, body, null)) // TODO: add unmarshalling of errors in here
     } else {
-      Right(body map( r => _client.unmarshaller.toRepresentation(r, typeR)))
+      Right(body map( r => _client.unmarshaller.toRepresentation(client.configuration.contentType, r, typeR)))
         // TODO: pass in client.configuration.contentType
 
           // case "application/json" => null // UnmarshalJson(b, true).toRepresentation[R](typeR) // TODO: remove rootKey bool
@@ -163,7 +163,7 @@ trait Payload[R <: Representation] {
 
     // TODO: pass in client.configuration.contentType
 
-    this.payload = Option(_client.marshaller.fromRepresentation(representation))
+    this.payload = Option(_client.marshaller.fromRepresentation(_client.configuration.contentType, representation))
     this
   }
 

@@ -35,3 +35,22 @@ trait Unmarshaller {
    */
   def toRepresentation[R <: Representation](marshalled: String, typeR: Class[R]): R
 }
+
+/**
+ * A MultiUnmarshaller can choose between different unmarshallers based on
+ * the supplied content type.
+ */
+trait MultiUnmarshaller {
+
+  /**
+   * Abstract method to unmarshal a string into a representation,
+   * based on the supplied content type.
+   */
+  def toRepresentation[R <: Representation](implicit m: Manifest[R], contentType: String, marshalled: String): R =
+    toRepresentation[R](contentType, marshalled, m.erasure.asInstanceOf[Class[R]])
+
+  /**
+   * See equivalent definition in Unmarshaller above.
+   */
+  def toRepresentation[R <: Representation](contentType: String, marshalled: String, typeR: Class[R]): R
+}

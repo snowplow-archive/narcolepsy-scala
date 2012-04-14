@@ -15,7 +15,7 @@ package co.orderly.narcolepsy
 // Orderly
 import utils._
 import adapters._
-import marshallers.{Marshaller, Unmarshaller}
+import marshallers.{MultiMarshaller, MultiUnmarshaller}
 
 /**
  * Client is an abstract Narcolepsy class you can use to build a web services client
@@ -57,10 +57,10 @@ abstract class Client(
   protected val resources: Api
 
   // The marshaller
-  val marshaller: Marshaller
+  val marshaller: MultiMarshaller
 
   // The unmarshaller
-  val unmarshaller: Unmarshaller
+  val unmarshaller: MultiUnmarshaller
 
   // -------------------------------------------------------------------------------------------------------------------
   // You can override the following defaults in your NarcolepsyClient if you want

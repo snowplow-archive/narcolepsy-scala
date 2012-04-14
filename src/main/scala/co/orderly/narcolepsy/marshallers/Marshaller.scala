@@ -23,3 +23,16 @@ trait Marshaller {
    */
   def fromRepresentation[R <: Representation](representation: R): String
 }
+
+/**
+ * A MultiMarshaller can choose between different marshallers based on
+ * the supplied content type.
+ */
+trait MultiMarshaller {
+
+  /**
+   * Abstract method to marshal a given representation into a string,
+   * based on the supplied content type.
+   */
+  def fromRepresentation[R <: Representation](contentType: String, representation: R): String
+}
