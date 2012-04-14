@@ -42,6 +42,8 @@ abstract class Query[
 
   protected var payload: Option[String] = None
 
+  protected val _client: Client = client // Because can't explicit self type on a class constructor arg
+
   protected var id: Option[String] = None
 
   protected var params: Option[RestfulParams] = None
@@ -154,7 +156,16 @@ trait Payload[R <: Representation] {
   // Grab _payload from Query
   self: {
     var payload: Option[String]
+    val _client: Client
   } =>
+
+  def addPayload(representation: R): this.type = {
+
+    // TODO: add validation if no default content type set
+
+    this.payload = Option(_client.marshaller.fromRepresentation(representation))
+    this
+  }
 
   def addPayload(payload: String): this.type = {
     this.payload = Option(payload)
@@ -169,7 +180,7 @@ trait Payload[R <: Representation] {
  */
 trait Id {
 
-  // Grab _id from Query
+  // Grab id from Query
   self: {
     var id: Option[String]
   } =>

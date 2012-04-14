@@ -57,10 +57,10 @@ abstract class Client(
   protected val resources: Api
 
   // The marshaller
-  protected val marshaller: Marshaller
+  val marshaller: Marshaller
 
   // The unmarshaller
-  protected val unmarshaller: Unmarshaller
+  val unmarshaller: Unmarshaller
 
   // -------------------------------------------------------------------------------------------------------------------
   // You can override the following defaults in your NarcolepsyClient if you want
