@@ -4,7 +4,8 @@
  * Unauthorized copying of this file, via any medium is strictly prohibited.
  * Proprietary and confidential.
  */
-package co.orderly.mdm
+package co.orderly
+package narcolepsy
 package utils
 
 // Java
