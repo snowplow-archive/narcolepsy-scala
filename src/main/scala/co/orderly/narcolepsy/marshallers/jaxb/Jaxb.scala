@@ -77,11 +77,11 @@ case class JaxbMarshaller(conf: JaxbConfiguration) extends Marshaller {
    */
   def fromRepresentation[R <: Representation](representation: R): String = {
 
-    val context = JAXBContext.newInstance(this.getClass())
+    val context = JAXBContext.newInstance(representation.getClass())
     val writer = new StringWriter
 
     if (conf.namespaced) {
-      context.createMarshaller.marshal(this, writer)
+      context.createMarshaller.marshal(representation, writer)
     } else { // Use the custom NonNamespacedXmlStreamWriter to produce XML without the namespace noise everywhere
       val xof = XMLOutputFactory.newFactory()
       val xsw = xof.createXMLStreamWriter(writer)
