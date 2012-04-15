@@ -85,7 +85,7 @@ case class JaxbMarshaller(conf: JaxbConfiguration) extends Marshaller {
     } else { // Use the custom NonNamespacedXmlStreamWriter to produce XML without the namespace noise everywhere
       val xof = XMLOutputFactory.newFactory()
       val xsw = xof.createXMLStreamWriter(writer)
-      context.createMarshaller.marshal(this, new NonNamespacedXmlStreamWriter(xsw))
+      context.createMarshaller.marshal(representation, new NonNamespacedXmlStreamWriter(xsw))
     }
 
     writer.toString()

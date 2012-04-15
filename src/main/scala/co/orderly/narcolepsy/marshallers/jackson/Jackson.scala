@@ -35,9 +35,9 @@ import RootValueStrategy._
  * JacksonConfiguration allows the Jackson marshalling and unmarshalling
  * to be tweaked/customized for a given API.
  */
-case class JacksonConfiguration(dateFormat: SimpleDateFormat, // new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+case class JacksonConfiguration(dateFormat: SimpleDateFormat,
                                 rootValueStrategy: RootValueStrategy,
-                                propertyNamingStrategy: PropertyNamingStrategy) // new PropertyNamingStrategy.LowerCaseWithUnderscoresStrategy() // Translates typical camel case Java property names to lower case JSON element names, separated by underscore
+                                propertyNamingStrategy: PropertyNamingStrategy) 
 
 /**
  * Mini-DSL to unmarshal a JSON string into a Representation.
@@ -81,7 +81,7 @@ case class JacksonMarshaller(conf: JacksonConfiguration) extends Marshaller with
 
     // Return a pretty printed String
     val writer = mapper.defaultPrettyPrintingWriter // Deprecated, replace
-    writer.writeValueAsString(this)
+    writer.writeValueAsString(representation)
   }
 }
 

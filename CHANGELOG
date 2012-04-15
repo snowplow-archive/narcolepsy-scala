@@ -1,3 +1,7 @@
+Version 0.2.1 (2012-04-14)
+--------------------------
+Fixed bug where marshalling acting on the Marshaller, not the representation
+
 Version 0.2.0 (2012-04-14)
 --------------------------
 Decoupled JAXB & Jackson (un)marshallers
