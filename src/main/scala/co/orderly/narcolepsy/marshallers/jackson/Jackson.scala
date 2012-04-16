@@ -56,8 +56,7 @@ case class JacksonUnmarshaller(conf: JacksonConfiguration) extends Unmarshaller 
 
     // Whether or not to add a root key aka "top level segment" when (un)marshalling JSON, as
     // per http://stackoverflow.com/questions/5728276/jackson-json-top-level-segment-inclusion
-    // Unmarshalling only
-    mapper.configure(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE, unwrapRootValue(conf.rootValueStrategy, typeR))
+    mapper.configure(DeserializationConfig.Feature.UNWRAP_ROOT_VALUE, needsRootValue(conf.rootValueStrategy, typeR))
 
     // Return the representation
     mapper.readValue(marshalled, typeR).asInstanceOf[R]
@@ -78,6 +77,10 @@ case class JacksonMarshaller(conf: JacksonConfiguration) extends Marshaller with
 
     mapper.getSerializationConfig().withAnnotationIntrospector(ai)
     mapper.getSerializationConfig().setDateFormat(conf.dateFormat) // TODO: setDateFormat has been deprecated
+
+    // Whether or not to add a root key aka "top level segment" when (un)marshalling JSON, as
+    // per http://stackoverflow.com/questions/5728276/jackson-json-top-level-segment-inclusion
+    mapper.configure(SerializationConfig.Feature.WRAP_ROOT_VALUE, needsRootValue(conf.rootValueStrategy, representation))
 
     // Return a pretty printed String
     val writer = mapper.defaultPrettyPrintingWriter // Deprecated, replace
@@ -113,12 +116,29 @@ trait JacksonHelpers {
   }
 
   /**
-   * Whether to set unwrap root value to true or false
+   * Whether we should be adding a root value to this representation or not
    */
-  def unwrapRootValue[R <: Representation](rvs: RootValueStrategy, typeR: Class[R]): Boolean = rvs match {
+  def needsRootValue[R <: Representation](rvs: RootValueStrategy, representation: R): Boolean = rvs match {
     case All         => true
     case None        => false
-    case NotWrappers => !isWrapper(typeR)
+    case NotWrappers => !isWrapper(representation) // Don't include as we get the root value for free with a wrapper
+  }
+
+  /**
+   * Whether we should be adding a root value to this reified representation or not
+   */
+  def needsRootValue[R <: Representation](rvs: RootValueStrategy, typeR: Class[R]): Boolean = rvs match {
+    case All         => true
+    case None        => false
+    case NotWrappers => !isReifiedWrapper(typeR) // Don't include as we get the root value for free with a wrapper
+  }
+
+  /**
+   * Simple pattern match to determine whether this is a wrapper or not
+   */
+  private def isWrapper[R <: Representation](representation: R): Boolean = representation match {
+    case r:RepresentationWrapper[_] => true
+    case _ => false
   }
 
   /**
@@ -126,5 +146,5 @@ trait JacksonHelpers {
    * RepresentationWrapper or not. Used to help determine whether Jackson
    * should be setting a root key or not.
    */
-  private def isWrapper(typeR: Class[_]) = classOf[RepresentationWrapper[_]].isAssignableFrom(typeR)
+  private def isReifiedWrapper(typeR: Class[_]) = classOf[RepresentationWrapper[_]].isAssignableFrom(typeR)
 }
