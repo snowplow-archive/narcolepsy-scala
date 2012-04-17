@@ -45,7 +45,7 @@ case class JacksonConfiguration(dateFormat: SimpleDateFormat,
  * Design as per Neil Essy's answer on:
  * http://stackoverflow.com/questions/8162345/how-do-i-create-a-class-hierarchy-of-typed-factory-method-constructors-and-acces
  */
-case class JacksonUnmarshaller(conf: JacksonConfiguration) extends Unmarshaller with JacksonHelpers {
+case class JacksonUnmarshaller(conf: JacksonConfiguration) extends ContentTypeUnmarshaller with JacksonHelpers {
 
   def toRepresentation[R <: Representation](marshalled: String, typeR: Class[R]): R = {
 
@@ -66,7 +66,7 @@ case class JacksonUnmarshaller(conf: JacksonConfiguration) extends Unmarshaller 
 /**
  * Case class mini-DSL for marshalling via Jackson.
  */
-case class JacksonMarshaller(conf: JacksonConfiguration) extends Marshaller with JacksonHelpers {
+case class JacksonMarshaller(conf: JacksonConfiguration) extends ContentTypeMarshaller with JacksonHelpers {
 
   /**
    * Marshals this representation into JSON via Jackson

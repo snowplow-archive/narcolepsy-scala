@@ -14,25 +14,41 @@ package co.orderly.narcolepsy
 package marshallers
 
 /**
- * Parent marshalling trait, extended by any format-specific marshaller
+ * Parent marshalling trait, extended by any marshaller
  */
-trait Marshaller {
-
-  /**
-   * Abstract method to marshal a given representation into a string
-   */
-  def fromRepresentation[R <: Representation](representation: R): String
-}
+sealed trait Marshaller
 
 /**
  * A MultiMarshaller can choose between different marshallers based on
  * the supplied content type.
  */
-trait MultiMarshaller {
+trait MultiMarshaller extends Marshaller {
 
   /**
    * Abstract method to marshal a given representation into a string,
    * based on the supplied content type.
    */
   def fromRepresentation[R <: Representation](contentType: String, representation: R): String
+}
+
+/**
+ * A ContentTypeMarshaller should be extended by any single-format marshaller
+ * which can only handle one incoming content type.
+ *
+ * ContentTypeMarshaller extends MultiMarshaller so it can be used in places
+ * where a MultiMarshaller is expected (e.g. assigning a marshaller to a
+ * Narcolepsy Client).
+ */
+trait ContentTypeMarshaller extends MultiMarshaller {
+
+  /**
+   * Take the contentType argument and discard it
+   */
+  def fromRepresentation[R <: Representation](contentType: String, representation: R): String =
+    fromRepresentation(representation)
+
+  /**
+   * Abstract method to marshal a given representation into a string
+   */
+  def fromRepresentation[R <: Representation](representation: R): String
 }

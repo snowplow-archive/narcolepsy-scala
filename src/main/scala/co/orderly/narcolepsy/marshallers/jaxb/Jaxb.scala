@@ -42,7 +42,7 @@ case class JaxbConfiguration(namespaced: Boolean)
  * Design as per Neil Essy's answer on:
  * http://stackoverflow.com/questions/8162345/how-do-i-create-a-class-hierarchy-of-typed-factory-method-constructors-and-acces
  */
-case class JaxbUnmarshaller(conf: JaxbConfiguration) extends Unmarshaller {
+case class JaxbUnmarshaller(conf: JaxbConfiguration) extends ContentTypeUnmarshaller {
 
   /**
    * Turns the case class's xml into a Representation subclass - use
@@ -70,7 +70,7 @@ case class JaxbUnmarshaller(conf: JaxbConfiguration) extends Unmarshaller {
 /**
  * Case class mini-DSL for marshalling via JAXB.
  */
-case class JaxbMarshaller(conf: JaxbConfiguration) extends Marshaller {
+case class JaxbMarshaller(conf: JaxbConfiguration) extends ContentTypeMarshaller {
 
   /**
    * Marshals this representation into XML using JAXB

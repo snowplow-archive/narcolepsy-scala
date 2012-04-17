@@ -150,7 +150,6 @@ abstract class Query[
  * Payload allows a Query to have a 'payload' attached. A payload is data submitted to the web service with the
  * request. Typically used by PUT and POST requests.
  */
-// TODO: need to update this so that payload can be typed
 trait Payload[R <: Representation] {
 
   // Grab _payload from Query
@@ -159,7 +158,11 @@ trait Payload[R <: Representation] {
     val _client: Client
   } =>
 
-  def addPayload(representation: R): this.type = {
+  /**
+   * Add a payload which is type-bound to the same representation as
+   * the containing Resource.
+   */
+  def addSelfPayload(representation: R): this.type = {
     this.payload = Option(_client.marshaller.fromRepresentation(
       _client.configuration.contentType,
       representation)
@@ -167,8 +170,22 @@ trait Payload[R <: Representation] {
     this
   }
 
+  /**
+   * Add any marshalled payload.
+   */
   def addPayload(payload: String): this.type = {
     this.payload = Option(payload)
+    this
+  }
+
+  /**
+   * Add any representation payload.
+   */
+  def addPayload[A <: Representation](representation: A): this.type = {
+    this.payload = Option(_client.marshaller.fromRepresentation(
+      _client.configuration.contentType,
+      representation)
+    )
     this
   }
 }

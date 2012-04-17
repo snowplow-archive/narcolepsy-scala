@@ -13,7 +13,37 @@
 package co.orderly.narcolepsy
 package marshallers
 
-trait Unmarshaller {
+/**
+ * Parent marshalling trait, extended by any unmarshaller
+ */
+sealed trait Unmarshaller
+
+/**
+ * A MultiUnmarshaller can choose between different unmarshallers based on
+ * the supplied content type.
+ */
+trait MultiUnmarshaller extends Unmarshaller {
+
+  /**
+   * Abstract method to unmarshal a string into a representation,
+   * based on the supplied content type.
+   */
+  def toRepresentation[R <: Representation](implicit m: Manifest[R], contentType: String, marshalled: String): R =
+    toRepresentation[R](contentType, marshalled, m.erasure.asInstanceOf[Class[R]])
+
+  /**
+   * See equivalent definition in Unmarshaller above.
+   */
+  def toRepresentation[R <: Representation](contentType: String, marshalled: String, typeR: Class[R]): R
+}
+
+trait ContentTypeUnmarshaller extends MultiUnmarshaller {
+
+  /**
+   * Take the contentType argument and discard it
+   */
+  def toRepresentation[R <: Representation](contentType: String, marshalled: String, typeR: Class[R]): R =
+    toRepresentation[R](marshalled, typeR)
 
   /**
    * Turns the case class's xml into a Representation subclass.
@@ -34,23 +64,4 @@ trait Unmarshaller {
    * implicit Manifest at the point of declaring T.
    */
   def toRepresentation[R <: Representation](marshalled: String, typeR: Class[R]): R
-}
-
-/**
- * A MultiUnmarshaller can choose between different unmarshallers based on
- * the supplied content type.
- */
-trait MultiUnmarshaller {
-
-  /**
-   * Abstract method to unmarshal a string into a representation,
-   * based on the supplied content type.
-   */
-  def toRepresentation[R <: Representation](implicit m: Manifest[R], contentType: String, marshalled: String): R =
-    toRepresentation[R](contentType, marshalled, m.erasure.asInstanceOf[Class[R]])
-
-  /**
-   * See equivalent definition in Unmarshaller above.
-   */
-  def toRepresentation[R <: Representation](contentType: String, marshalled: String, typeR: Class[R]): R
 }
