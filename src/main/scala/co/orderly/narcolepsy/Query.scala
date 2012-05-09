@@ -46,7 +46,7 @@ abstract class Query[
 
   protected var id: Option[String] = None
 
-  protected var params: Option[RestfulParams] = None
+  protected var querystring: Option[String] = None
 
   protected var slug: String = resource
 
@@ -60,6 +60,7 @@ abstract class Query[
 
   /**
    * Switches on debug-style printing of the query execution
+   *
    * @return The updated Query builder
    */
   def consolePrint(): this.type = {
@@ -69,7 +70,8 @@ abstract class Query[
 
   /**
    * Overrides the resource 'slug' used for this query
-   * @param slug
+   *
+   * @param slug The resource slug to use
    * @return The updated Query builder
    */
   def overrideSlug(slug: String): this.type = {
@@ -79,10 +81,33 @@ abstract class Query[
 
   /**
    * Throws an exception if we received an HTTP error code back from the web service
+   *
    * @return The updated Query builder
    */
   def throwException(): this.type = {
     this.exception = true
+    this
+  }
+
+  /**
+   * Sets a querystring for this call.
+   *
+   * @param querystring The querystring to set. A pre-escaped String in the correct encoding, without initial '?'
+   * @return The updated Query builder
+   */
+  def setQuerystring(querystring: String): this.type = {
+    this.querystring = if (querystring.isEmpty) None else Some(querystring)
+    this
+  }
+
+  /**
+   * Sets a querystring for this call.
+   *
+   * @param params The Map of unescaped key:value parameters to build the querystring from
+   * @return The updated Query builder
+   */
+  def setQuerystring(params: RestfulParams): this.type = {
+    this.querystring = Some(RestfulHelpers.canonicalize(params, client.configuration.encoding))
     this
   }
 
@@ -93,13 +118,14 @@ abstract class Query[
   /**
    * Executes the query using all of the parameters set (or not set) through
    * the builder.
+   *
    * @return A RestfulResponse tuple of return code, HTTP headers and body
    */
   def run(): RestfulResponse = {
 
     val uri = (slug +
       (if (id.isDefined) "/%s".format(id.get) else "") +
-      (if (params.isDefined) "?%s".format(RestfulHelpers.canonicalize(params.get, client.configuration.encoding)) else "")
+      (if (querystring.isDefined) "?%s".format(querystring.get) else "")
       )
 
     if (console) {

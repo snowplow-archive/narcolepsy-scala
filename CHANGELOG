@@ -1,3 +1,8 @@
+Version 0.2.5 (2012-05-10)
+--------------------------
+Added in Java->Scala null conversions
+Added in setQuerystring() functionality
+
 Version 0.2.4 (2012-04-17)
 --------------------------
 Clarified addSelf versus addPayload

@@ -23,12 +23,16 @@ import scala.collection.JavaConversions._
  */
 object JavaNullConversions {
 
+  // -------------------------------------------------------------------------------------------------------------------
+  // From Scala Option[A]s to Java A-equivalents
+  // -------------------------------------------------------------------------------------------------------------------
+
   /**
    * Convert a Scala Option[Float] to a Java Float.
    */
   implicit def optionalFloat2JFloat(float: Option[Float]): JFloat = float match {
     case None => null
-    case Some(f) => f
+    case Some(f) => f // Implicit Float -> JFloat happens here
   }
 
   /**
@@ -36,7 +40,7 @@ object JavaNullConversions {
    */
   implicit def optionalInt2JInteger(int: Option[Int]): JInteger = int match {
     case None => null
-    case Some(i) => i
+    case Some(i) => i // Implicit Int -> JInteger happens here
   }
 
   /**
@@ -44,6 +48,33 @@ object JavaNullConversions {
    */
   implicit def optionalDouble2JDouble(double: Option[Double]): JDouble = double match {
     case None => null
-    case Some(d) => d
+    case Some(d) => d // Implicit Double -> JDouble happens here
   }
+
+  // -------------------------------------------------------------------------------------------------------------------
+  // From Java A-equivalents to Scala Option[A]s
+  // -------------------------------------------------------------------------------------------------------------------
+
+  /**
+   * Convert a Java Float to a Scala Option[Float].
+   *
+   * Two-stage using scala's JavaConversions. Trying to do this in one
+   * stage throws a:
+   *   java.lang.NullPointerException
+   *   at scala.Predef$.Float2float(Predef.scala:305)
+   */
+  implicit def jFloat2OptionalFloat(float: JFloat): Option[Float] =
+    Option(float) map (f => f) // Implicit JFloat -> Float happens here
+
+  /**
+   * Convert a Java Integer to a Scala Option[Int]
+   */
+  implicit def jInteger2OptionalInt(int: JInteger): Option[Int] =
+    Option(int) map (i => i) // Implicit JInteger -> Int happens here
+
+  /**
+   * Convert a Java Integer to a Scala Option[Int]
+   */
+  implicit def jDouble2OptionalDouble(double: JDouble): Option[Double] =
+    Option(double) map (d => d) // Implicit JDouble -> Double happens here
 }
